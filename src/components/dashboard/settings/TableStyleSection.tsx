@@ -20,7 +20,7 @@ const TableStyleSection = () => {
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Cell spacing</span>
+          <span className=" text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">Cell spacing</span>
           <div className="flex gap-2 items-center">
             <span>Extra small</span>
             <span className="text-gray-500">▼</span>
