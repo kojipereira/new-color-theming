@@ -1,13 +1,10 @@
-
 import React from "react";
 import { Plus, MoreHorizontal } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-
 const TableStyleSection = () => {
-  return (
-    <div className="bg-white w-full p-4 border-b border-gray-200">
+  return <div className="bg-white w-full p-4 border-b border-gray-200">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-lg">Table Style</h3>
+        <h3 className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">Table Style</h3>
         <button className="text-gray-700">
           <Plus size={20} />
         </button>
@@ -102,8 +99,6 @@ const TableStyleSection = () => {
           <MoreHorizontal size={20} className="text-gray-500" />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TableStyleSection;
