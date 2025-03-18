@@ -28,7 +28,7 @@ const TableStyleSection = () => {
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Grid lines</span>
+          <span className=" text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">Grid lines</span>
           <div className="flex gap-2">
             <div className="border border-blue-500 bg-blue-50 w-8 h-8 flex items-center justify-center rounded-md">
               <span className="text-blue-500 text-lg">⫶</span>
