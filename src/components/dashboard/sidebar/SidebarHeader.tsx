@@ -3,7 +3,7 @@ import React from "react";
 
 const SidebarHeader: React.FC = () => {
   return (
-    <div className="sticky top-0 z-10 bg-[rgba(238,238,238,1)]">
+    <div className="bg-[rgba(238,238,238,1)]">
       <div className="rounded w-full overflow-hidden">
         <div className="bg-white flex w-full flex-col overflow-hidden items-stretch justify-center px-1 py-3">
           <div className="flex w-full items-center gap-2 px-2">

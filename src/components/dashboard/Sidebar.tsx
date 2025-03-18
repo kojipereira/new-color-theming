@@ -80,59 +80,60 @@ const Sidebar: React.FC = () => {
 
   return (
     <div className="bg-[rgba(238,238,238,1)] min-w-60 w-[280px] flex flex-col h-full">
-      {/* Header - Fixed at top */}
+      {/* Header */}
       <SidebarHeader />
 
-      {/* Scrollable content area */}
-      <ScrollArea className="flex-1 overflow-auto">
-        <div className="rounded w-full overflow-hidden mt-1">
-          <DraggableSection
-            title="Pivot Rows"
-            items={pivotRowItems}
-            onAddItem={addToPivotRows}
-            onDrop={(e) => handleDrop(e, "pivotRows")}
-            actionIcons={[
-              "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/e820ab38758ad106d1eec29a70763f66ca2e10fc?placeholderIfAbsent=true",
-            ]}
-          />
+      {/* Scrollable content area with proper layout for sticky footer */}
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <ScrollArea className="flex-1">
+          <div className="pb-16"> {/* Added padding at the bottom to ensure content doesn't get hidden behind the sticky footer */}
+            <div className="rounded w-full overflow-hidden mt-1">
+              <DraggableSection
+                title="Pivot Rows"
+                items={pivotRowItems}
+                onAddItem={addToPivotRows}
+                onDrop={(e) => handleDrop(e, "pivotRows")}
+                actionIcons={[
+                  "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/e820ab38758ad106d1eec29a70763f66ca2e10fc?placeholderIfAbsent=true",
+                ]}
+              />
 
-          <div className="w-full">
-            <div className="border-neutral-200 border shrink-0 h-px border-solid" />
+              <div className="w-full">
+                <div className="border-neutral-200 border shrink-0 h-px border-solid" />
+              </div>
+
+              <DraggableSection
+                title="Pivot Columns"
+                items={pivotColumnItems}
+                onAddItem={addToPivotColumns}
+                onDrop={(e) => handleDrop(e, "pivotColumns")}
+              />
+
+              <div className="w-full">
+                <div className="border-neutral-200 border shrink-0 h-px border-solid" />
+              </div>
+
+              <DraggableSection
+                title="Values"
+                items={valuesItems}
+                onAddItem={addToValues}
+                onDrop={(e) => handleDrop(e, "values")}
+              />
+            </div>
+
+            {/* Base Columns Section */}
+            <BaseColumnsSection
+              visibleBaseColumnItems={visibleBaseColumnItems}
+              baseColumnsExpanded={baseColumnsExpanded}
+              setBaseColumnsExpanded={setBaseColumnsExpanded}
+              handleDragStart={handleDragStart}
+            />
+
+            {/* Advanced settings sections */}
+            <AdvancedSectionRenderer advancedSections={advancedSections} />
           </div>
-
-          <DraggableSection
-            title="Pivot Columns"
-            items={pivotColumnItems}
-            onAddItem={addToPivotColumns}
-            onDrop={(e) => handleDrop(e, "pivotColumns")}
-          />
-
-          <div className="w-full">
-            <div className="border-neutral-200 border shrink-0 h-px border-solid" />
-          </div>
-
-          <DraggableSection
-            title="Values"
-            items={valuesItems}
-            onAddItem={addToValues}
-            onDrop={(e) => handleDrop(e, "values")}
-          />
-        </div>
-
-        {/* Base Columns Section */}
-        <BaseColumnsSection
-          visibleBaseColumnItems={visibleBaseColumnItems}
-          baseColumnsExpanded={baseColumnsExpanded}
-          setBaseColumnsExpanded={setBaseColumnsExpanded}
-          handleDragStart={handleDragStart}
-        />
-
-        {/* Advanced settings sections */}
-        <AdvancedSectionRenderer advancedSections={advancedSections} />
-        
-        {/* Add padding at the bottom to ensure content can scroll past the sticky footer */}
-        <div className="h-16" /> 
-      </ScrollArea>
+        </ScrollArea>
+      </div>
 
       {/* Advanced Settings - Fixed at bottom */}
       <AdvancedSettings 
