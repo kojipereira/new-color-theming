@@ -79,14 +79,14 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="bg-[rgba(238,238,238,1)] min-w-60 w-[280px] flex flex-col h-full overflow-hidden">
+    <div className="bg-[rgba(238,238,238,1)] min-w-60 w-[280px] flex flex-col h-full">
+      {/* Header */}
+      <SidebarHeader />
+
       {/* Scrollable content area with proper layout for sticky footer */}
       <div className="flex-1 overflow-hidden flex flex-col">
         <ScrollArea className="flex-1">
-          <div className="pb-16 px-2"> {/* Added consistent padding to ensure content doesn't bleed */}
-            {/* Header now scrolls naturally with content */}
-            <SidebarHeader />
-            
+          <div className="pb-16"> {/* Added padding at the bottom to ensure content doesn't get hidden behind the sticky footer */}
             <div className="rounded w-full overflow-hidden mt-1">
               <DraggableSection
                 title="Pivot Rows"

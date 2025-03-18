@@ -1,10 +1,13 @@
+
 import React from "react";
 import { Plus, MoreHorizontal } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+
 const TableStyleSection = () => {
-  return <div className="bg-white w-full p-4 border-b border-gray-200">
+  return (
+    <div className="bg-white w-full p-4 border-b border-gray-200">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">Table Style</h3>
+        <h3 className="font-bold text-lg">Table Style</h3>
         <button className="text-gray-700">
           <Plus size={20} />
         </button>
@@ -12,15 +15,15 @@ const TableStyleSection = () => {
       
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <span className=" text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">Style preset</span>
+          <span className="text-gray-700">Style preset</span>
           <div className="flex gap-2 items-center">
-            <span className=" text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">Spreadsheet</span>
+            <span>Spreadsheet</span>
             <span className="text-gray-500">▼</span>
           </div>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className=" text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">Cell spacing</span>
+          <span className="text-gray-700">Cell spacing</span>
           <div className="flex gap-2 items-center">
             <span>Extra small</span>
             <span className="text-gray-500">▼</span>
@@ -28,7 +31,7 @@ const TableStyleSection = () => {
         </div>
         
         <div className="flex justify-between items-center">
-          <span className=" text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">Grid lines</span>
+          <span className="text-gray-700">Grid lines</span>
           <div className="flex gap-2">
             <div className="border border-blue-500 bg-blue-50 w-8 h-8 flex items-center justify-center rounded-md">
               <span className="text-blue-500 text-lg">⫶</span>
@@ -45,7 +48,7 @@ const TableStyleSection = () => {
           </div>
         </div>
         
-        <div className=" text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">
+        <div className="flex justify-between items-center">
           <span className="text-gray-700">Show banding</span>
           <Switch />
         </div>
@@ -99,6 +102,8 @@ const TableStyleSection = () => {
           <MoreHorizontal size={20} className="text-gray-500" />
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default TableStyleSection;

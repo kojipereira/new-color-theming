@@ -1,17 +1,20 @@
+
 import React from "react";
 import { Minus } from "lucide-react";
+
 const ElementStyleSection = () => {
-  return <div className="bg-white w-full p-4 border-b border-gray-200">
+  return (
+    <div className="bg-white w-full p-4 border-b border-gray-200">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">Element Style</h3>
+        <h3 className="font-bold text-lg">Element Style</h3>
         <button className="text-gray-700">
           <Minus size={20} />
         </button>
       </div>
       
-      <div className="text-ellipsis self-stretch flex-1 shrink basis-[0%] my-auto">
+      <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <span className="text-ellipsis self-stretch flex-1 shrink basis-[0%] my-auto">Border</span>
+          <span className="text-gray-700">Border</span>
           <div className="flex gap-2">
             <div className="border border-gray-300 w-8 h-8 flex items-center justify-center rounded-md">
               <span className="text-gray-700">□</span>
@@ -23,7 +26,7 @@ const ElementStyleSection = () => {
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-ellipsis self-stretch flex-1 shrink basis-[0%] my-auto">Shadow</span>
+          <span className="text-gray-700">Shadow</span>
           <div className="flex gap-2">
             <div className="border border-gray-300 w-8 h-8 flex items-center justify-center rounded-md">
               <span className="text-gray-700">⬒</span>
@@ -39,6 +42,8 @@ const ElementStyleSection = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default ElementStyleSection;

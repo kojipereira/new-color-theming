@@ -1,9 +1,12 @@
+
 import React from "react";
 import { Minus, MoreHorizontal } from "lucide-react";
+
 const TitleSection = () => {
-  return <div className="bg-white w-full p-4 border-b border-gray-200">
+  return (
+    <div className="bg-white w-full p-4 border-b border-gray-200">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">Title</h3>
+        <h3 className="font-bold text-lg">Title</h3>
         <div className="flex gap-2">
           <button className="text-gray-700">
             <MoreHorizontal size={20} />
@@ -42,6 +45,8 @@ const TitleSection = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default TitleSection;
