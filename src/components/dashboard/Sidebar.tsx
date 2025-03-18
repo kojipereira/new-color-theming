@@ -79,7 +79,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="bg-[rgba(238,238,238,1)] min-w-60 w-60 flex flex-col h-full">
+    <div className="bg-[rgba(238,238,238,1)] min-w-60 w-60 max-w-60 flex flex-col h-full border-r border-neutral-200 overflow-hidden">
       {/* Scrollable content area with proper layout for sticky footer */}
       <div className="flex-1 overflow-hidden flex flex-col">
         <ScrollArea className="flex-1">
