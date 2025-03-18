@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
     "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/2be93f2b94c8cb2dc17b55913b705736c54565e7?placeholderIfAbsent=true";
 
   return (
-    <div className="bg-[rgba(238,238,238,1)] min-w-60 overflow-hidden w-[280px] p-1">
+    <div className="bg-[rgba(238,238,238,1)] min-w-60 overflow-hidden w-[280px] p-1 flex flex-col h-full relative">
       <div className="rounded w-full overflow-hidden">
         <div className="bg-white flex w-full flex-col overflow-hidden items-stretch justify-center px-1 py-3">
           <div className="flex w-full items-center gap-2 px-2">
@@ -105,7 +105,7 @@ const Sidebar: React.FC = () => {
         </PanelSection>
       </div>
 
-      <div className="rounded bg-white min-h-[519px] w-full overflow-hidden mt-1 pb-4 px-1">
+      <div className="rounded bg-white min-h-[519px] w-full overflow-hidden mt-1 pb-4 px-1 flex-1 overflow-y-auto">
         <div className="bg-white flex min-h-6 w-full items-center gap-1 pt-3 pb-2 px-2">
           <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
             Base Columns
@@ -133,7 +133,6 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
         <div className="w-full overflow-hidden flex-1 mt-1">
-          {/* Repeat pattern for base columns */}
           {[...Array(16)].map((_, index) => (
             <PanelItem
               key={`base-column-${index}`}
@@ -160,7 +159,7 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      <div className="rounded bg-white max-w-full w-[272px] overflow-hidden mt-1 px-1">
+      <div className="rounded bg-white max-w-full w-[272px] overflow-hidden mt-1 px-1 sticky bottom-0 left-0 right-0">
         <div className="rounded bg-white flex w-full flex-col items-stretch justify-center py-3">
           <div className="flex min-h-6 w-full items-center gap-2 px-2">
             <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
