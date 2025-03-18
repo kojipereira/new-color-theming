@@ -1,19 +1,21 @@
-import React, { ReactNode } from "react";
+
+import React, { ReactNode, useState } from "react";
+import { Plus } from "lucide-react";
 
 interface PanelSectionProps {
   title: string;
   children: ReactNode;
   actionIcons?: string[];
   expanded?: boolean;
+  onAddItem?: () => void;
 }
 
 const PanelSection: React.FC<PanelSectionProps> = ({
   title,
   children,
-  actionIcons = [
-    "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/e820ab38758ad106d1eec29a70763f66ca2e10fc?placeholderIfAbsent=true",
-  ],
+  actionIcons = [],
   expanded = true,
+  onAddItem,
 }) => {
   return (
     <div className="bg-white w-full px-1 py-3">
@@ -21,6 +23,14 @@ const PanelSection: React.FC<PanelSectionProps> = ({
         <div className="self-stretch z-0 gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
           {title}
         </div>
+        {onAddItem && (
+          <div
+            className="rounded self-stretch z-0 flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1 cursor-pointer hover:bg-gray-100"
+            onClick={onAddItem}
+          >
+            <Plus className="h-4 w-4" />
+          </div>
+        )}
         {actionIcons.map((icon, index) => (
           <div
             key={index}

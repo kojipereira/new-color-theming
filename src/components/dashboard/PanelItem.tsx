@@ -1,18 +1,27 @@
+
 import React from "react";
 
 interface PanelItemProps {
   icon: string;
   label: string;
   actionIcon?: string;
+  draggable?: boolean;
+  onDragStart?: (event: React.DragEvent<HTMLDivElement>) => void;
 }
 
 const PanelItem: React.FC<PanelItemProps> = ({
   icon,
   label,
   actionIcon = "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/182fe5157336973a37cf0dedd2701321f28ee286?placeholderIfAbsent=true",
+  draggable = false,
+  onDragStart,
 }) => {
   return (
-    <div className="rounded flex w-full items-center gap-2 px-2">
+    <div 
+      className={`rounded flex w-full items-center gap-2 px-2 ${draggable ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      draggable={draggable}
+      onDragStart={onDragStart}
+    >
       <div className="self-stretch flex min-h-6 items-center gap-2 text-xs text-neutral-900 font-normal whitespace-nowrap leading-none flex-1 shrink basis-[0%] my-auto">
         <img
           src={icon}
