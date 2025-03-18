@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import PanelSection from "./PanelSection";
 import PanelItem from "./PanelItem";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, ChevronsDown, ChevronsUp } from "lucide-react";
 
 const Sidebar: React.FC = () => {
   // Common icons used in the sidebar
@@ -49,7 +48,10 @@ const Sidebar: React.FC = () => {
 
   // State for base columns expand/collapse
   const [baseColumnsExpanded, setBaseColumnsExpanded] = useState(false);
-  const baseColumnsHeight = baseColumnsExpanded ? "min-h-[600px]" : "min-h-[519px]";
+  
+  // Display 10 items when contracted, 30 when expanded
+  const displayCount = baseColumnsExpanded ? 30 : 10;
+  const visibleBaseColumnItems = baseColumnItems.slice(0, displayCount);
 
   // Function to handle drag and drop
   const handleDragStart = (e: React.DragEvent, item: { icon: string; label: string }) => {
@@ -212,7 +214,7 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      <div className={`rounded bg-white w-full overflow-hidden mt-1 pb-4 px-1 flex-1 overflow-y-auto ${baseColumnsHeight} transition-all duration-300`}>
+      <div className={`rounded bg-white w-full overflow-hidden mt-1 pb-4 px-1 flex-1 overflow-y-auto transition-all duration-300`}>
         <div className="bg-white flex min-h-6 w-full items-center gap-1 pt-3 pb-2 px-2">
           <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
             Base Columns
@@ -236,14 +238,14 @@ const Sidebar: React.FC = () => {
             onClick={() => setBaseColumnsExpanded(!baseColumnsExpanded)}
           >
             {baseColumnsExpanded ? (
-              <ChevronUp className="h-4 w-4" />
+              <ChevronsUp className="h-4 w-4" />
             ) : (
-              <ChevronDown className="h-4 w-4" />
+              <ChevronsDown className="h-4 w-4" />
             )}
           </div>
         </div>
         <div className="w-full overflow-hidden mt-1">
-          {baseColumnItems.map((item, index) => (
+          {visibleBaseColumnItems.map((item, index) => (
             <PanelItem
               key={`base-column-${index}`}
               icon={item.icon}
