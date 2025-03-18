@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import SidebarHeader from "./sidebar/SidebarHeader";
@@ -33,6 +33,39 @@ const Sidebar: React.FC = () => {
   // Advanced settings sections
   const [advancedSections, setAdvancedSections] = useState<string[]>([]);
   const [advancedMenuOpen, setAdvancedMenuOpen] = useState(false);
+  
+  // Scroll position tracking
+  const [showStickyAdvancedSettings, setShowStickyAdvancedSettings] = useState(true);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const baseColumnsRef = useRef<HTMLDivElement>(null);
+
+  // Function to handle scroll and determine which Advanced Settings to show
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!scrollAreaRef.current || !baseColumnsRef.current) return;
+      
+      const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (!scrollElement) return;
+      
+      const scrollPosition = scrollElement.scrollTop;
+      const baseColumnsBottom = baseColumnsRef.current.getBoundingClientRect().bottom;
+      const viewportHeight = window.innerHeight;
+      
+      // Show sticky when base columns are not fully visible at the bottom
+      setShowStickyAdvancedSettings(baseColumnsBottom > viewportHeight - 100);
+    };
+    
+    const scrollElement = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+    if (scrollElement) {
+      scrollElement.addEventListener('scroll', handleScroll);
+      // Initial check
+      handleScroll();
+      
+      return () => {
+        scrollElement.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
 
   // Function to handle drag and drop
   const handleDragStart = (e: React.DragEvent, item: { icon: string; label: string }) => {
@@ -81,7 +114,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full border-r border-neutral-200 overflow-hidden">
       <div className="flex-1 overflow-hidden flex flex-col">
-        <ScrollArea className="flex-1 w-full">
+        <ScrollArea className="flex-1 w-full" ref={scrollAreaRef}>
           <div className="pb-16 w-full max-w-[280px]"> 
             <SidebarHeader />
             
@@ -119,23 +152,39 @@ const Sidebar: React.FC = () => {
               />
             </div>
 
-            <BaseColumnsSection
-              visibleBaseColumnItems={visibleBaseColumnItems}
-              baseColumnsExpanded={baseColumnsExpanded}
-              setBaseColumnsExpanded={setBaseColumnsExpanded}
-              handleDragStart={handleDragStart}
-            />
+            <div ref={baseColumnsRef}>
+              <BaseColumnsSection
+                visibleBaseColumnItems={visibleBaseColumnItems}
+                baseColumnsExpanded={baseColumnsExpanded}
+                setBaseColumnsExpanded={setBaseColumnsExpanded}
+                handleDragStart={handleDragStart}
+              />
+              
+              {/* Inline Advanced Settings (shown when scrolled to base columns) */}
+              {!showStickyAdvancedSettings && (
+                <AdvancedSettings 
+                  advancedMenuOpen={advancedMenuOpen}
+                  setAdvancedMenuOpen={setAdvancedMenuOpen}
+                  addAdvancedSection={addAdvancedSection}
+                  isSticky={false}
+                />
+              )}
+            </div>
 
             <AdvancedSectionRenderer advancedSections={advancedSections} />
           </div>
         </ScrollArea>
       </div>
 
-      <AdvancedSettings 
-        advancedMenuOpen={advancedMenuOpen}
-        setAdvancedMenuOpen={setAdvancedMenuOpen}
-        addAdvancedSection={addAdvancedSection}
-      />
+      {/* Sticky Advanced Settings (hidden when scrolled to base columns) */}
+      {showStickyAdvancedSettings && (
+        <AdvancedSettings 
+          advancedMenuOpen={advancedMenuOpen}
+          setAdvancedMenuOpen={setAdvancedMenuOpen}
+          addAdvancedSection={addAdvancedSection}
+          isSticky={true}
+        />
+      )}
     </div>
   );
 };

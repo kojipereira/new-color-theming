@@ -9,15 +9,21 @@ interface AdvancedSettingsProps {
   advancedMenuOpen: boolean;
   setAdvancedMenuOpen: (open: boolean) => void;
   addAdvancedSection: (sectionType: string) => void;
+  isSticky?: boolean;
 }
 
 const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
   advancedMenuOpen,
   setAdvancedMenuOpen,
-  addAdvancedSection
+  addAdvancedSection,
+  isSticky = true
 }) => {
+  const containerClasses = isSticky 
+    ? "sticky bottom-0 z-10 bg-[rgba(238,238,238,1)]" 
+    : "bg-[rgba(238,238,238,1)]";
+
   return (
-    <div className="sticky bottom-0 z-10 bg-[rgba(238,238,238,1)]">
+    <div className={containerClasses}>
       <Separator className="h-[2px] bg-gray-200" />
       <div className="rounded bg-white w-full overflow-hidden px-1">
         <div className="rounded bg-white flex w-full flex-col items-stretch justify-center py-3">
