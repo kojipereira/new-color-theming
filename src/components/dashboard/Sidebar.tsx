@@ -79,7 +79,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full border-r border-neutral-200">
+    <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full border-r border-neutral-200 overflow-hidden">
       <div className="flex-1 overflow-hidden flex flex-col">
         <ScrollArea className="flex-1 w-full">
           <div className="pb-16 w-full max-w-[280px]"> 
