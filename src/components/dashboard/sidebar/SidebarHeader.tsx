@@ -3,7 +3,7 @@ import React from "react";
 
 const SidebarHeader: React.FC = () => {
   return (
-    <div className="bg-[rgba(238,238,238,1)]">
+    <div className="w-full bg-[rgba(238,238,238,1)]">
       <div className="rounded w-full overflow-hidden">
         <div className="bg-white flex w-full flex-col overflow-hidden items-stretch justify-center px-1 py-3">
           <div className="flex w-full items-center gap-2 px-2">
@@ -14,8 +14,8 @@ const SidebarHeader: React.FC = () => {
                 alt="Search"
               />
             </div>
-            <div className="text-neutral-900 text-ellipsis text-base font-bold self-stretch flex-1 shrink basis-[0%] my-auto">
-              Automation status{" "}
+            <div className="text-neutral-900 text-ellipsis truncate text-base font-bold self-stretch flex-1 shrink basis-[0%] my-auto">
+              Automation status
             </div>
             <div className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
               <img
@@ -31,7 +31,7 @@ const SidebarHeader: React.FC = () => {
         </div>
         <div className="bg-white flex w-full flex-col overflow-hidden items-stretch justify-center px-1 py-2">
           <div className="flex min-h-6 w-full items-center px-2">
-            <div className="self-stretch flex min-w-60 w-full items-center flex-1 shrink basis-[0%] my-auto">
+            <div className="self-stretch flex min-w-0 w-full items-center flex-1 shrink basis-[0%] my-auto">
               <div className="self-stretch flex items-center gap-2 flex-1 shrink basis-[0%] my-auto">
                 <div className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
                   <img
@@ -40,7 +40,7 @@ const SidebarHeader: React.FC = () => {
                     alt="Database"
                   />
                 </div>
-                <div className="text-[#505050] text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">
+                <div className="text-[#505050] text-ellipsis truncate text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">
                   PLUGS_ELECTRONICS_HANDS_ON_LAB_DATA
                 </div>
               </div>
