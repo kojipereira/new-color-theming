@@ -12,7 +12,7 @@ const TableStyleSection = () => {
       
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Style preset</span>
+          <span className=" text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">Style preset</span>
           <div className="flex gap-2 items-center">
             <span>Spreadsheet</span>
             <span className="text-gray-500">▼</span>
