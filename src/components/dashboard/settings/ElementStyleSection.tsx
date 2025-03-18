@@ -11,7 +11,7 @@ const ElementStyleSection = () => {
       
       <div className="text-ellipsis self-stretch flex-1 shrink basis-[0%] my-auto">
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Border</span>
+          <span className="text-ellipsis self-stretch flex-1 shrink basis-[0%] my-auto">Border</span>
           <div className="flex gap-2">
             <div className="border border-gray-300 w-8 h-8 flex items-center justify-center rounded-md">
               <span className="text-gray-700">□</span>
