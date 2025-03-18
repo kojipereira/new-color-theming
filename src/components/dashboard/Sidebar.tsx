@@ -79,15 +79,13 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full overflow-hidden border-r border-neutral-200">
-      {/* Scrollable content area with proper layout for sticky footer */}
+    <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full border-r border-neutral-200">
       <div className="flex-1 overflow-hidden flex flex-col">
         <ScrollArea className="flex-1 w-full">
-          <div className="pb-16"> {/* Added padding at the bottom to ensure content doesn't get hidden behind the sticky footer */}
-            {/* Header is now inside ScrollArea to allow natural scrolling */}
+          <div className="pb-16 w-full max-w-[280px]"> 
             <SidebarHeader />
             
-            <div className="rounded w-full overflow-hidden mt-1">
+            <div className="w-full overflow-hidden mt-1">
               <DraggableSection
                 title="Pivot Rows"
                 items={pivotRowItems}
@@ -121,7 +119,6 @@ const Sidebar: React.FC = () => {
               />
             </div>
 
-            {/* Base Columns Section */}
             <BaseColumnsSection
               visibleBaseColumnItems={visibleBaseColumnItems}
               baseColumnsExpanded={baseColumnsExpanded}
@@ -129,13 +126,11 @@ const Sidebar: React.FC = () => {
               handleDragStart={handleDragStart}
             />
 
-            {/* Advanced settings sections */}
             <AdvancedSectionRenderer advancedSections={advancedSections} />
           </div>
         </ScrollArea>
       </div>
 
-      {/* Advanced Settings - Fixed at bottom */}
       <AdvancedSettings 
         advancedMenuOpen={advancedMenuOpen}
         setAdvancedMenuOpen={setAdvancedMenuOpen}
