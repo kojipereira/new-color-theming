@@ -16,9 +16,9 @@ const BaseColumnsSection: React.FC<BaseColumnsSectionProps> = ({
   handleDragStart
 }) => {
   return (
-    <div className="rounded bg-white w-full overflow-hidden mt-1 pb-4 px-1">
+    <div className="rounded bg-white w-full overflow-hidden mt-1 pb-4 p-1">
       <div className="bg-white flex min-h-6 w-full items-center gap-1 pt-3 pb-2 px-2">
-        <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
+        <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto truncate">
           Base Columns
         </div>
         <div className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">

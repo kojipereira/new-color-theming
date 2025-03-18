@@ -18,9 +18,9 @@ const PanelSection: React.FC<PanelSectionProps> = ({
   onAddItem
 }) => {
   return (
-    <div className="bg-white w-full px-1 py-3">
+    <div className="bg-white w-full p-1 py-3">
       <div className="relative flex min-h-6 w-full items-center gap-2 px-2">
-        <div className="self-stretch z-0 gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
+        <div className="self-stretch z-0 gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto truncate">
           {title}
         </div>
         {onAddItem && (

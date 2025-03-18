@@ -16,11 +16,11 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
   addAdvancedSection
 }) => {
   return (
-    <div className="sticky bottom-0 z-10 bg-[rgba(238,238,238,1)]">
-      <div className="rounded bg-white w-full overflow-hidden px-1">
-        <div className="rounded bg-white flex w-full flex-col items-stretch justify-center py-3">
+    <div className="sticky bottom-0 z-10 bg-[rgba(238,238,238,1)] px-2">
+      <div className="rounded bg-white w-full overflow-hidden">
+        <div className="rounded bg-white flex w-full flex-col items-stretch justify-center p-1 py-3">
           <div className="flex min-h-6 w-full items-center gap-2 px-2">
-            <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
+            <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto truncate">
               Advanced Settings
             </div>
             <DropdownMenu open={advancedMenuOpen} onOpenChange={setAdvancedMenuOpen}>
