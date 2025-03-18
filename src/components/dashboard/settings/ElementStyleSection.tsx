@@ -9,7 +9,7 @@ const ElementStyleSection = () => {
         </button>
       </div>
       
-      <div className="space-y-6">
+      <div className="text-ellipsis self-stretch flex-1 shrink basis-[0%] my-auto">
         <div className="flex justify-between items-center">
           <span className="text-gray-700">Border</span>
           <div className="flex gap-2">
