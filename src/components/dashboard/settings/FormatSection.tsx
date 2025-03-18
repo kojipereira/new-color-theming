@@ -11,7 +11,7 @@ const FormatSection = () => {
       
       <div className="space-y-4">
         <div className="flex flex-col">
-          <span className="text-gray-700 mb-2">Empty cell display value</span>
+          <span className="text-gray-700 mb-2 text-sm">Empty cell display value</span>
           <span className="text-gray-500 text-sm">*Please add description</span>
         </div>
         

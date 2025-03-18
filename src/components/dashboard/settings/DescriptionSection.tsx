@@ -16,7 +16,7 @@ const DescriptionSection = () => {
       
       <div className="space-y-4">
         <div className="w-full border border-gray-300 rounded-md p-3 h-36 flex items-start">
-          <span className="text-gray-400">Textarea placeholder</span>
+          <span className="text-gray-400 text-sm">Textarea placeholder</span>
         </div>
         
         <div className="flex justify-end">

@@ -16,7 +16,7 @@ const TitleSection = () => {
       
       <div className="space-y-4">
         <div className="w-full border border-gray-300 rounded-md p-3">
-          <span className="text-gray-400">Input placeholder</span>
+          <span className="text-gray-400 text-sm">Input placeholder</span>
         </div>
         
         <div className="flex justify-between">
@@ -30,12 +30,12 @@ const TitleSection = () => {
           </div>
           
           <div className="w-20 h-10 flex items-center justify-center rounded-md border border-gray-300">
-            <span>12px ▼</span>
+            <span className="text-xs">12px ▼</span>
           </div>
         </div>
         
         <div className="flex items-center">
-          <span className="text-gray-700 mr-4">Color</span>
+          <span className="text-gray-700 mr-4 text-xs">Color</span>
           <div className="w-20 h-10 flex items-center justify-between rounded-md border border-gray-300 px-2">
             <div className="w-6 h-6 bg-purple-600 rounded"></div>
             <span>▼</span>
