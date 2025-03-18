@@ -1,13 +1,10 @@
-
 import React from "react";
 import { Plus, MoreHorizontal } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-
 const TableStyleSection = () => {
-  return (
-    <div className="bg-white w-full p-4 border-b border-gray-200">
+  return <div className="bg-white w-full p-4 border-b border-gray-200">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-lg">Table Style</h3>
+        <h3 className="font-bold text-base">Table Style</h3>
         <button className="text-gray-700">
           <Plus size={20} />
         </button>
@@ -15,23 +12,23 @@ const TableStyleSection = () => {
       
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Style preset</span>
+          <span className="text-gray-700 text-xs">Style preset</span>
           <div className="flex gap-2 items-center">
-            <span>Spreadsheet</span>
+            <span className="text-xs">Spreadsheet</span>
             <span className="text-gray-500">▼</span>
           </div>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Cell spacing</span>
+          <span className="text-gray-700 text-xs">Cell spacing</span>
           <div className="flex gap-2 items-center">
-            <span>Extra small</span>
+            <span className="text-xs">Extra small</span>
             <span className="text-gray-500">▼</span>
           </div>
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Grid lines</span>
+          <span className="text-gray-700 text-xs">Grid lines</span>
           <div className="flex gap-2">
             <div className="border border-blue-500 bg-blue-50 w-8 h-8 flex items-center justify-center rounded-md">
               <span className="text-blue-500 text-lg">⫶</span>
@@ -49,7 +46,7 @@ const TableStyleSection = () => {
         </div>
         
         <div className="flex justify-between items-center">
-          <span className="text-gray-700">Show banding</span>
+          <span className="text-gray-700 text-xs">Show banding</span>
           <Switch />
         </div>
         
@@ -64,7 +61,7 @@ const TableStyleSection = () => {
             </div>
           </div>
           <div className="flex-1">
-            <p className="font-bold text-gray-800">Header styling</p>
+            <p className="text-gray-800 font-bold text-sm">Header styling</p>
             <p className="text-gray-500 text-sm">custom</p>
           </div>
           <MoreHorizontal size={20} className="text-gray-500" />
@@ -80,7 +77,7 @@ const TableStyleSection = () => {
             </div>
           </div>
           <div className="flex-1">
-            <p className="font-bold text-gray-800">Cell styling</p>
+            <p className="font-bold text-gray-800 text-sm">Cell styling</p>
             <p className="text-gray-500 text-sm">default</p>
           </div>
           <MoreHorizontal size={20} className="text-gray-500" />
@@ -96,14 +93,12 @@ const TableStyleSection = () => {
             </div>
           </div>
           <div className="flex-1">
-            <p className="font-bold text-gray-800">Cell styling</p>
+            <p className="font-bold text-gray-800 text-sm">Cell styling</p>
             <p className="text-gray-500 text-sm">default</p>
           </div>
           <MoreHorizontal size={20} className="text-gray-500" />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TableStyleSection;
