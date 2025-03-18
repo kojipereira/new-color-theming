@@ -1,4 +1,3 @@
-
 import React from "react";
 import PanelSection from "./PanelSection";
 import PanelItem from "./PanelItem";
@@ -160,7 +159,7 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      <div className="rounded bg-white max-w-full w-[272px] overflow-hidden mt-1 px-1 fixed bottom-4 left-4 shadow-lg z-10">
+      <div className="rounded bg-white max-w-full w-[272px] overflow-hidden mt-1 px-1 fixed bottom-4 right-4 shadow-lg z-10">
         <div className="rounded bg-white flex w-full flex-col items-stretch justify-center py-3">
           <div className="flex min-h-6 w-full items-center gap-2 px-2">
             <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
