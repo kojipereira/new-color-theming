@@ -3,6 +3,7 @@ import React from "react";
 import { Plus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Paintbrush, Type, FileType, Table, BarChart3, List } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 interface AdvancedSettingsProps {
   advancedMenuOpen: boolean;
@@ -17,6 +18,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
 }) => {
   return (
     <div className="sticky bottom-0 z-10 bg-[rgba(238,238,238,1)]">
+      <Separator className="h-[2px] bg-gray-200" />
       <div className="rounded bg-white w-full overflow-hidden px-1">
         <div className="rounded bg-white flex w-full flex-col items-stretch justify-center py-3">
           <div className="flex min-h-6 w-full items-center gap-2 px-2">
