@@ -1,5 +1,4 @@
-
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { 
   Plus, 
   MoreHorizontal, 
@@ -11,11 +10,6 @@ import {
   Paintbrush 
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
-} from "@/components/ui/popover";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -35,14 +29,10 @@ import CustomMenuSection from "./settings/CustomMenuSection";
 
 const Sidebar: React.FC = () => {
   // Common icons used in the sidebar
-  const priceIcon =
-    "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/a197f4fe5dd2df7c3fb64605c54231dc1d5f1df7?placeholderIfAbsent=true";
-  const storeNameIcon =
-    "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/a129a5431fb92a36d9bf9dfbffdb4c2e37e4ef32?placeholderIfAbsent=true";
-  const dateIcon =
-    "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/ff7d1a25dd04025ed706057304583c1d5c5540fa?placeholderIfAbsent=true";
-  const logicIcon =
-    "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/2be93f2b94c8cb2dc17b55913b705736c54565e7?placeholderIfAbsent=true";
+  const priceIcon = "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/a197f4fe5dd2df7c3fb64605c54231dc1d5f1df7?placeholderIfAbsent=true";
+  const storeNameIcon = "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/a129a5431fb92a36d9bf9dfbffdb4c2e37e4ef32?placeholderIfAbsent=true";
+  const dateIcon = "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/ff7d1a25dd04025ed706057304583c1d5c5540fa?placeholderIfAbsent=true";
+  const logicIcon = "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/2be93f2b94c8cb2dc17b55913b705736c54565e7?placeholderIfAbsent=true";
 
   // State for the panels
   const [pivotRowItems, setPivotRowItems] = useState([
@@ -157,9 +147,9 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="bg-[rgba(238,238,238,1)] min-w-60 w-[280px] flex flex-col h-full relative">
-      {/* Header - Sticky */}
-      <div className="sticky top-0 z-10">
+    <div className="bg-[rgba(238,238,238,1)] min-w-60 w-[280px] flex flex-col h-full">
+      {/* Header - Fixed at top */}
+      <div className="sticky top-0 z-10 bg-[rgba(238,238,238,1)]">
         <div className="rounded w-full overflow-hidden">
           <div className="bg-white flex w-full flex-col overflow-hidden items-stretch justify-center px-1 py-3">
             <div className="flex w-full items-center gap-2 px-2">
@@ -220,7 +210,7 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Scrollable content */}
+      {/* Scrollable content area */}
       <ScrollArea className="flex-1 overflow-auto">
         <div className="rounded w-full overflow-hidden mt-1">
           <div 
@@ -301,7 +291,7 @@ const Sidebar: React.FC = () => {
               />
             </div>
           </div>
-          <div className="w-full overflow-hidden mt-1 max-h-80">
+          <div className="w-full overflow-hidden mt-1">
             {visibleBaseColumnItems.map((item, index) => (
               <PanelItem
                 key={`base-column-${index}`}
@@ -323,10 +313,13 @@ const Sidebar: React.FC = () => {
 
         {/* Advanced settings sections */}
         {advancedSections.map((section, index) => renderAdvancedSection(section, index))}
+        
+        {/* Add padding at the bottom to ensure content can scroll past the sticky footer */}
+        <div className="h-16" /> 
       </ScrollArea>
 
-      {/* Advanced Settings - Sticky at the bottom */}
-      <div className="sticky bottom-0 z-10 mt-1">
+      {/* Advanced Settings - Fixed at bottom */}
+      <div className="sticky bottom-0 z-10 bg-[rgba(238,238,238,1)]">
         <div className="rounded bg-white w-full overflow-hidden px-1">
           <div className="rounded bg-white flex w-full flex-col items-stretch justify-center py-3">
             <div className="flex min-h-6 w-full items-center gap-2 px-2">
