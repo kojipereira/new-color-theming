@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Plus, 
@@ -64,13 +65,17 @@ const Sidebar: React.FC = () => {
     { icon: storeNameIcon, label: "Country" },
     { icon: dateIcon, label: "State" },
     { icon: logicIcon, label: "City" },
+    { icon: priceIcon, label: "Sales" },
+    { icon: storeNameIcon, label: "Profit" },
+    { icon: dateIcon, label: "Revenue" },
+    { icon: logicIcon, label: "Units" },
   ]);
 
   // State for base columns expand/collapse
   const [baseColumnsExpanded, setBaseColumnsExpanded] = useState(false);
   
-  // Display 10 items when contracted, 30 when expanded
-  const displayCount = baseColumnsExpanded ? 30 : 10;
+  // Display 10 items when contracted, 20 when expanded
+  const displayCount = baseColumnsExpanded ? 20 : 10;
   const visibleBaseColumnItems = baseColumnItems.slice(0, displayCount);
 
   // Advanced settings sections
