@@ -1,3 +1,4 @@
+
 import React from "react";
 
 const Header: React.FC = () => {
@@ -39,7 +40,7 @@ const Header: React.FC = () => {
           alt="User profile"
         />
       </div>
-      <div className="border-neutral-200 border absolute z-0 flex items-center w-12 px-4 py-2 rounded-full border-solid right-[676px] bottom-[7px]">
+      <div className="border-neutral-200 border absolute z-0 flex items-center w-12 px-4 py-2 rounded-full border-solid left-1/2 bottom-[7px] transform -translate-x-1/2 mx-auto justify-center">
         <img
           src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/7f1f05ac3ce1f922ec524e1810cf7a8ab1169042?placeholderIfAbsent=true"
           className="aspect-[1] object-contain w-4 self-stretch my-auto"
@@ -51,3 +52,4 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+
