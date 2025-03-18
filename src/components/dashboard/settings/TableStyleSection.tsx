@@ -45,7 +45,7 @@ const TableStyleSection = () => {
           </div>
         </div>
         
-        <div className="flex justify-between items-center">
+        <div className=" text-ellipsis text-xs font-normal leading-none self-stretch flex-1 shrink basis-[0%] my-auto">
           <span className="text-gray-700">Show banding</span>
           <Switch />
         </div>
