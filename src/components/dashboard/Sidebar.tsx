@@ -159,7 +159,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="bg-[rgba(238,238,238,1)] min-w-60 w-[280px] flex flex-col h-full relative">
       {/* Header - Sticky */}
-      <div className="sticky top-0 z-10">
+      <div className="sticky top-0 z-10 bg-[rgba(238,238,238,1)]">
         <div className="rounded w-full overflow-hidden">
           <div className="bg-white flex w-full flex-col overflow-hidden items-stretch justify-center px-1 py-3">
             <div className="flex w-full items-center gap-2 px-2">
@@ -220,7 +220,7 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Scrollable content */}
+      {/* Scrollable content area */}
       <ScrollArea className="flex-1 overflow-auto">
         <div className="rounded w-full overflow-hidden mt-1">
           <div 
@@ -278,55 +278,55 @@ const Sidebar: React.FC = () => {
               ))}
             </PanelSection>
           </div>
-        </div>
 
-        {/* Base Columns Section */}
-        <div className="rounded bg-white w-full overflow-hidden mt-1 pb-4 px-1">
-          <div className="bg-white flex min-h-6 w-full items-center gap-1 pt-3 pb-2 px-2">
-            <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
-              Base Columns
+          {/* Base Columns Section */}
+          <div className="rounded bg-white w-full overflow-hidden mt-1 pb-4 px-1">
+            <div className="bg-white flex min-h-6 w-full items-center gap-1 pt-3 pb-2 px-2">
+              <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
+                Base Columns
+              </div>
+              <div className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/781dbfe789e3d1a66ef1605cf94336da48380f4a?placeholderIfAbsent=true"
+                  className="aspect-[1] object-contain w-4 self-stretch my-auto"
+                  alt="Action"
+                />
+              </div>
+              <div className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/cb1292c171f906e91c44d3be493b675ac9675368?placeholderIfAbsent=true"
+                  className="aspect-[1] object-contain w-4 self-stretch my-auto"
+                  alt="Action"
+                />
+              </div>
             </div>
-            <div className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/781dbfe789e3d1a66ef1605cf94336da48380f4a?placeholderIfAbsent=true"
-                className="aspect-[1] object-contain w-4 self-stretch my-auto"
-                alt="Action"
-              />
-            </div>
-            <div className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/cb1292c171f906e91c44d3be493b675ac9675368?placeholderIfAbsent=true"
-                className="aspect-[1] object-contain w-4 self-stretch my-auto"
-                alt="Action"
-              />
+            <div className="w-full overflow-hidden mt-1 max-h-80">
+              {visibleBaseColumnItems.map((item, index) => (
+                <PanelItem
+                  key={`base-column-${index}`}
+                  icon={item.icon}
+                  label={item.label}
+                  draggable={true}
+                  onDragStart={(e) => handleDragStart(e, item)}
+                />
+              ))}
+              
+              <div 
+                className="w-full text-center py-2 text-blue-600 hover:text-blue-800 cursor-pointer font-medium text-sm"
+                onClick={() => setBaseColumnsExpanded(!baseColumnsExpanded)}
+              >
+                {baseColumnsExpanded ? "Show less" : "Show more"}
+              </div>
             </div>
           </div>
-          <div className="w-full overflow-hidden mt-1 max-h-80">
-            {visibleBaseColumnItems.map((item, index) => (
-              <PanelItem
-                key={`base-column-${index}`}
-                icon={item.icon}
-                label={item.label}
-                draggable={true}
-                onDragStart={(e) => handleDragStart(e, item)}
-              />
-            ))}
-            
-            <div 
-              className="w-full text-center py-2 text-blue-600 hover:text-blue-800 cursor-pointer font-medium text-sm"
-              onClick={() => setBaseColumnsExpanded(!baseColumnsExpanded)}
-            >
-              {baseColumnsExpanded ? "Show less" : "Show more"}
-            </div>
-          </div>
-        </div>
 
-        {/* Advanced settings sections */}
-        {advancedSections.map((section, index) => renderAdvancedSection(section, index))}
+          {/* Advanced settings sections */}
+          {advancedSections.map((section, index) => renderAdvancedSection(section, index))}
+        </div>
       </ScrollArea>
 
       {/* Advanced Settings - Sticky at the bottom */}
-      <div className="sticky bottom-0 z-10 mt-1">
+      <div className="sticky bottom-0 z-10 bg-[rgba(238,238,238,1)] mt-1">
         <div className="rounded bg-white w-full overflow-hidden px-1">
           <div className="rounded bg-white flex w-full flex-col items-stretch justify-center py-3">
             <div className="flex min-h-6 w-full items-center gap-2 px-2">
@@ -339,7 +339,7 @@ const Sidebar: React.FC = () => {
                     <Plus className="h-4 w-4" />
                   </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="min-w-48">
+                <DropdownMenuContent align="end" className="min-w-48 bg-white">
                   <DropdownMenuItem onClick={() => addAdvancedSection("ElementStyle")}>
                     <Paintbrush className="mr-2 h-4 w-4" />
                     <span>Element Style</span>
