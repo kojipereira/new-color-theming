@@ -1,3 +1,4 @@
+
 import React from "react";
 import PanelSection from "./PanelSection";
 import PanelItem from "./PanelItem";
@@ -132,7 +133,7 @@ const Sidebar: React.FC = () => {
             />
           </div>
         </div>
-        <div className="w-full overflow-hidden flex-1 mt-1">
+        <div className="w-full overflow-hidden mt-1">
           {[...Array(16)].map((_, index) => (
             <PanelItem
               key={`base-column-${index}`}
