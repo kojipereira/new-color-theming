@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PanelSection from "./PanelSection";
 import PanelItem from "./PanelItem";
-import { ChevronDown, ChevronUp, ChevronsDown, ChevronsUp } from "lucide-react";
+import { ChevronsDown, ChevronsUp } from "lucide-react";
 
 const Sidebar: React.FC = () => {
   // Common icons used in the sidebar
@@ -233,16 +233,6 @@ const Sidebar: React.FC = () => {
               alt="Action"
             />
           </div>
-          <div 
-            className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1 cursor-pointer hover:bg-gray-100"
-            onClick={() => setBaseColumnsExpanded(!baseColumnsExpanded)}
-          >
-            {baseColumnsExpanded ? (
-              <ChevronsUp className="h-4 w-4" />
-            ) : (
-              <ChevronsDown className="h-4 w-4" />
-            )}
-          </div>
         </div>
         <div className="w-full overflow-hidden mt-1">
           {visibleBaseColumnItems.map((item, index) => (
@@ -254,6 +244,13 @@ const Sidebar: React.FC = () => {
               onDragStart={(e) => handleDragStart(e, item)}
             />
           ))}
+          
+          <div 
+            className="w-full text-center py-2 text-blue-600 hover:text-blue-800 cursor-pointer font-medium text-sm"
+            onClick={() => setBaseColumnsExpanded(!baseColumnsExpanded)}
+          >
+            {baseColumnsExpanded ? "Show less" : "Show more"}
+          </div>
         </div>
       </div>
 
