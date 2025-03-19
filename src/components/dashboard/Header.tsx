@@ -1,4 +1,14 @@
+
 import React from "react";
+import { ChevronRight } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 const Header: React.FC = () => {
   return <div className="bg-white relative flex w-full items-stretch max-md:max-w-full">
       <div className="z-0 flex items-center gap-2 h-full w-12 px-[7px] my-0">
@@ -8,8 +18,42 @@ const Header: React.FC = () => {
       </div>
       <div className="z-0 flex min-w-60 min-h-12 items-center gap-4 overflow-hidden flex-1 shrink basis-5 my-auto pr-3 max-md:max-w-full">
         <div className="rounded self-stretch flex min-w-[88px] min-h-8 items-center gap-[9px] overflow-hidden text-base text-neutral-900 font-semibold text-center justify-center my-auto pl-1">
-          <div className="self-stretch my-auto">Workbook title</div>
-          <img src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/d71d0b3d345c337907310c50d2bb015e98218d4e?placeholderIfAbsent=true" className="aspect-[1] object-contain w-6 self-stretch shrink-0 my-auto" alt="Dropdown" />
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">
+              <div className="self-stretch my-auto">Workbook title</div>
+              <img src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/d71d0b3d345c337907310c50d2bb015e98218d4e?placeholderIfAbsent=true" className="aspect-[1] object-contain w-6 self-stretch shrink-0 my-auto" alt="Dropdown" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-64 bg-white shadow-md">
+              <DropdownMenuItem className="cursor-pointer">
+                <span>File</span>
+                <ChevronRight className="ml-auto h-4 w-4" />
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <span>Edit</span>
+                <ChevronRight className="ml-auto h-4 w-4" />
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="cursor-pointer">
+                <span>Custom views</span>
+                <ChevronRight className="ml-auto h-4 w-4" />
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <span>Versions</span>
+                <ChevronRight className="ml-auto h-4 w-4" />
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="cursor-pointer">
+                <span>Share and export</span>
+                <ChevronRight className="ml-auto h-4 w-4" />
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <span>Comments</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <span>About this workbook...</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <div className="self-stretch flex min-w-60 items-center justify-end gap-4 flex-1 shrink basis-[0%] my-auto max-md:max-w-full">
           <img src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/3eca79869b6221d1e6758c7f3b299cd6dc95e0a4?placeholderIfAbsent=true" className="aspect-[1.38] object-contain w-11 self-stretch shrink-0 my-auto" alt="Action button" />
@@ -22,4 +66,5 @@ const Header: React.FC = () => {
       </div>
     </div>;
 };
+
 export default Header;
