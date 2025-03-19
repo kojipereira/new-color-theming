@@ -13,16 +13,26 @@ interface BaseColumnsSectionProps {
     icon: string;
     label: string;
   }) => void;
+  onDrop: (e: React.DragEvent) => void;
 }
 
 const BaseColumnsSection: React.FC<BaseColumnsSectionProps> = ({
   visibleBaseColumnItems,
   baseColumnsExpanded,
   setBaseColumnsExpanded,
-  handleDragStart
+  handleDragStart,
+  onDrop
 }) => {
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
   return (
-    <div className="rounded bg-white w-full overflow-hidden mt-1 pb-4 px-1">
+    <div 
+      className="rounded bg-white w-full overflow-hidden mt-1 pb-4 px-1"
+      onDragOver={handleDragOver}
+      onDrop={onDrop}
+    >
       <div className="bg-white flex min-h-6 w-full items-center gap-1 pt-3 pb-2 px-2">
         <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
           Base Columns

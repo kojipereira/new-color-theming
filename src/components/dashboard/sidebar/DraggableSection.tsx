@@ -9,6 +9,7 @@ interface DraggableSectionProps {
   onAddItem: () => void;
   onDrop: (e: React.DragEvent) => void;
   actionIcons?: string[];
+  onDragStart?: (e: React.DragEvent, item: { icon: string; label: string }, index: number) => void;
 }
 
 const DraggableSection: React.FC<DraggableSectionProps> = ({
@@ -16,7 +17,8 @@ const DraggableSection: React.FC<DraggableSectionProps> = ({
   items,
   onAddItem,
   onDrop,
-  actionIcons = []
+  actionIcons = [],
+  onDragStart
 }) => {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ const DraggableSection: React.FC<DraggableSectionProps> = ({
     <div 
       onDragOver={handleDragOver}
       onDrop={onDrop}
-      className="border-2 border-transparent hover:border-blue-200 border-dashed"
+      className="border-2 border-transparent"
     >
       <PanelSection
         title={title}
@@ -34,7 +36,13 @@ const DraggableSection: React.FC<DraggableSectionProps> = ({
         actionIcons={actionIcons}
       >
         {items.map((item, index) => (
-          <PanelItem key={`${title.toLowerCase().replace(/\s+/g, '-')}-${index}`} icon={item.icon} label={item.label} />
+          <PanelItem 
+            key={`${title.toLowerCase().replace(/\s+/g, '-')}-${index}`} 
+            icon={item.icon} 
+            label={item.label} 
+            draggable={true}
+            onDragStart={(e) => onDragStart && onDragStart(e, item, index)}
+          />
         ))}
       </PanelSection>
     </div>

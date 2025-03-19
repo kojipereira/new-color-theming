@@ -1,5 +1,6 @@
 
-import React from "react";
+import React, { useState } from "react";
+import { GripVertical } from "lucide-react";
 
 interface PanelItemProps {
   icon: string;
@@ -16,18 +17,26 @@ const PanelItem: React.FC<PanelItemProps> = ({
   draggable = false,
   onDragStart,
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <div 
-      className={`rounded flex w-full items-center gap-2 px-2 ${draggable ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`rounded flex w-full items-center gap-2 px-2 h-7 border-2 border-transparent hover:border-blue-400 ${draggable ? 'cursor-grab active:cursor-grabbing' : ''}`}
       draggable={draggable}
       onDragStart={onDragStart}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="self-stretch flex min-h-6 items-center gap-2 text-xs text-neutral-900 font-normal whitespace-nowrap leading-none flex-1 shrink basis-[0%] my-auto">
-        <img
-          src={icon}
-          className="aspect-[1] object-contain w-4 self-stretch shrink-0 my-auto"
-          alt={label}
-        />
+        {isHovered && draggable ? (
+          <GripVertical className="w-4 h-4 text-gray-400" />
+        ) : (
+          <img
+            src={icon}
+            className="aspect-[1] object-contain w-4 self-stretch shrink-0 my-auto"
+            alt={label}
+          />
+        )}
         <div className="text-ellipsis self-stretch flex-1 shrink basis-[0%] my-auto">
           {label}
         </div>

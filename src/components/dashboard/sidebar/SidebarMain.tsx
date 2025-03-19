@@ -22,7 +22,7 @@ const SidebarMain: React.FC = () => {
   const [pivotRowItems, setPivotRowItems] = useState(initialPivotRowItems);
   const [pivotColumnItems, setPivotColumnItems] = useState(initialPivotColumnItems);
   const [valuesItems, setValuesItems] = useState(initialValuesItems);
-  const [baseColumnItems] = useState(initialBaseColumnItems);
+  const [baseColumnItems, setBaseColumnItems] = useState(initialBaseColumnItems);
 
   // State for base columns expand/collapse
   const [baseColumnsExpanded, setBaseColumnsExpanded] = useState(false);
@@ -48,9 +48,48 @@ const SidebarMain: React.FC = () => {
     e.dataTransfer.setData("item", JSON.stringify(item));
   };
 
+  // Function to handle drag start from a specific section
+  const handleSectionDragStart = (e: React.DragEvent, item: { icon: string; label: string }, index: number, section: string) => {
+    e.dataTransfer.setData("item", JSON.stringify(item));
+    e.dataTransfer.setData("sourceSection", section);
+    e.dataTransfer.setData("sourceIndex", index.toString());
+  };
+
   const handleDrop = (e: React.DragEvent, targetSection: string) => {
     e.preventDefault();
     const item = JSON.parse(e.dataTransfer.getData("item"));
+    const sourceSection = e.dataTransfer.getData("sourceSection");
+    const sourceIndex = e.dataTransfer.getData("sourceIndex");
+    
+    // Handle removing from source section if it came from a draggable section
+    if (sourceSection) {
+      switch (sourceSection) {
+        case "pivotRows":
+          // Don't remove if dragging to the same section
+          if (sourceSection !== targetSection) {
+            const newItems = [...pivotRowItems];
+            newItems.splice(parseInt(sourceIndex), 1);
+            setPivotRowItems(newItems);
+          }
+          break;
+        case "pivotColumns":
+          if (sourceSection !== targetSection) {
+            const newItems = [...pivotColumnItems];
+            newItems.splice(parseInt(sourceIndex), 1);
+            setPivotColumnItems(newItems);
+          }
+          break;
+        case "values":
+          if (sourceSection !== targetSection) {
+            const newItems = [...valuesItems];
+            newItems.splice(parseInt(sourceIndex), 1);
+            setValuesItems(newItems);
+          }
+          break;
+        default:
+          break;
+      }
+    }
     
     // Add the dragged item to the appropriate section
     switch (targetSection) {
@@ -62,6 +101,9 @@ const SidebarMain: React.FC = () => {
         break;
       case "values":
         setValuesItems([...valuesItems, item]);
+        break;
+      case "baseColumns":
+        setBaseColumnItems([...baseColumnItems, item]);
         break;
       default:
         break;
@@ -112,6 +154,7 @@ const SidebarMain: React.FC = () => {
               addToPivotColumns={addToPivotColumns}
               addToValues={addToValues}
               handleDrop={handleDrop}
+              handleSectionDragStart={handleSectionDragStart}
             />
 
             <div ref={baseColumnsRef}>
@@ -120,6 +163,7 @@ const SidebarMain: React.FC = () => {
                 baseColumnsExpanded={baseColumnsExpanded}
                 setBaseColumnsExpanded={setBaseColumnsExpanded}
                 handleDragStart={handleDragStart}
+                onDrop={(e) => handleDrop(e, "baseColumns")}
               />
               
               {/* Inline Advanced Settings (shown when scrolled to base columns) */}
@@ -163,6 +207,7 @@ interface SidebarSectionsProps {
   addToPivotColumns: () => void;
   addToValues: () => void;
   handleDrop: (e: React.DragEvent, targetSection: string) => void;
+  handleSectionDragStart: (e: React.DragEvent, item: { icon: string; label: string }, index: number, section: string) => void;
 }
 
 const SidebarSections: React.FC<SidebarSectionsProps> = ({
@@ -172,7 +217,8 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
   addToPivotRows,
   addToPivotColumns,
   addToValues,
-  handleDrop
+  handleDrop,
+  handleSectionDragStart
 }) => {
   return (
     <div className="w-full overflow-hidden mt-1">
@@ -181,6 +227,7 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
         items={pivotRowItems}
         onAddItem={addToPivotRows}
         onDrop={(e) => handleDrop(e, "pivotRows")}
+        onDragStart={(e, item, index) => handleSectionDragStart(e, item, index, "pivotRows")}
         actionIcons={[
           "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/e820ab38758ad106d1eec29a70763f66ca2e10fc?placeholderIfAbsent=true",
         ]}
@@ -195,6 +242,7 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
         items={pivotColumnItems}
         onAddItem={addToPivotColumns}
         onDrop={(e) => handleDrop(e, "pivotColumns")}
+        onDragStart={(e, item, index) => handleSectionDragStart(e, item, index, "pivotColumns")}
       />
 
       <div className="w-full">
@@ -206,6 +254,7 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
         items={valuesItems}
         onAddItem={addToValues}
         onDrop={(e) => handleDrop(e, "values")}
+        onDragStart={(e, item, index) => handleSectionDragStart(e, item, index, "values")}
       />
     </div>
   );
