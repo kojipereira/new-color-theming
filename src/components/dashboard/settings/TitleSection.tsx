@@ -20,7 +20,7 @@ const TitleSection: React.FC<TitleSectionProps> = ({
             <div className="bg-blue-100 w-24 h-10 flex items-center justify-center rounded-md">
               <span className="font-bold text-blue-600">B A |¶|</span>
             </div>
-            <div className="w-24 h-10 flex items-center justify-center rounded-md border border-gray-300">
+            <div className="w-12 h-10 flex items-center justify-center rounded-md border border-gray-300">
               <span>≡ ≡ ≡</span>
             </div>
           </div>
