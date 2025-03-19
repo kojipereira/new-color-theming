@@ -88,7 +88,7 @@ export const PivotProvider: React.FC<PivotProviderProps> = ({
   const handleDrop = (e: React.DragEvent, targetSection: string) => {
     e.preventDefault();
     try {
-      const item = JSON.parse(e.dataTransfer.getData("item"));
+      const item = JSON.parse(e.dataTransfer.getData("item")) as PivotItem;
       const sourceSection = e.dataTransfer.getData("sourceSection");
       const sourceIndex = parseInt(e.dataTransfer.getData("sourceIndex"), 10);
       
@@ -106,20 +106,34 @@ export const PivotProvider: React.FC<PivotProviderProps> = ({
       
       // Add the item to the target section if it's not already there
       if (targetSection === "pivotRows") {
-        if (sourceSection !== targetSection || sourceSection === "baseColumns") {
+        // Check if sourceSection is baseColumns or not the same as targetSection
+        const isFromBaseColumns = sourceSection === "baseColumns";
+        const isFromDifferentSection = sourceSection !== targetSection;
+        
+        if (isFromDifferentSection || isFromBaseColumns) {
           setPivotRowItems(prev => [...prev, item]);
         }
       } else if (targetSection === "pivotColumns") {
-        if (sourceSection !== targetSection || sourceSection === "baseColumns") {
+        // Check if sourceSection is baseColumns or not the same as targetSection
+        const isFromBaseColumns = sourceSection === "baseColumns";
+        const isFromDifferentSection = sourceSection !== targetSection;
+        
+        if (isFromDifferentSection || isFromBaseColumns) {
           setPivotColumnItems(prev => [...prev, item]);
         }
       } else if (targetSection === "values") {
-        if (sourceSection !== targetSection || sourceSection === "baseColumns") {
+        // Check if sourceSection is baseColumns or not the same as targetSection
+        const isFromBaseColumns = sourceSection === "baseColumns";
+        const isFromDifferentSection = sourceSection !== targetSection;
+        
+        if (isFromDifferentSection || isFromBaseColumns) {
           setValuesItems(prev => [...prev, item]);
         }
       } else if (targetSection === "baseColumns") {
         // When dropping back to base columns, only add if it's not already there
-        if (sourceSection !== "baseColumns") {
+        const isFromBaseColumns = sourceSection === "baseColumns";
+        
+        if (!isFromBaseColumns) {
           const exists = baseColumnItems.some(i => i.label === item.label);
           if (!exists) {
             setBaseColumnItems(prev => [...prev, item]);
