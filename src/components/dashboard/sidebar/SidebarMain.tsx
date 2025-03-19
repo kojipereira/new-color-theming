@@ -34,6 +34,7 @@ const SidebarMain: React.FC = () => {
   // Advanced settings sections
   const [advancedSections, setAdvancedSections] = useState<string[]>([]);
   const [advancedMenuOpen, setAdvancedMenuOpen] = useState(false);
+  const [lastAddedSectionIndex, setLastAddedSectionIndex] = useState<number | null>(null);
   
   // Refs for scroll positioning
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -82,8 +83,18 @@ const SidebarMain: React.FC = () => {
 
   // Function to add advanced section
   const addAdvancedSection = (sectionType: string) => {
-    setAdvancedSections([...advancedSections, sectionType]);
+    const newSections = [...advancedSections, sectionType];
+    setAdvancedSections(newSections);
+    setLastAddedSectionIndex(newSections.length - 1);
     setAdvancedMenuOpen(false);
+  };
+
+  // Function to remove advanced section
+  const removeAdvancedSection = (index: number) => {
+    const newSections = [...advancedSections];
+    newSections.splice(index, 1);
+    setAdvancedSections(newSections);
+    setLastAddedSectionIndex(null);
   };
 
   return (
@@ -122,7 +133,11 @@ const SidebarMain: React.FC = () => {
               )}
             </div>
 
-            <AdvancedSectionRenderer advancedSections={advancedSections} />
+            <AdvancedSectionRenderer 
+              advancedSections={advancedSections} 
+              onRemoveSection={removeAdvancedSection}
+              lastAddedIndex={lastAddedSectionIndex}
+            />
           </div>
         </ScrollArea>
       </div>

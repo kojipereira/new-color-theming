@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import ElementStyleSection from "../settings/ElementStyleSection";
 import TitleSection from "../settings/TitleSection";
 import DescriptionSection from "../settings/DescriptionSection";
@@ -10,28 +10,67 @@ import CustomMenuSection from "../settings/CustomMenuSection";
 
 interface AdvancedSectionRendererProps {
   advancedSections: string[];
+  onRemoveSection?: (index: number) => void;
+  lastAddedIndex: number | null;
 }
 
-const AdvancedSectionRenderer: React.FC<AdvancedSectionRendererProps> = ({ advancedSections }) => {
+const AdvancedSectionRenderer: React.FC<AdvancedSectionRendererProps> = ({ 
+  advancedSections, 
+  onRemoveSection,
+  lastAddedIndex 
+}) => {
+  // Create a ref for the last added section
+  const lastSectionRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to the last added section when it changes
+  useEffect(() => {
+    if (lastAddedIndex !== null && lastSectionRef.current) {
+      lastSectionRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  }, [lastAddedIndex]);
+
   const renderAdvancedSection = (sectionType: string, index: number) => {
+    // Determine if this is the last added section
+    const isLastAdded = index === lastAddedIndex;
+    // Create a ref for the last added section
+    const ref = isLastAdded ? lastSectionRef : null;
+
+    // Render appropriate section component based on type
+    let SectionComponent;
     switch (sectionType) {
       case "ElementStyle":
-        return <ElementStyleSection key={`element-style-${index}`} />;
+        SectionComponent = ElementStyleSection;
+        break;
       case "Title":
-        return <TitleSection key={`title-${index}`} />;
+        SectionComponent = TitleSection;
+        break;
       case "Description":
-        return <DescriptionSection key={`description-${index}`} />;
+        SectionComponent = DescriptionSection;
+        break;
       case "TableStyle":
-        return <TableStyleSection key={`table-style-${index}`} />;
+        SectionComponent = TableStyleSection;
+        break;
       case "Totals":
-        return <TotalsSection key={`totals-${index}`} />;
+        SectionComponent = TotalsSection;
+        break;
       case "Format":
-        return <FormatSection key={`format-${index}`} />;
+        SectionComponent = FormatSection;
+        break;
       case "CustomMenu":
-        return <CustomMenuSection key={`custom-menu-${index}`} />;
+        SectionComponent = CustomMenuSection;
+        break;
       default:
         return null;
     }
+
+    return (
+      <div key={`${sectionType}-${index}`} ref={ref}>
+        <SectionComponent onRemove={onRemoveSection ? () => onRemoveSection(index) : undefined} />
+      </div>
+    );
   };
 
   return (
