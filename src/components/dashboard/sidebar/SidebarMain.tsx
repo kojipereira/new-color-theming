@@ -224,6 +224,7 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
         items={pivotRowItems}
         onAddItem={addToPivotRows}
         onDrop={(e) => handleDrop(e, "pivotRows")}
+        onDragStart={(e, item) => handleDragStart(e, item, "pivotRows")}
         actionIcons={[
           "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/e820ab38758ad106d1eec29a70763f66ca2e10fc?placeholderIfAbsent=true",
         ]}
@@ -238,6 +239,7 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
         items={pivotColumnItems}
         onAddItem={addToPivotColumns}
         onDrop={(e) => handleDrop(e, "pivotColumns")}
+        onDragStart={(e, item) => handleDragStart(e, item, "pivotColumns")}
       />
 
       <div className="w-full">
@@ -249,6 +251,7 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
         items={valuesItems}
         onAddItem={addToValues}
         onDrop={(e) => handleDrop(e, "values")}
+        onDragStart={(e, item) => handleDragStart(e, item, "values")}
       />
     </div>
   );
