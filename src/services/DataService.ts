@@ -7,6 +7,7 @@ export interface DataItem {
   product: string;
   store: string;
   price?: number;
+  logic?: string; // Add logic property to the DataItem interface
 }
 
 // Sample data for our pivot table

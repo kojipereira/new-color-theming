@@ -108,17 +108,17 @@ export const PivotProvider: React.FC<PivotProviderProps> = ({
       // Add the item to the target section if it's not already there
       switch (targetSection) {
         case "pivotRows":
-          if (sourceSection !== targetSection || targetSection === "baseColumns") {
+          if (sourceSection !== targetSection || sourceSection === "baseColumns") {
             setPivotRowItems(prev => [...prev, item]);
           }
           break;
         case "pivotColumns":
-          if (sourceSection !== targetSection || targetSection === "baseColumns") {
+          if (sourceSection !== targetSection || sourceSection === "baseColumns") {
             setPivotColumnItems(prev => [...prev, item]);
           }
           break;
         case "values":
-          if (sourceSection !== targetSection || targetSection === "baseColumns") {
+          if (sourceSection !== targetSection || sourceSection === "baseColumns") {
             setValuesItems(prev => [...prev, item]);
           }
           break;
