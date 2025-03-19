@@ -10,7 +10,7 @@ interface TableStyleSectionProps {
 
 const TableStyleSection: React.FC<TableStyleSectionProps> = ({ onRemove }) => {
   return (
-    <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2">
+    <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2 rounded-md">
       <SettingsHeader title="Table Style" onRemove={onRemove} />
       
       <div className="space-y-6">

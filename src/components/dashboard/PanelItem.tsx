@@ -21,7 +21,7 @@ const PanelItem: React.FC<PanelItemProps> = ({
 
   return (
     <div 
-      className={`rounded flex w-full items-center gap-2 px-2 h-7 border-2 border-transparent hover:border-blue-400 ${draggable ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`rounded-md flex w-full items-center gap-2 px-2 h-7 border-2 border-transparent hover:border-blue-400 ${draggable ? 'cursor-grab active:cursor-grabbing' : ''}`}
       draggable={draggable}
       onDragStart={onDragStart}
       onMouseEnter={() => setIsHovered(true)}
@@ -41,7 +41,7 @@ const PanelItem: React.FC<PanelItemProps> = ({
           {label}
         </div>
       </div>
-      <div className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
+      <div className="rounded-md self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
         <img
           src={actionIcon}
           className="aspect-[1] object-contain w-4 self-stretch my-auto"

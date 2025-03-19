@@ -24,11 +24,11 @@ const BaseColumnsSection: React.FC<BaseColumnsSectionProps> = ({
 
   return (
     <div 
-      className="rounded bg-white w-full overflow-hidden mt-1 pb-4 px-1"
+      className="rounded-md bg-white w-full overflow-hidden mt-1 mb-2 px-3 py-4"
       onDragOver={handleDragOver}
       onDrop={onDrop}
     >
-      <div className="bg-white flex min-h-6 w-full items-center gap-1 pt-3 pb-2 px-2">
+      <div className="flex min-h-6 w-full items-center gap-1 px-2">
         <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
           Base Columns
         </div>

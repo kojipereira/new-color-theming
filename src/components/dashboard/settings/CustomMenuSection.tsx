@@ -9,7 +9,7 @@ interface CustomMenuSectionProps {
 
 const CustomMenuSection: React.FC<CustomMenuSectionProps> = ({ onRemove }) => {
   return (
-    <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2">
+    <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2 rounded-md">
       <SettingsHeader title="Custom Menu" onRemove={onRemove} />
       
       <div className="space-y-6">
