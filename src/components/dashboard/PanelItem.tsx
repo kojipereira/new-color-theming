@@ -1,6 +1,5 @@
 
 import React from "react";
-import { GripVertical } from "lucide-react";
 
 interface PanelItemProps {
   icon: string;
@@ -19,16 +18,11 @@ const PanelItem: React.FC<PanelItemProps> = ({
 }) => {
   return (
     <div 
-      className={`rounded flex w-full items-center gap-2 px-2 py-1 my-0.5 relative group hover:border hover:border-blue-500 ${draggable ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`rounded flex w-full items-center gap-2 px-2 ${draggable ? 'cursor-grab active:cursor-grabbing' : ''}`}
       draggable={draggable}
       onDragStart={onDragStart}
     >
-      {draggable && (
-        <div className="absolute left-0 opacity-0 group-hover:opacity-100 transition-opacity">
-          <GripVertical className="h-4 w-4 text-gray-500" />
-        </div>
-      )}
-      <div className="self-stretch flex min-h-5 items-center gap-2 text-xs text-neutral-900 font-normal whitespace-nowrap leading-none flex-1 shrink basis-[0%] my-auto pl-4">
+      <div className="self-stretch flex min-h-6 items-center gap-2 text-xs text-neutral-900 font-normal whitespace-nowrap leading-none flex-1 shrink basis-[0%] my-auto">
         <img
           src={icon}
           className="aspect-[1] object-contain w-4 self-stretch shrink-0 my-auto"

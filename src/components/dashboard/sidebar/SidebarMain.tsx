@@ -22,7 +22,7 @@ const SidebarMain: React.FC = () => {
   const [pivotRowItems, setPivotRowItems] = useState(initialPivotRowItems);
   const [pivotColumnItems, setPivotColumnItems] = useState(initialPivotColumnItems);
   const [valuesItems, setValuesItems] = useState(initialValuesItems);
-  const [baseColumnItems, setBaseColumnItems] = useState(initialBaseColumnItems);
+  const [baseColumnItems] = useState(initialBaseColumnItems);
 
   // State for base columns expand/collapse
   const [baseColumnsExpanded, setBaseColumnsExpanded] = useState(false);
@@ -44,53 +44,27 @@ const SidebarMain: React.FC = () => {
   const { showStickyAdvancedSettings } = useSidebarScroll(scrollAreaRef, baseColumnsRef);
 
   // Function to handle drag and drop
-  const handleDragStart = (e: React.DragEvent, item: { icon: string; label: string }, source: string) => {
+  const handleDragStart = (e: React.DragEvent, item: { icon: string; label: string }) => {
     e.dataTransfer.setData("item", JSON.stringify(item));
-    e.dataTransfer.setData("source", source);
   };
 
   const handleDrop = (e: React.DragEvent, targetSection: string) => {
     e.preventDefault();
-    try {
-      const item = JSON.parse(e.dataTransfer.getData("item"));
-      const sourceSection = e.dataTransfer.getData("source");
-      
-      // If the item is being dropped to the same section, do nothing
-      if (sourceSection === targetSection) {
-        return;
-      }
-      
-      // Add the dragged item to the appropriate section
-      switch (targetSection) {
-        case "pivotRows":
-          setPivotRowItems([...pivotRowItems, item]);
-          break;
-        case "pivotColumns":
-          setPivotColumnItems([...pivotColumnItems, item]);
-          break;
-        case "values":
-          setValuesItems([...valuesItems, item]);
-          break;
-        case "baseColumns":
-          setBaseColumnItems([...baseColumnItems, item]);
-          break;
-        default:
-          break;
-      }
-      
-      // Remove the item from the source section
-      if (sourceSection === "pivotRows") {
-        setPivotRowItems(pivotRowItems.filter(i => i.label !== item.label));
-      } else if (sourceSection === "pivotColumns") {
-        setPivotColumnItems(pivotColumnItems.filter(i => i.label !== item.label));
-      } else if (sourceSection === "values") {
-        setValuesItems(valuesItems.filter(i => i.label !== item.label));
-      } else if (sourceSection === "baseColumns") {
-        // We don't remove from base columns when dragging to other sections
-        // This allows for multiple uses of the same base column
-      }
-    } catch (error) {
-      console.error("Error handling drop:", error);
+    const item = JSON.parse(e.dataTransfer.getData("item"));
+    
+    // Add the dragged item to the appropriate section
+    switch (targetSection) {
+      case "pivotRows":
+        setPivotRowItems([...pivotRowItems, item]);
+        break;
+      case "pivotColumns":
+        setPivotColumnItems([...pivotColumnItems, item]);
+        break;
+      case "values":
+        setValuesItems([...valuesItems, item]);
+        break;
+      default:
+        break;
     }
   };
 
@@ -123,16 +97,6 @@ const SidebarMain: React.FC = () => {
     setLastAddedSectionIndex(null);
   };
 
-  // Handle base columns drag over
-  const handleBaseColumnsDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  // Handle base columns drop
-  const handleBaseColumnsDrop = (e: React.DragEvent) => {
-    handleDrop(e, "baseColumns");
-  };
-
   return (
     <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full border-r border-neutral-200 overflow-hidden">
       <div className="flex-1 overflow-hidden flex flex-col">
@@ -148,19 +112,14 @@ const SidebarMain: React.FC = () => {
               addToPivotColumns={addToPivotColumns}
               addToValues={addToValues}
               handleDrop={handleDrop}
-              handleDragStart={handleDragStart}
             />
 
-            <div 
-              ref={baseColumnsRef} 
-              onDragOver={handleBaseColumnsDragOver}
-              onDrop={handleBaseColumnsDrop}
-            >
+            <div ref={baseColumnsRef}>
               <BaseColumnsSection
                 visibleBaseColumnItems={visibleBaseColumnItems}
                 baseColumnsExpanded={baseColumnsExpanded}
                 setBaseColumnsExpanded={setBaseColumnsExpanded}
-                handleDragStart={(e, item) => handleDragStart(e, item, "baseColumns")}
+                handleDragStart={handleDragStart}
               />
               
               {/* Inline Advanced Settings (shown when scrolled to base columns) */}
@@ -204,7 +163,6 @@ interface SidebarSectionsProps {
   addToPivotColumns: () => void;
   addToValues: () => void;
   handleDrop: (e: React.DragEvent, targetSection: string) => void;
-  handleDragStart: (e: React.DragEvent, item: { icon: string; label: string }, source: string) => void;
 }
 
 const SidebarSections: React.FC<SidebarSectionsProps> = ({
@@ -214,8 +172,7 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
   addToPivotRows,
   addToPivotColumns,
   addToValues,
-  handleDrop,
-  handleDragStart
+  handleDrop
 }) => {
   return (
     <div className="w-full overflow-hidden mt-1">
@@ -224,7 +181,6 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
         items={pivotRowItems}
         onAddItem={addToPivotRows}
         onDrop={(e) => handleDrop(e, "pivotRows")}
-        onDragStart={(e, item) => handleDragStart(e, item, "pivotRows")}
         actionIcons={[
           "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/e820ab38758ad106d1eec29a70763f66ca2e10fc?placeholderIfAbsent=true",
         ]}
@@ -239,7 +195,6 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
         items={pivotColumnItems}
         onAddItem={addToPivotColumns}
         onDrop={(e) => handleDrop(e, "pivotColumns")}
-        onDragStart={(e, item) => handleDragStart(e, item, "pivotColumns")}
       />
 
       <div className="w-full">
@@ -251,7 +206,6 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
         items={valuesItems}
         onAddItem={addToValues}
         onDrop={(e) => handleDrop(e, "values")}
-        onDragStart={(e, item) => handleDragStart(e, item, "values")}
       />
     </div>
   );
