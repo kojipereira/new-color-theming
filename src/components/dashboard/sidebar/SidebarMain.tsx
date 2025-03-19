@@ -7,7 +7,7 @@ import DraggableSection from "./DraggableSection";
 import BaseColumnsSection from "./BaseColumnsSection";
 import AdvancedSettings from "./AdvancedSettings";
 import AdvancedSectionRenderer from "./AdvancedSectionRenderer";
-import { dateIcon, priceIcon } from "./SidebarData";
+import { dateIcon, priceIcon, storeIcon, categoryIcon } from "./SidebarData";
 import { useSidebarScroll } from "./hooks/useSidebarScroll";
 import { usePivotContext } from "@/contexts/PivotContext";
 
@@ -41,20 +41,28 @@ const SidebarMain: React.FC = () => {
   // Use custom hook for scroll behavior
   const { showStickyAdvancedSettings } = useSidebarScroll(scrollAreaRef, baseColumnsRef);
 
+  // Counter for new items to ensure unique labels
+  const [rowCounter, setRowCounter] = useState(1);
+  const [colCounter, setColCounter] = useState(1);
+  const [valueCounter, setValueCounter] = useState(1);
+
   // Functions to add new items to each section
   const addToPivotRows = () => {
     const { setPivotRowItems } = usePivotContext();
-    setPivotRowItems(prev => [...prev, { icon: dateIcon, label: "New Pivot Row" }]);
+    setPivotRowItems(prev => [...prev, { icon: categoryIcon, label: `Category ${rowCounter}` }]);
+    setRowCounter(prev => prev + 1);
   };
 
   const addToPivotColumns = () => {
     const { setPivotColumnItems } = usePivotContext();
-    setPivotColumnItems(prev => [...prev, { icon: dateIcon, label: "New Pivot Column" }]);
+    setPivotColumnItems(prev => [...prev, { icon: storeIcon, label: `Store ${colCounter}` }]);
+    setColCounter(prev => prev + 1);
   };
 
   const addToValues = () => {
     const { setValuesItems } = usePivotContext();
-    setValuesItems(prev => [...prev, { icon: priceIcon, label: "New Value" }]);
+    setValuesItems(prev => [...prev, { icon: priceIcon, label: `Price ${valueCounter}` }]);
+    setValueCounter(prev => prev + 1);
   };
 
   // Function to add advanced section

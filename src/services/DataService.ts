@@ -40,8 +40,12 @@ export const processPivotData = (
   columnFields: string[], 
   valueFields: string[]
 ) => {
-  // Simple implementation for now - returns the filtered data
-  // In a real implementation, this would aggregate and pivot the data
+  // If no fields are selected, return the original data
+  if (rowFields.length === 0 && columnFields.length === 0 && valueFields.length === 0) {
+    return [];
+  }
+
+  // Create a result array to store processed data
   return data.map(item => {
     const result: Record<string, any> = {};
     
@@ -80,4 +84,8 @@ export const fieldMap: Record<string, keyof DataItem> = {
   "Category": "product",
   "Product": "product",
   "Quantity": "quantity",
+  "New Pivot Row": "product",
+  "New Pivot Column": "store",
+  "New Value": "price",
+  "Store": "store",
 };

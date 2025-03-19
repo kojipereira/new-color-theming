@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
+import { fieldMap } from "@/services/DataService";
 
 const DataTable: React.FC = () => {
   const { processedData, pivotRowItems, pivotColumnItems, valuesItems } = usePivotContext();
@@ -84,17 +85,17 @@ const DataTable: React.FC = () => {
 
   // Get headers from the pivot configuration
   const getHeaders = () => {
-    return [...new Set([
-      ...pivotRowItems.map(item => item.label),
-      ...pivotColumnItems.map(item => item.label),
-      ...valuesItems.map(item => item.label)
-    ])];
+    const rowHeaders = pivotRowItems.map(item => item.label);
+    const columnHeaders = pivotColumnItems.map(item => item.label);
+    const valueHeaders = valuesItems.map(item => item.label);
+    
+    return [...rowHeaders, ...columnHeaders, ...valueHeaders];
   };
 
   const headers = getHeaders();
 
   return (
-    <div className="bg-white border absolute z-0 min-h-[268px] w-[576px] max-w-full overflow-hidden rounded-lg border-[rgba(0,89,235,1)] border-solid left-6 top-[57px] p-2">
+    <div className="bg-white border absolute z-0 min-h-[268px] w-[576px] max-w-full overflow-auto rounded-lg border-[rgba(0,89,235,1)] border-solid left-6 top-[57px] p-2">
       <Table className="text-[11px]">
         <TableHeader>
           <TableRow>
@@ -109,14 +110,16 @@ const DataTable: React.FC = () => {
           {processedData.map((row, rowIndex) => (
             <TableRow key={`row-${rowIndex}`}>
               {headers.map((header, colIndex) => {
-                // Look for the value in the field map
-                const fieldKey = Object.entries(row).find(([key]) => 
-                  key === header.toLowerCase() || key === header
-                );
+                // Look up the field key in the fieldMap
+                const dataKey = fieldMap[header];
+                // Use the mapped key if it exists in the data
+                const value = dataKey && row[dataKey] !== undefined 
+                  ? row[dataKey] 
+                  : row[header.toLowerCase()];
                 
                 return (
                   <TableCell key={`cell-${rowIndex}-${colIndex}`} className="min-h-7 whitespace-nowrap px-3 border-b">
-                    {fieldKey ? row[fieldKey[0]] : Object.values(row)[colIndex] || ''}
+                    {value !== undefined ? String(value) : ''}
                   </TableCell>
                 );
               })}
