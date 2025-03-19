@@ -1,4 +1,6 @@
+
 import React from "react";
+
 const DataTable: React.FC = () => {
   return <div className="bg-white border absolute z-0 flex min-h-[268px] w-[576px] max-w-full overflow-hidden text-[11px] text-neutral-900 font-normal leading-[1.2] h-[268px] rounded-lg border-[rgba(0,89,235,1)] border-solid left-6 top-[57px]">
       <div className="bg-[rgba(238,238,238,1)] overflow-hidden w-[195px]">
@@ -19,7 +21,7 @@ const DataTable: React.FC = () => {
           </div>
         </div>
         {Array(8).fill(0).map((_, index) => <div key={`cell-2-${index}`} className="bg-white border-neutral-200 min-h-7 w-full px-3 border-b">
-              2021-09-26 15:54:13
+              2021-09-26
             </div>)}
       </div>
       <div className="bg-white text-right w-[118px]">
