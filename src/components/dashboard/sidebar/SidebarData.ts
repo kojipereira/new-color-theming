@@ -4,6 +4,8 @@ export const priceIcon = "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd
 export const storeNameIcon = "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/a129a5431fb92a36d9bf9dfbffdb4c2e37e4ef32?placeholderIfAbsent=true";
 export const dateIcon = "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/ff7d1a25dd04025ed706057304583c1d5c5540fa?placeholderIfAbsent=true";
 export const logicIcon = "https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/2be93f2b94c8cb2dc17b55913b705736c54565e7?placeholderIfAbsent=true";
+export const storeIcon = storeNameIcon; // Use storeNameIcon for storeIcon
+export const categoryIcon = dateIcon; // Use dateIcon for categoryIcon
 
 // Initial data for sidebar sections
 export const initialPivotRowItems = [
