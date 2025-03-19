@@ -1,8 +1,7 @@
-
 import React from "react";
 const Header: React.FC = () => {
   return <div className="bg-white relative flex w-full items-stretch max-md:max-w-full">
-      <div className="z-0 flex items-center gap-2 h-full w-12 px-2 my-[7px]">
+      <div className="z-0 flex items-center gap-2 h-full w-12 px-[7px] my-0">
         <div className="self-stretch flex w-8 items-center gap-2 justify-center my-auto">
           <img src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/e645e8d25a4ea608d8a3b27098e5b6be0b4ef550?placeholderIfAbsent=true" className="aspect-[1] object-contain w-8 rounded self-stretch my-auto" alt="Logo" />
         </div>
