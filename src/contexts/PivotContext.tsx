@@ -31,6 +31,9 @@ export const usePivotContext = () => {
   return context;
 };
 
+// Define section types for type safety
+type SectionType = 'pivotRows' | 'pivotColumns' | 'values' | 'baseColumns';
+
 interface PivotProviderProps {
   children: React.ReactNode;
   initialPivotRowItems: PivotItem[];
@@ -51,7 +54,7 @@ export const PivotProvider: React.FC<PivotProviderProps> = ({
   const [valuesItems, setValuesItems] = useState<PivotItem[]>(initialValuesItems);
   const [baseColumnItems, setBaseColumnItems] = useState<PivotItem[]>(initialBaseColumnItems);
   const [processedData, setProcessedData] = useState<Record<string, any>[]>([]);
-  const [draggedItem, setDraggedItem] = useState<{ item: PivotItem; sourceSection: string; sourceIndex: number } | null>(null);
+  const [draggedItem, setDraggedItem] = useState<{ item: PivotItem; sourceSection: SectionType; sourceIndex: number } | null>(null);
 
   // Process data whenever pivot configuration changes
   useEffect(() => {
@@ -74,7 +77,11 @@ export const PivotProvider: React.FC<PivotProviderProps> = ({
     e.dataTransfer.setData("item", JSON.stringify(item));
     e.dataTransfer.setData("sourceSection", section);
     e.dataTransfer.setData("sourceIndex", index.toString());
-    setDraggedItem({ item, sourceSection: section, sourceIndex: index });
+    setDraggedItem({ 
+      item, 
+      sourceSection: section as SectionType, 
+      sourceIndex: index 
+    });
   };
 
   // Handle drop on a specific section
@@ -87,52 +94,37 @@ export const PivotProvider: React.FC<PivotProviderProps> = ({
       
       // Remove item from source section if it's not being dropped back to the same place
       if (sourceSection && sourceSection !== targetSection) {
-        switch (sourceSection) {
-          case "pivotRows":
-            setPivotRowItems(prev => prev.filter((_, i) => i !== sourceIndex));
-            break;
-          case "pivotColumns":
-            setPivotColumnItems(prev => prev.filter((_, i) => i !== sourceIndex));
-            break;
-          case "values":
-            setValuesItems(prev => prev.filter((_, i) => i !== sourceIndex));
-            break;
-          case "baseColumns":
-            // Don't remove from base columns when dragging elsewhere
-            break;
-          default:
-            break;
+        if (sourceSection === "pivotRows") {
+          setPivotRowItems(prev => prev.filter((_, i) => i !== sourceIndex));
+        } else if (sourceSection === "pivotColumns") {
+          setPivotColumnItems(prev => prev.filter((_, i) => i !== sourceIndex));
+        } else if (sourceSection === "values") {
+          setValuesItems(prev => prev.filter((_, i) => i !== sourceIndex));
         }
+        // Don't remove from base columns when dragging elsewhere
       }
       
       // Add the item to the target section if it's not already there
-      switch (targetSection) {
-        case "pivotRows":
-          if (sourceSection !== targetSection || sourceSection === "baseColumns") {
-            setPivotRowItems(prev => [...prev, item]);
+      if (targetSection === "pivotRows") {
+        if (sourceSection !== targetSection || sourceSection === "baseColumns") {
+          setPivotRowItems(prev => [...prev, item]);
+        }
+      } else if (targetSection === "pivotColumns") {
+        if (sourceSection !== targetSection || sourceSection === "baseColumns") {
+          setPivotColumnItems(prev => [...prev, item]);
+        }
+      } else if (targetSection === "values") {
+        if (sourceSection !== targetSection || sourceSection === "baseColumns") {
+          setValuesItems(prev => [...prev, item]);
+        }
+      } else if (targetSection === "baseColumns") {
+        // When dropping back to base columns, only add if it's not already there
+        if (sourceSection !== "baseColumns") {
+          const exists = baseColumnItems.some(i => i.label === item.label);
+          if (!exists) {
+            setBaseColumnItems(prev => [...prev, item]);
           }
-          break;
-        case "pivotColumns":
-          if (sourceSection !== targetSection || sourceSection === "baseColumns") {
-            setPivotColumnItems(prev => [...prev, item]);
-          }
-          break;
-        case "values":
-          if (sourceSection !== targetSection || sourceSection === "baseColumns") {
-            setValuesItems(prev => [...prev, item]);
-          }
-          break;
-        case "baseColumns":
-          // When dropping back to base columns, only add if it's not already there
-          if (sourceSection !== "baseColumns") {
-            const exists = baseColumnItems.some(i => i.label === item.label);
-            if (!exists) {
-              setBaseColumnItems(prev => [...prev, item]);
-            }
-          }
-          break;
-        default:
-          break;
+        }
       }
     } catch (error) {
       console.error("Error handling drop:", error);
