@@ -107,24 +107,34 @@ const DataTable: React.FC = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {processedData.map((row, rowIndex) => (
-            <TableRow key={`row-${rowIndex}`}>
-              {headers.map((header, colIndex) => {
-                // Look up the field key in the fieldMap
-                const dataKey = fieldMap[header];
-                // Use the mapped key if it exists in the data
-                const value = dataKey && row[dataKey] !== undefined 
-                  ? row[dataKey] 
-                  : row[header.toLowerCase()];
-                
-                return (
-                  <TableCell key={`cell-${rowIndex}-${colIndex}`} className="min-h-7 whitespace-nowrap px-3 border-b">
-                    {value !== undefined ? String(value) : ''}
-                  </TableCell>
-                );
-              })}
+          {processedData.length > 0 ? (
+            processedData.map((row, rowIndex) => (
+              <TableRow key={`row-${rowIndex}`}>
+                {headers.map((header, colIndex) => {
+                  // Look up the field key in the fieldMap
+                  const dataKey = fieldMap[header];
+                  // Use the mapped key if it exists in the data
+                  const value = dataKey && row[dataKey] !== undefined 
+                    ? row[dataKey] 
+                    : row[header] !== undefined 
+                      ? row[header]
+                      : row[header.toLowerCase()];
+                  
+                  return (
+                    <TableCell key={`cell-${rowIndex}-${colIndex}`} className="min-h-7 whitespace-nowrap px-3 border-b">
+                      {value !== undefined ? String(value) : ''}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={headers.length} className="text-center py-4">
+                No data available. Try a different pivot configuration.
+              </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
