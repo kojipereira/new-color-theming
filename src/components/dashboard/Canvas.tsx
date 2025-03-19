@@ -1,6 +1,7 @@
 
 import React from "react";
 import DataTable from "./DataTable";
+import { usePivotContext } from "@/contexts/PivotContext";
 
 const Canvas: React.FC = () => {
   return (

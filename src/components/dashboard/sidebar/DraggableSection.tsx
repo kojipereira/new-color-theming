@@ -28,7 +28,7 @@ const DraggableSection: React.FC<DraggableSectionProps> = ({
     <div 
       onDragOver={handleDragOver}
       onDrop={onDrop}
-      className="border-2 border-transparent"
+      className="border-2 border-transparent hover:border-blue-400"
     >
       <PanelSection
         title={title}
