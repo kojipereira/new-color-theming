@@ -1,14 +1,10 @@
-
 import React from "react";
 import { Switch } from "@/components/ui/switch";
 import SettingsHeader from "./SettingsHeader";
-
 interface TotalsSectionProps {
   onRemove?: () => void;
 }
-
-const StylingButtons = () => (
-  <div className="flex gap-2">
+const StylingButtons = () => <div className="flex gap-2">
     <div className="bg-blue-100 w-8 h-8 flex items-center justify-center rounded-md">
       <span className="font-bold text-blue-600">B</span>
     </div>
@@ -18,15 +14,14 @@ const StylingButtons = () => (
     <div className="w-8 h-8 flex items-center justify-center rounded-md">
       <span className="font-bold">⟲</span>
     </div>
-  </div>
-);
-
-const TotalsSection: React.FC<TotalsSectionProps> = ({ onRemove }) => {
-  return (
-    <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2">
+  </div>;
+const TotalsSection: React.FC<TotalsSectionProps> = ({
+  onRemove
+}) => {
+  return <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2">
       <SettingsHeader title="Totals" onRemove={onRemove} />
       
-      <div className="space-y-6">
+      <div className="space-y-6 mx-[8px]">
         <div className="flex justify-between items-center">
           <span className="text-gray-700 text-xs">Subtotals</span>
           <Switch />
@@ -55,8 +50,6 @@ const TotalsSection: React.FC<TotalsSectionProps> = ({ onRemove }) => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TotalsSection;
