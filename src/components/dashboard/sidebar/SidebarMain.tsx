@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from "react";
+import React, { useState, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import SidebarHeader from "./SidebarHeader";
@@ -7,20 +7,22 @@ import DraggableSection from "./DraggableSection";
 import BaseColumnsSection from "./BaseColumnsSection";
 import AdvancedSettings from "./AdvancedSettings";
 import AdvancedSectionRenderer from "./AdvancedSectionRenderer";
-import { dateIcon, priceIcon, storeIcon, categoryIcon } from "./SidebarData";
+import { 
+  initialPivotRowItems, 
+  initialPivotColumnItems, 
+  initialValuesItems, 
+  initialBaseColumnItems,
+  dateIcon,
+  priceIcon
+} from "./SidebarData";
 import { useSidebarScroll } from "./hooks/useSidebarScroll";
-import { usePivotContext } from "@/contexts/PivotContext";
 
 const SidebarMain: React.FC = () => {
-  // Get state from context
-  const {
-    pivotRowItems,
-    pivotColumnItems,
-    valuesItems,
-    baseColumnItems,
-    handleDragStart,
-    handleDrop,
-  } = usePivotContext();
+  // State for the panels
+  const [pivotRowItems, setPivotRowItems] = useState(initialPivotRowItems);
+  const [pivotColumnItems, setPivotColumnItems] = useState(initialPivotColumnItems);
+  const [valuesItems, setValuesItems] = useState(initialValuesItems);
+  const [baseColumnItems, setBaseColumnItems] = useState(initialBaseColumnItems);
 
   // State for base columns expand/collapse
   const [baseColumnsExpanded, setBaseColumnsExpanded] = useState(false);
@@ -41,28 +43,84 @@ const SidebarMain: React.FC = () => {
   // Use custom hook for scroll behavior
   const { showStickyAdvancedSettings } = useSidebarScroll(scrollAreaRef, baseColumnsRef);
 
-  // Counter for new items to ensure unique labels
-  const [rowCounter, setRowCounter] = useState(1);
-  const [colCounter, setColCounter] = useState(1);
-  const [valueCounter, setValueCounter] = useState(1);
+  // Function to handle drag and drop
+  const handleDragStart = (e: React.DragEvent, item: { icon: string; label: string }) => {
+    e.dataTransfer.setData("item", JSON.stringify(item));
+  };
+
+  // Function to handle drag start from a specific section
+  const handleSectionDragStart = (e: React.DragEvent, item: { icon: string; label: string }, index: number, section: string) => {
+    e.dataTransfer.setData("item", JSON.stringify(item));
+    e.dataTransfer.setData("sourceSection", section);
+    e.dataTransfer.setData("sourceIndex", index.toString());
+  };
+
+  const handleDrop = (e: React.DragEvent, targetSection: string) => {
+    e.preventDefault();
+    const item = JSON.parse(e.dataTransfer.getData("item"));
+    const sourceSection = e.dataTransfer.getData("sourceSection");
+    const sourceIndex = e.dataTransfer.getData("sourceIndex");
+    
+    // Handle removing from source section if it came from a draggable section
+    if (sourceSection) {
+      switch (sourceSection) {
+        case "pivotRows":
+          // Don't remove if dragging to the same section
+          if (sourceSection !== targetSection) {
+            const newItems = [...pivotRowItems];
+            newItems.splice(parseInt(sourceIndex), 1);
+            setPivotRowItems(newItems);
+          }
+          break;
+        case "pivotColumns":
+          if (sourceSection !== targetSection) {
+            const newItems = [...pivotColumnItems];
+            newItems.splice(parseInt(sourceIndex), 1);
+            setPivotColumnItems(newItems);
+          }
+          break;
+        case "values":
+          if (sourceSection !== targetSection) {
+            const newItems = [...valuesItems];
+            newItems.splice(parseInt(sourceIndex), 1);
+            setValuesItems(newItems);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    
+    // Add the dragged item to the appropriate section
+    switch (targetSection) {
+      case "pivotRows":
+        setPivotRowItems([...pivotRowItems, item]);
+        break;
+      case "pivotColumns":
+        setPivotColumnItems([...pivotColumnItems, item]);
+        break;
+      case "values":
+        setValuesItems([...valuesItems, item]);
+        break;
+      case "baseColumns":
+        setBaseColumnItems([...baseColumnItems, item]);
+        break;
+      default:
+        break;
+    }
+  };
 
   // Functions to add new items to each section
   const addToPivotRows = () => {
-    const { setPivotRowItems } = usePivotContext();
-    setPivotRowItems(prev => [...prev, { icon: categoryIcon, label: `Category ${rowCounter}` }]);
-    setRowCounter(prev => prev + 1);
+    setPivotRowItems([...pivotRowItems, { icon: dateIcon, label: "New Pivot Row" }]);
   };
 
   const addToPivotColumns = () => {
-    const { setPivotColumnItems } = usePivotContext();
-    setPivotColumnItems(prev => [...prev, { icon: storeIcon, label: `Store ${colCounter}` }]);
-    setColCounter(prev => prev + 1);
+    setPivotColumnItems([...pivotColumnItems, { icon: dateIcon, label: "New Pivot Column" }]);
   };
 
   const addToValues = () => {
-    const { setValuesItems } = usePivotContext();
-    setValuesItems(prev => [...prev, { icon: priceIcon, label: `Price ${valueCounter}` }]);
-    setValueCounter(prev => prev + 1);
+    setValuesItems([...valuesItems, { icon: priceIcon, label: "New Value" }]);
   };
 
   // Function to add advanced section
@@ -96,7 +154,7 @@ const SidebarMain: React.FC = () => {
               addToPivotColumns={addToPivotColumns}
               addToValues={addToValues}
               handleDrop={handleDrop}
-              handleSectionDragStart={handleDragStart}
+              handleSectionDragStart={handleSectionDragStart}
             />
 
             <div ref={baseColumnsRef}>
@@ -104,7 +162,7 @@ const SidebarMain: React.FC = () => {
                 visibleBaseColumnItems={visibleBaseColumnItems}
                 baseColumnsExpanded={baseColumnsExpanded}
                 setBaseColumnsExpanded={setBaseColumnsExpanded}
-                handleDragStart={(e, item) => handleDragStart(e, item, baseColumnItems.findIndex(i => i.label === item.label), "baseColumns")}
+                handleDragStart={handleDragStart}
                 onDrop={(e) => handleDrop(e, "baseColumns")}
               />
               
