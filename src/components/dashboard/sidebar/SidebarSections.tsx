@@ -21,7 +21,7 @@ const SidebarSections: React.FC<SidebarSectionsProps> = ({
   handleDrop,
   handleSectionDragStart
 }) => {
-  return <div className="w-full overflow-hidden mt-1 my-0 py-[4px]">
+  return <div className="w-full overflow-hidden mt-1 my-0 py-0">
       <DraggableSection title="Pivot Rows" items={pivotRowItems} onAddItem={addToPivotRows} onDrop={e => handleDrop(e, "pivotRows")} onDragStart={(e, item, index) => handleSectionDragStart(e, item, index, "pivotRows")} actionIcons={["https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/e820ab38758ad106d1eec29a70763f66ca2e10fc?placeholderIfAbsent=true"]} />
 
       <div className="w-full">

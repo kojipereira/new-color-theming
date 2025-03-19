@@ -16,7 +16,7 @@ const SidebarHeader: React.FC = () => {
           </div>
         </div>
         <div className="w-full">
-          <div className="border-neutral-200 border shrink-0 h-px border-solid py-[2px]" />
+          <div className="border-neutral-200 border shrink-0 h-px border-solid py-px" />
         </div>
         <div className="bg-white flex w-full flex-col overflow-hidden items-stretch justify-center px-3 py-2 rounded-b-md">
           <div className="flex min-h-6 w-full items-center px-2">
