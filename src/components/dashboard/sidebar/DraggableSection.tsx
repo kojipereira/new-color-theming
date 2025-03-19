@@ -2,14 +2,15 @@
 import React from "react";
 import PanelSection from "../PanelSection";
 import PanelItem from "../PanelItem";
+import { SidebarItem } from "./hooks/useSidebarState";
 
 interface DraggableSectionProps {
   title: string;
-  items: Array<{ icon: string; label: string }>;
+  items: SidebarItem[];
   onAddItem: () => void;
   onDrop: (e: React.DragEvent) => void;
   actionIcons?: string[];
-  onDragStart?: (e: React.DragEvent, item: { icon: string; label: string }, index: number) => void;
+  onDragStart?: (e: React.DragEvent, item: SidebarItem, index: number) => void;
 }
 
 const DraggableSection: React.FC<DraggableSectionProps> = ({

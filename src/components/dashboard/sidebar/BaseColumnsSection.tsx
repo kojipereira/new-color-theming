@@ -1,18 +1,13 @@
 
 import React from "react";
 import PanelItem from "../PanelItem";
+import { SidebarItem } from "./hooks/useSidebarState";
 
 interface BaseColumnsSectionProps {
-  visibleBaseColumnItems: Array<{
-    icon: string;
-    label: string;
-  }>;
+  visibleBaseColumnItems: SidebarItem[];
   baseColumnsExpanded: boolean;
   setBaseColumnsExpanded: (expanded: boolean) => void;
-  handleDragStart: (e: React.DragEvent, item: {
-    icon: string;
-    label: string;
-  }) => void;
+  handleDragStart: (e: React.DragEvent, item: SidebarItem) => void;
   onDrop: (e: React.DragEvent) => void;
 }
 
