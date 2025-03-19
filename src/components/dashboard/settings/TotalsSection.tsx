@@ -1,7 +1,14 @@
+
 import React from "react";
 import { Switch } from "@/components/ui/switch";
-import { Minus } from "lucide-react";
-const StylingButtons = () => <div className="flex gap-2">
+import SettingsHeader from "./SettingsHeader";
+
+interface TotalsSectionProps {
+  onRemove?: () => void;
+}
+
+const StylingButtons = () => (
+  <div className="flex gap-2">
     <div className="bg-blue-100 w-8 h-8 flex items-center justify-center rounded-md">
       <span className="font-bold text-blue-600">B</span>
     </div>
@@ -11,15 +18,13 @@ const StylingButtons = () => <div className="flex gap-2">
     <div className="w-8 h-8 flex items-center justify-center rounded-md">
       <span className="font-bold">⟲</span>
     </div>
-  </div>;
-const TotalsSection = () => {
-  return <div className="bg-white w-full p-4 border-b border-gray-200">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-sm">Totals</h3>
-        <button className="text-gray-700">
-          <Minus size={20} />
-        </button>
-      </div>
+  </div>
+);
+
+const TotalsSection: React.FC<TotalsSectionProps> = ({ onRemove }) => {
+  return (
+    <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2">
+      <SettingsHeader title="Totals" onRemove={onRemove} />
       
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -50,6 +55,8 @@ const TotalsSection = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default TotalsSection;

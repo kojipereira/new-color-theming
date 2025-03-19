@@ -1,14 +1,17 @@
+
 import React from "react";
 import { Plus, MoreHorizontal } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-const TableStyleSection = () => {
-  return <div className="bg-white w-full p-4 border-b border-gray-200">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-base">Table Style</h3>
-        <button className="text-gray-700">
-          <Plus size={20} />
-        </button>
-      </div>
+import SettingsHeader from "./SettingsHeader";
+
+interface TableStyleSectionProps {
+  onRemove?: () => void;
+}
+
+const TableStyleSection: React.FC<TableStyleSectionProps> = ({ onRemove }) => {
+  return (
+    <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2">
+      <SettingsHeader title="Table Style" onRemove={onRemove} />
       
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -99,6 +102,8 @@ const TableStyleSection = () => {
           <MoreHorizontal size={20} className="text-gray-500" />
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default TableStyleSection;
