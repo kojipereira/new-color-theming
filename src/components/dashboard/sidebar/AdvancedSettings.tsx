@@ -19,8 +19,8 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
   isSticky = true
 }) => {
   const containerClasses = isSticky 
-    ? "sticky bottom-0 z-10 bg-[rgba(238,238,238,1)]" 
-    : "bg-[rgba(238,238,238,1)]";
+    ? "sticky bottom-0 z-10 bg-[rgba(238,238,238,1)] transition-opacity duration-150" 
+    : "bg-[rgba(238,238,238,1)] transition-opacity duration-150";
 
   return (
     <div className={containerClasses}>

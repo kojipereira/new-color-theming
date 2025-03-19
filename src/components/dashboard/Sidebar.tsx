@@ -34,7 +34,7 @@ const Sidebar: React.FC = () => {
   const [advancedSections, setAdvancedSections] = useState<string[]>([]);
   const [advancedMenuOpen, setAdvancedMenuOpen] = useState(false);
   
-  // Scroll position tracking
+  // Scroll position tracking - add buffer to prevent flickering
   const [showStickyAdvancedSettings, setShowStickyAdvancedSettings] = useState(true);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const baseColumnsRef = useRef<HTMLDivElement>(null);
@@ -48,11 +48,23 @@ const Sidebar: React.FC = () => {
       if (!scrollElement) return;
       
       const scrollPosition = scrollElement.scrollTop;
-      const baseColumnsBottom = baseColumnsRef.current.getBoundingClientRect().bottom;
+      const baseColumnRect = baseColumnsRef.current.getBoundingClientRect();
+      const baseColumnsBottom = baseColumnRect.bottom;
+      const baseColumnsTop = baseColumnRect.top;
       const viewportHeight = window.innerHeight;
       
-      // Show sticky when base columns are not fully visible at the bottom
-      setShowStickyAdvancedSettings(baseColumnsBottom > viewportHeight - 100);
+      // Add a buffer zone to prevent flickering
+      // Only switch visibility when the element is well into view or out of view
+      const buffer = 20; // pixels of buffer to prevent flicker
+
+      if (baseColumnsBottom < viewportHeight - buffer) {
+        // Base columns section is fully visible and above the bottom of the viewport with buffer
+        setShowStickyAdvancedSettings(false);
+      } else if (baseColumnsBottom > viewportHeight + buffer || baseColumnsTop > viewportHeight) {
+        // Base columns section is below the viewport or partially visible at the bottom
+        setShowStickyAdvancedSettings(true);
+      }
+      // If we're in the buffer zone, maintain the current state to prevent flickering
     };
     
     const scrollElement = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]');
@@ -61,8 +73,23 @@ const Sidebar: React.FC = () => {
       // Initial check
       handleScroll();
       
+      // Use requestAnimationFrame to throttle scroll events
+      let ticking = false;
+      const scrollListener = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      
+      scrollElement.addEventListener('scroll', scrollListener, { passive: true });
+      
       return () => {
         scrollElement.removeEventListener('scroll', handleScroll);
+        scrollElement.removeEventListener('scroll', scrollListener);
       };
     }
   }, []);
