@@ -6,7 +6,7 @@ interface ElementStyleSectionProps {
 const ElementStyleSection: React.FC<ElementStyleSectionProps> = ({
   onRemove
 }) => {
-  return <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2 rounded-md">
+  return <div className="bg-white w-full py-4 max-w-[280px] mb-2 rounded-md px-[8px]">
       <SettingsHeader title="Element Style" onRemove={onRemove} />
       
       <div className="space-y-4">
