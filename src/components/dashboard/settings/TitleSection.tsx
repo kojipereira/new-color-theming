@@ -1,18 +1,16 @@
-
 import React from "react";
 import { MoreHorizontal } from "lucide-react";
 import SettingsHeader from "./SettingsHeader";
-
 interface TitleSectionProps {
   onRemove?: () => void;
 }
-
-const TitleSection: React.FC<TitleSectionProps> = ({ onRemove }) => {
-  return (
-    <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2">
+const TitleSection: React.FC<TitleSectionProps> = ({
+  onRemove
+}) => {
+  return <div className="bg-white w-full px-3 py-4 max-w-[280px] mb-2">
       <SettingsHeader title="Title" onRemove={onRemove} />
       
-      <div className="space-y-4">
+      <div className="space-y-4 px-[8px]">
         <div className="w-full border border-gray-300 rounded-md p-3">
           <span className="text-gray-400 text-sm">Input placeholder</span>
         </div>
@@ -40,8 +38,6 @@ const TitleSection: React.FC<TitleSectionProps> = ({ onRemove }) => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TitleSection;
