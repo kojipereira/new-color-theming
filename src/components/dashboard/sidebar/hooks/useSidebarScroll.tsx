@@ -39,6 +39,11 @@ export const useSidebarScroll = (
   // Function to manually show the sticky advanced settings
   const showStickyPanel = () => {
     setShowStickyAdvancedSettings(true);
+    
+    // Timeout to ensure the DOM has updated before checking position
+    setTimeout(() => {
+      checkPositioning();
+    }, 50);
   };
 
   // Function to handle scroll and determine which Advanced Settings to show
