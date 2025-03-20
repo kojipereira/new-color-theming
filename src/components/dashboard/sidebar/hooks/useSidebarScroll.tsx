@@ -18,22 +18,18 @@ export const useSidebarScroll = (
     if (!scrollElement) return;
     
     const baseColumnRect = baseColumnsRef.current.getBoundingClientRect();
-    const baseColumnsBottom = baseColumnRect.bottom;
-    const baseColumnsTop = baseColumnRect.top;
     const viewportHeight = window.innerHeight;
     
-    // Add a buffer zone to prevent flickering
-    // Only switch visibility when the element is well into view or out of view
-    const buffer = 20; // pixels of buffer to prevent flicker
-
-    if (baseColumnsBottom < viewportHeight - buffer) {
-      // Base columns section is fully visible and above the bottom of the viewport with buffer
-      setShowStickyAdvancedSettings(false);
-    } else if (baseColumnsBottom > viewportHeight + buffer || baseColumnsTop > viewportHeight) {
-      // Base columns section is below the viewport or partially visible at the bottom
+    // Determine if the base columns section is below the viewport
+    if (baseColumnRect.bottom > viewportHeight) {
+      // Base columns section is below or partially below the viewport
+      // Show the sticky version
       setShowStickyAdvancedSettings(true);
+    } else {
+      // Base columns section is fully visible within the viewport
+      // Hide the sticky version, show the inline version
+      setShowStickyAdvancedSettings(false);
     }
-    // If we're in the buffer zone, maintain the current state to prevent flickering
   };
 
   // Function to manually show the sticky advanced settings
@@ -43,7 +39,7 @@ export const useSidebarScroll = (
     // Timeout to ensure the DOM has updated before checking position
     setTimeout(() => {
       checkPositioning();
-    }, 50);
+    }, 100); // Increased timeout for more reliable checking
   };
 
   // Function to handle scroll and determine which Advanced Settings to show
@@ -82,7 +78,6 @@ export const useSidebarScroll = (
   // Add window resize listener
   useEffect(() => {
     const handleResize = () => {
-      // Use throttling for resize events as well
       checkPositioning();
     };
 
@@ -100,7 +95,9 @@ export const useSidebarScroll = (
     window.addEventListener('resize', throttledResize);
     
     // Initial check on mount
-    checkPositioning();
+    setTimeout(() => {
+      checkPositioning();
+    }, 100); // Delayed initial check to ensure DOM is fully rendered
     
     // Cleanup
     return () => {
@@ -110,6 +107,40 @@ export const useSidebarScroll = (
       }
     };
   }, []);
+
+  // Additional effect to handle window changes that might affect positioning
+  useEffect(() => {
+    // MutationObserver to detect changes in the DOM that might affect positioning
+    const observer = new MutationObserver(() => {
+      setTimeout(() => {
+        checkPositioning();
+      }, 50);
+    });
+    
+    // Observe the baseColumnsRef for changes
+    if (baseColumnsRef.current) {
+      observer.observe(baseColumnsRef.current, { 
+        subtree: true, 
+        childList: true,
+        attributes: true,
+        characterData: true 
+      });
+    }
+    
+    // Observe the scrollAreaRef for changes
+    if (scrollAreaRef.current) {
+      observer.observe(scrollAreaRef.current, { 
+        subtree: true, 
+        childList: true,
+        attributes: true,
+        characterData: true 
+      });
+    }
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, [baseColumnsRef.current, scrollAreaRef.current]);
 
   return { showStickyAdvancedSettings, showStickyPanel };
 };

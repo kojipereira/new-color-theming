@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import BaseColumnsSection from "./BaseColumnsSection";
@@ -79,7 +79,7 @@ const SidebarMain: React.FC = () => {
         </ScrollArea>
       </div>
 
-      {/* Sticky Advanced Settings (hidden when scrolled to base columns) */}
+      {/* Sticky Advanced Settings (shown when baseColumns push it below viewport) */}
       {showStickyAdvancedSettings && (
         <AdvancedSettings 
           advancedMenuOpen={sidebarState.advancedMenuOpen}
