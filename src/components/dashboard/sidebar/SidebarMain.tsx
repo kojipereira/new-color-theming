@@ -2,7 +2,6 @@
 import React, { useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import SidebarHeader from "./SidebarHeader";
 import BaseColumnsSection from "./BaseColumnsSection";
 import AdvancedSettings from "./AdvancedSettings";
 import AdvancedSectionRenderer from "./AdvancedSectionRenderer";
@@ -35,12 +34,10 @@ const SidebarMain: React.FC = () => {
   const { showStickyAdvancedSettings, showStickyPanel } = useSidebarScroll(scrollAreaRef, baseColumnsRef);
 
   return (
-    <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full border-r border-neutral-200 overflow-hidden">
+    <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-hidden flex flex-col">
         <ScrollArea className="flex-1 w-full" ref={scrollAreaRef}>
           <div className="pb-16 w-full max-w-[280px]"> 
-            <SidebarHeader />
-            
             <SidebarSections 
               pivotRowItems={sidebarState.pivotRowItems}
               pivotColumnItems={sidebarState.pivotColumnItems}

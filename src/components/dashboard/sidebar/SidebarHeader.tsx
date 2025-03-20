@@ -1,6 +1,9 @@
+
 import React from "react";
+
 const SidebarHeader: React.FC = () => {
-  return <div className="w-full bg-[rgba(238,238,238,1)] max-w-[280px] overflow-hidden">
+  return (
+    <div className="sticky top-0 z-10 w-full bg-[rgba(238,238,238,1)] max-w-[280px] overflow-hidden">
       <div className="rounded-md w-full overflow-hidden">
         <div className="bg-white flex w-full flex-col overflow-hidden items-stretch justify-center py-3 rounded-t-md px-[8px]">
           <div className="flex w-full items-center gap-2 px-2">
@@ -39,6 +42,8 @@ const SidebarHeader: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default SidebarHeader;
