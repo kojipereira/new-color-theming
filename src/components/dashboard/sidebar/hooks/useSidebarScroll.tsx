@@ -22,7 +22,7 @@ export const useSidebarScroll = (
 
 
     // Determine if the base columns section is below the viewport
-if (baseColumnRect.bottom > viewportHeight - 80) {
+if (baseColumnRect.bottom > viewportHeight) {
       // Base columns section is below or partially below the viewport
       // Show the sticky version
       setShowStickyAdvancedSettings(true);
