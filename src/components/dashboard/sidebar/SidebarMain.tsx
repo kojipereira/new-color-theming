@@ -32,7 +32,7 @@ const SidebarMain: React.FC = () => {
   const baseColumnsRef = useRef<HTMLDivElement>(null);
 
   // Use custom hook for scroll behavior
-  const { showStickyAdvancedSettings } = useSidebarScroll(scrollAreaRef, baseColumnsRef);
+  const { showStickyAdvancedSettings, showStickyPanel } = useSidebarScroll(scrollAreaRef, baseColumnsRef);
 
   return (
     <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full border-r border-neutral-200 overflow-hidden">
@@ -59,6 +59,7 @@ const SidebarMain: React.FC = () => {
                 setBaseColumnsExpanded={sidebarState.setBaseColumnsExpanded}
                 handleDragStart={dragDrop.handleDragStart}
                 onDrop={(e) => dragDrop.handleDrop(e, "baseColumns")}
+                showStickyPanel={showStickyPanel}
               />
               
               {/* Inline Advanced Settings (shown when scrolled to base columns) */}

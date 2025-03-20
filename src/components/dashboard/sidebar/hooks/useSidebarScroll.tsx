@@ -1,5 +1,6 @@
 
 import { useState, useEffect, RefObject } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export const useSidebarScroll = (
   scrollAreaRef: RefObject<HTMLDivElement>,
@@ -7,6 +8,7 @@ export const useSidebarScroll = (
 ) => {
   // Scroll position tracking - add buffer to prevent flickering
   const [showStickyAdvancedSettings, setShowStickyAdvancedSettings] = useState(true);
+  const isMobile = useIsMobile();
 
   // Function to check positioning and update visibility
   const checkPositioning = () => {
@@ -32,6 +34,11 @@ export const useSidebarScroll = (
       setShowStickyAdvancedSettings(true);
     }
     // If we're in the buffer zone, maintain the current state to prevent flickering
+  };
+
+  // Function to manually show the sticky advanced settings
+  const showStickyPanel = () => {
+    setShowStickyAdvancedSettings(true);
   };
 
   // Function to handle scroll and determine which Advanced Settings to show
@@ -99,5 +106,5 @@ export const useSidebarScroll = (
     };
   }, []);
 
-  return { showStickyAdvancedSettings };
+  return { showStickyAdvancedSettings, showStickyPanel };
 };
