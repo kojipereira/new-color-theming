@@ -1,5 +1,7 @@
+
 import React, { ReactNode } from "react";
 import { Plus } from "lucide-react";
+
 interface PanelSectionProps {
   title: string;
   children: ReactNode;
@@ -7,6 +9,7 @@ interface PanelSectionProps {
   expanded?: boolean;
   onAddItem?: () => void;
 }
+
 const PanelSection: React.FC<PanelSectionProps> = ({
   title,
   children,
@@ -22,10 +25,15 @@ const PanelSection: React.FC<PanelSectionProps> = ({
         {onAddItem && <div className="rounded self-stretch z-0 flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1 cursor-pointer hover:bg-gray-100" onClick={onAddItem}>
             <Plus className="h-4 w-4" />
           </div>}
-        {actionIcons.map((icon, index) => {})}
+        {actionIcons.map((icon, index) => (
+          <div key={index} className="rounded self-stretch z-0 flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
+            <img src={icon} className="aspect-[1] object-contain w-4 self-stretch my-auto" alt="Action" />
+          </div>
+        ))}
         <div className="absolute z-0 flex w-2 shrink-0 h-4 -left-1 bottom-1" />
       </div>
       {expanded && <div className="w-full overflow-hidden mt-1">{children}</div>}
     </div>;
 };
+
 export default PanelSection;
