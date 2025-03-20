@@ -16,7 +16,7 @@ export const useSidebarScroll = (
       // Add a small delay to debounce rapid changes (prevents flickering)
       setTimeout(() => {
         setShowStickyAdvancedSettings(shouldShow);
-      }, 50);
+      }, 100); // Increased from 50ms to 100ms for more stability
     }
   };
 
@@ -30,8 +30,8 @@ export const useSidebarScroll = (
     const baseColumnRect = baseColumnsRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
     
-    // Add a buffer zone (20px) to prevent flickering around the threshold
-    const bufferZone = 20;
+    // Increased buffer zone from 20px to 40px to prevent flickering around the threshold
+    const bufferZone = 40;
     
     // If currently showing sticky and base column is above threshold + buffer, hide sticky
     if (showStickyAdvancedSettings && baseColumnRect.bottom < viewportHeight - bufferZone) {
@@ -51,7 +51,7 @@ export const useSidebarScroll = (
     // Timeout to ensure the DOM has updated before checking position
     setTimeout(() => {
       checkPositioning();
-    }, 150); // Increased timeout for more reliable checking
+    }, 200); // Increased timeout for more reliable checking (from 150ms to 200ms)
   };
 
   // Function to handle scroll and determine which Advanced Settings to show
@@ -67,7 +67,7 @@ export const useSidebarScroll = (
           isThrottled = false;
           // Check again after throttle period to catch any missed updates
           checkPositioning();
-        }, 100);
+        }, 150); // Increased from 100ms to 150ms for better stability
       }
     };
     
