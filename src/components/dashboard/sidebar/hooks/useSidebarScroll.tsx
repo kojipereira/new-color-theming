@@ -20,12 +20,9 @@ export const useSidebarScroll = (
     const baseColumnRect = baseColumnsRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
 
-    // Add a buffer to prevent flickering (e.g., 20px)
-const buffer = 20px;
 
-    
     // Determine if the base columns section is below the viewport
-if (baseColumnRect.bottom > viewportHeight - buffer) {
+if (baseColumnRect.bottom > viewportHeight - 20) {
       // Base columns section is below or partially below the viewport
       // Show the sticky version
       setShowStickyAdvancedSettings(true);
