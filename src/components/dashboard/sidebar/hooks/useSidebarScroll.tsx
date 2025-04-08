@@ -87,41 +87,17 @@ export const useSidebarScroll = (
     };
   }, [showStickyAdvancedSettings, isLocked]); // Include state dependencies to ensure effect updates properly
 
-  // Initial load check - improved with multiple checks to ensure proper initial state
+  // Initial load check - run after component is fully mounted
   useEffect(() => {
-    // Check immediately on component mount
-    checkPositioning();
+    // Run an initial check after DOM is fully rendered
+    const initialCheckTimeout = setTimeout(checkPositioning, 100);
     
-    // Run additional checks at different times to account for layout changes
-    const initialCheckTimeouts = [
-      setTimeout(checkPositioning, 50),
-      setTimeout(checkPositioning, 100),
-      setTimeout(checkPositioning, 300),
-      setTimeout(checkPositioning, 500)
-    ];
-    
-    // Handle window load event for when all resources are loaded
-    const handleLoad = () => {
-      checkPositioning();
-      // Do another check after a slight delay to account for any post-load layout shifts
-      setTimeout(checkPositioning, 100);
-    };
-    
-    // Check when window is fully loaded with all resources
-    if (document.readyState === 'complete') {
-      handleLoad();
-    } else {
-      window.addEventListener('load', handleLoad);
-    }
-    
-    // Check after first paint
-    requestAnimationFrame(() => {
-      checkPositioning();
-    });
+    // Run another check after images and other resources are loaded
+    window.addEventListener('load', checkPositioning);
     
     return () => {
-      initialCheckTimeouts.forEach(clearTimeout);
-      window.removeEventListener('load', handleLoad);
+      clearTimeout(initialCheckTimeout);
+      window.removeEventListener('load', checkPositioning);
     };
   }, []);
 
@@ -195,4 +171,3 @@ export const useSidebarScroll = (
 
   return { showStickyAdvancedSettings, showStickyPanel };
 };
-

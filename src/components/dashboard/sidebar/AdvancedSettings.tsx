@@ -19,7 +19,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
   isSticky = true
 }) => {
   const containerClasses = isSticky 
-    ? "sticky bottom-0 z-10 bg-[rgba(238,238,238,1)] transition-all duration-300 ease-in-out will-change-transform" 
+    ? "sticky bottom-0 z-10 bg-[rgba(238,238,238,1)] transition-all duration-300 ease-in-out" 
     : "bg-[rgba(238,238,238,1)] transition-all duration-300 ease-in-out";
   
   // Force a repaint when the stickiness changes to ensure proper positioning
@@ -29,13 +29,6 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
       window.requestAnimationFrame(() => {
         const forceRepaint = document.body.offsetHeight;
       });
-      
-      // Force another recalculation after a short delay for smoother transitions
-      setTimeout(() => {
-        window.requestAnimationFrame(() => {
-          const forceRepaint = document.body.offsetHeight;
-        });
-      }, 50);
     }
   }, [isSticky]);
 
@@ -91,4 +84,3 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
 };
 
 export default AdvancedSettings;
-
