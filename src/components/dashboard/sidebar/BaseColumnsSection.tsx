@@ -31,7 +31,7 @@ const BaseColumnsSection: React.FC<BaseColumnsSectionProps> = ({
       showStickyPanel();
     }
   };
-  return <div onDragOver={handleDragOver} onDrop={onDrop} className="rounded-md bg-white w-full overflow-hidden mt-1 mb-2 px-[8px] py-[9px] my-0">
+  return <div onDragOver={handleDragOver} onDrop={onDrop} className="rounded-md bg-white w-full overflow-hidden mt-1 mb-2 px-[8px] my-0 py-[9px]">
       <div className="flex min-h-6 w-full items-center gap-1 px-2">
         <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">Columns</div>
         
