@@ -35,21 +35,40 @@ const SidebarMain: React.FC = () => {
 
   // Run this effect only once on mount to force initial calculation
   useEffect(() => {
-    // Prepare DOM for calculations
-    const timeout = setTimeout(() => {
-      // Force layout recalculation
-      if (baseColumnsRef.current && scrollAreaRef.current) {
+    // Force layout recalculation immediately
+    if (baseColumnsRef.current && scrollAreaRef.current) {
+      const height = baseColumnsRef.current.getBoundingClientRect().height;
+      
+      // Force an initial show of sticky panel if needed based on viewport height
+      if (window.innerHeight < height + 100) { // Reduced padding for faster action
+        showStickyPanel();
+      }
+    }
+    
+    // Check again after a short delay to ensure DOM is fully rendered
+    const immediateTimeout = setTimeout(() => {
+      if (baseColumnsRef.current) {
         const height = baseColumnsRef.current.getBoundingClientRect().height;
-        const scrollHeight = scrollAreaRef.current.scrollHeight;
-        
-        // Force an initial show of sticky panel if needed based on viewport height
-        if (window.innerHeight < height + 150) { // Add padding for safety
+        if (window.innerHeight < height + 100) {
+          showStickyPanel();
+        }
+      }
+    }, 10);
+    
+    // And check one final time after layout might have settled
+    const finalTimeout = setTimeout(() => {
+      if (baseColumnsRef.current) {
+        const height = baseColumnsRef.current.getBoundingClientRect().height;
+        if (window.innerHeight < height + 100) {
           showStickyPanel();
         }
       }
     }, 100);
     
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(immediateTimeout);
+      clearTimeout(finalTimeout);
+    };
   }, [showStickyPanel]);
 
   return (

@@ -21,23 +21,23 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   
   const containerClasses = isSticky 
-    ? "sticky bottom-0 z-10 bg-[rgba(238,238,238,1)] transition-all duration-300 ease-in-out will-change-transform" 
+    ? "sticky bottom-0 z-10 bg-[rgba(238,238,238,1)] transition-all duration-300 ease-in-out will-change-transform shadow-[0_-2px_6px_rgba(0,0,0,0.05)]" 
     : "bg-[rgba(238,238,238,1)] transition-all duration-300 ease-in-out";
   
   // Use useLayoutEffect to force repaints before visual updates
   useLayoutEffect(() => {
     if (isSticky && containerRef.current) {
-      // Force layout recalculation before paint
-      const forceRepaint = containerRef.current.getBoundingClientRect().height;
+      // Force layout recalculation and better compositing
+      containerRef.current.style.transform = 'translateZ(0)';
+      containerRef.current.style.willChange = 'transform';
       
-      // Minimal timeout to ensure the DOM has updated
-      setTimeout(() => {
+      // Apply styles that trigger hardware acceleration
+      requestAnimationFrame(() => {
         if (containerRef.current) {
-          // Trigger another layout calculation to stabilize
-          containerRef.current.style.transform = 'translateZ(0)';
-          containerRef.current.style.willChange = 'transform';
+          containerRef.current.style.backfaceVisibility = 'hidden';
+          containerRef.current.style.perspective = '1000px';
         }
-      }, 0);
+      });
     }
   }, [isSticky]);
   
@@ -45,19 +45,16 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
   useEffect(() => {
     if (!containerRef.current) return;
     
-    // Force repaint when sticky state changes
+    // Force repaint on sticky state changes
     const forceRepaint = () => {
       if (!containerRef.current) return;
-      
-      // Read layout properties to force a recalc
-      const height = containerRef.current.offsetHeight;
-      const width = containerRef.current.offsetWidth;
       
       // Apply minimal style changes to force a repaint
       requestAnimationFrame(() => {
         if (containerRef.current) {
           containerRef.current.style.opacity = '0.99';
           
+          // Reset opacity in the next frame
           requestAnimationFrame(() => {
             if (containerRef.current) {
               containerRef.current.style.opacity = '1';
@@ -67,9 +64,8 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
       });
     };
     
+    // Run immediately and after a short delay
     forceRepaint();
-    
-    // Small delay to ensure DOM is settled
     const timeout = setTimeout(forceRepaint, 50);
     
     return () => clearTimeout(timeout);

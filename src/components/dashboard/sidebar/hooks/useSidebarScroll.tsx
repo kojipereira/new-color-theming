@@ -1,4 +1,3 @@
-
 import { useState, useEffect, RefObject, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -19,7 +18,7 @@ export const useSidebarScroll = (
   const BUFFER_SHOW = 50;  // Buffer when deciding to show
   const BUFFER_HIDE = 70;  // Larger buffer when deciding to hide (hysteresis)
   
-  // Function to check positioning and update visibility
+  // Function to check positioning and update visibility - much more aggressive
   const checkPositioning = useCallback(() => {
     if (!scrollAreaRef.current || !baseColumnsRef.current) return;
     
@@ -60,27 +59,30 @@ export const useSidebarScroll = (
     setShowStickyAdvancedSettings(true);
   }, []);
 
-  // Helper function to ensure multiple checks are run on load
-  const runInitialChecks = useCallback(() => {
-    // Immediate check
-    checkPositioning();
+  // Force a check on small screens - immediate action taken
+  const checkScreenSize = useCallback(() => {
+    if (!baseColumnsRef.current || !scrollAreaRef.current) return;
     
-    // Check after a short delay (DOM fully rendered)
-    setTimeout(checkPositioning, 100);
+    // Get base columns height to compare against viewport
+    const baseColumnRect = baseColumnsRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
     
-    // Check after slightly longer delay (styles applied)
-    setTimeout(checkPositioning, 300);
+    // If base columns extend below viewport, immediately show the sticky panel
+    if (baseColumnRect.bottom > viewportHeight - 20) { // smaller buffer for immediate action
+      setShowStickyAdvancedSettings(true);
+    }
+  }, [baseColumnsRef]);
+
+  // Immediate check as soon as component mounts
+  useEffect(() => {
+    // Try to force it immediately
+    checkScreenSize();
     
-    // Check after layout shifts may have occurred
-    setTimeout(checkPositioning, 500);
+    // Check after a short delay to ensure DOM measurements are accurate
+    const timeoutId = setTimeout(checkScreenSize, 10);
     
-    // Use RAF for smooth timing with the browser's render cycle
-    requestAnimationFrame(() => {
-      checkPositioning();
-      // Double RAF ensures we run after the next paint
-      requestAnimationFrame(checkPositioning);
-    });
-  }, [checkPositioning]);
+    return () => clearTimeout(timeoutId);
+  }, [checkScreenSize]);
 
   // Function to handle scroll and determine which Advanced Settings to show
   useEffect(() => {
@@ -100,32 +102,53 @@ export const useSidebarScroll = (
     
     scrollElement.addEventListener('scroll', handleScrollThrottled, { passive: true });
     
-    // Run initial check on mount
-    runInitialChecks();
+    // Check multiple times during load to catch any timing issues
+    checkPositioning();
+    setTimeout(checkPositioning, 0);
+    setTimeout(checkPositioning, 50);
+    setTimeout(checkPositioning, 100);
+    
+    // Set up a forced check after a delay
+    const checkTimeout = setTimeout(() => {
+      checkScreenSize();
+    }, 250);
     
     return () => {
       scrollElement.removeEventListener('scroll', handleScrollThrottled);
       if (scrollTimeout) window.clearTimeout(scrollTimeout);
+      clearTimeout(checkTimeout);
     };
-  }, [checkPositioning, runInitialChecks, scrollAreaRef]);
+  }, [checkPositioning, checkScreenSize, scrollAreaRef]);
 
-  // Initial load check - run after component is fully mounted
+  // Run a screen size check when document is ready - more aggressive approach
   useEffect(() => {
-    // Set up the load event listener
-    window.addEventListener('load', runInitialChecks, { once: true });
+    // Check immediately
+    requestAnimationFrame(() => {
+      checkScreenSize();
+      // Run another check to be sure
+      requestAnimationFrame(checkScreenSize);
+    });
     
-    // Use DOMContentLoaded as a backup if load hasn't fired yet
+    // Set up load event listeners
+    const handleLoad = () => {
+      checkScreenSize();
+      setTimeout(checkScreenSize, 100);
+    };
+    
+    // If document is already loaded, run check now
     if (document.readyState === 'complete') {
-      runInitialChecks();
+      handleLoad();
     } else {
-      document.addEventListener('DOMContentLoaded', runInitialChecks, { once: true });
+      // Otherwise wait for load events
+      window.addEventListener('load', handleLoad);
+      document.addEventListener('DOMContentLoaded', handleLoad);
     }
     
     return () => {
-      window.removeEventListener('load', runInitialChecks);
-      document.removeEventListener('DOMContentLoaded', runInitialChecks);
+      window.removeEventListener('load', handleLoad);
+      document.removeEventListener('DOMContentLoaded', handleLoad);
     };
-  }, [runInitialChecks]);
+  }, [checkScreenSize]);
 
   // Add window resize listener with debounce
   useEffect(() => {
@@ -137,7 +160,7 @@ export const useSidebarScroll = (
       }
       
       // Immediate check for faster response
-      checkPositioning();
+      checkScreenSize();
       
       // Additional check after animation frames have settled
       resizeTimeout = window.setTimeout(() => {
@@ -154,7 +177,7 @@ export const useSidebarScroll = (
         window.clearTimeout(resizeTimeout);
       }
     };
-  }, [checkPositioning]);
+  }, [checkPositioning, checkScreenSize]);
 
   // Add MutationObserver for DOM changes
   useEffect(() => {
@@ -165,6 +188,7 @@ export const useSidebarScroll = (
       
       updateTimeout = window.setTimeout(() => {
         checkPositioning();
+        checkScreenSize(); // Also check screen size when DOM changes
         updateTimeout = null;
       }, 200);
     };
@@ -193,7 +217,7 @@ export const useSidebarScroll = (
         window.clearTimeout(updateTimeout);
       }
     };
-  }, [checkPositioning, baseColumnsRef, scrollAreaRef]);
+  }, [checkPositioning, checkScreenSize, baseColumnsRef, scrollAreaRef]);
 
   return { showStickyAdvancedSettings, showStickyPanel };
 };
