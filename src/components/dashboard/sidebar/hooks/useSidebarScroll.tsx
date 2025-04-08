@@ -1,5 +1,4 @@
-
-import { useState, useEffect, RefObject } from 'react';
+import { useState, useEffect, RefObject, useRef } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const useSidebarScroll = (
