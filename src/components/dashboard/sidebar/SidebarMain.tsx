@@ -33,6 +33,25 @@ const SidebarMain: React.FC = () => {
   // Use custom hook for scroll behavior
   const { showStickyAdvancedSettings, showStickyPanel } = useSidebarScroll(scrollAreaRef, baseColumnsRef);
 
+  // Run this effect only once on mount to force initial calculation
+  useEffect(() => {
+    // Prepare DOM for calculations
+    const timeout = setTimeout(() => {
+      // Force layout recalculation
+      if (baseColumnsRef.current && scrollAreaRef.current) {
+        const height = baseColumnsRef.current.getBoundingClientRect().height;
+        const scrollHeight = scrollAreaRef.current.scrollHeight;
+        
+        // Force an initial show of sticky panel if needed based on viewport height
+        if (window.innerHeight < height + 150) { // Add padding for safety
+          showStickyPanel();
+        }
+      }
+    }, 100);
+    
+    return () => clearTimeout(timeout);
+  }, [showStickyPanel]);
+
   return (
     <div className="bg-[rgba(238,238,238,1)] w-[280px] flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-hidden flex flex-col">

@@ -1,5 +1,5 @@
 
-import { useState, useEffect, RefObject } from 'react';
+import { useState, useEffect, RefObject, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const useSidebarScroll = (
@@ -20,7 +20,7 @@ export const useSidebarScroll = (
   const BUFFER_HIDE = 70;  // Larger buffer when deciding to hide (hysteresis)
   
   // Function to check positioning and update visibility
-  const checkPositioning = () => {
+  const checkPositioning = useCallback(() => {
     if (!scrollAreaRef.current || !baseColumnsRef.current) return;
     
     const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -53,20 +53,39 @@ export const useSidebarScroll = (
         setTimeout(() => setIsLocked(false), 300); // Keep locked for 300ms to prevent toggling back
       }
     }
-  };
+  }, [showStickyAdvancedSettings, isLocked, scrollAreaRef, baseColumnsRef, lastScrollPosition]);
 
   // Function to manually show the sticky advanced settings
-  const showStickyPanel = () => {
+  const showStickyPanel = useCallback(() => {
     setShowStickyAdvancedSettings(true);
-  };
+  }, []);
+
+  // Helper function to ensure multiple checks are run on load
+  const runInitialChecks = useCallback(() => {
+    // Immediate check
+    checkPositioning();
+    
+    // Check after a short delay (DOM fully rendered)
+    setTimeout(checkPositioning, 100);
+    
+    // Check after slightly longer delay (styles applied)
+    setTimeout(checkPositioning, 300);
+    
+    // Check after layout shifts may have occurred
+    setTimeout(checkPositioning, 500);
+    
+    // Use RAF for smooth timing with the browser's render cycle
+    requestAnimationFrame(() => {
+      checkPositioning();
+      // Double RAF ensures we run after the next paint
+      requestAnimationFrame(checkPositioning);
+    });
+  }, [checkPositioning]);
 
   // Function to handle scroll and determine which Advanced Settings to show
   useEffect(() => {
     const scrollElement = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]');
     if (!scrollElement) return;
-    
-    // Run initial check after a short delay to ensure all elements are properly rendered
-    setTimeout(checkPositioning, 200);
     
     // Throttled scroll event handler
     let scrollTimeout: number | null = null;
@@ -81,25 +100,32 @@ export const useSidebarScroll = (
     
     scrollElement.addEventListener('scroll', handleScrollThrottled, { passive: true });
     
+    // Run initial check on mount
+    runInitialChecks();
+    
     return () => {
       scrollElement.removeEventListener('scroll', handleScrollThrottled);
       if (scrollTimeout) window.clearTimeout(scrollTimeout);
     };
-  }, [showStickyAdvancedSettings, isLocked]); // Include state dependencies to ensure effect updates properly
+  }, [checkPositioning, runInitialChecks, scrollAreaRef]);
 
   // Initial load check - run after component is fully mounted
   useEffect(() => {
-    // Run an initial check after DOM is fully rendered
-    const initialCheckTimeout = setTimeout(checkPositioning, 100);
+    // Set up the load event listener
+    window.addEventListener('load', runInitialChecks, { once: true });
     
-    // Run another check after images and other resources are loaded
-    window.addEventListener('load', checkPositioning);
+    // Use DOMContentLoaded as a backup if load hasn't fired yet
+    if (document.readyState === 'complete') {
+      runInitialChecks();
+    } else {
+      document.addEventListener('DOMContentLoaded', runInitialChecks, { once: true });
+    }
     
     return () => {
-      clearTimeout(initialCheckTimeout);
-      window.removeEventListener('load', checkPositioning);
+      window.removeEventListener('load', runInitialChecks);
+      document.removeEventListener('DOMContentLoaded', runInitialChecks);
     };
-  }, []);
+  }, [runInitialChecks]);
 
   // Add window resize listener with debounce
   useEffect(() => {
@@ -128,7 +154,7 @@ export const useSidebarScroll = (
         window.clearTimeout(resizeTimeout);
       }
     };
-  }, [showStickyAdvancedSettings, isLocked]); // Include dependencies
+  }, [checkPositioning]);
 
   // Add MutationObserver for DOM changes
   useEffect(() => {
@@ -167,7 +193,7 @@ export const useSidebarScroll = (
         window.clearTimeout(updateTimeout);
       }
     };
-  }, [showStickyAdvancedSettings, isLocked]); // Include dependencies
+  }, [checkPositioning, baseColumnsRef, scrollAreaRef]);
 
   return { showStickyAdvancedSettings, showStickyPanel };
 };
