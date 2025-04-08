@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Plus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Paintbrush, Type, FileType, Table, BarChart3, List } from "lucide-react";
@@ -22,6 +22,16 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
     ? "sticky bottom-0 z-10 bg-[rgba(238,238,238,1)] transition-all duration-300 ease-in-out" 
     : "bg-[rgba(238,238,238,1)] transition-all duration-300 ease-in-out";
   
+  // Force a repaint when the stickiness changes to ensure proper positioning
+  useEffect(() => {
+    if (isSticky) {
+      // Trigger layout recalculation
+      window.requestAnimationFrame(() => {
+        const forceRepaint = document.body.offsetHeight;
+      });
+    }
+  }, [isSticky]);
+
   return (
     <div className={containerClasses}>
       <Separator className="h-[2px] bg-gray-200" />

@@ -65,7 +65,7 @@ export const useSidebarScroll = (
     const scrollElement = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]');
     if (!scrollElement) return;
     
-    // Initial check
+    // Run initial check after a short delay to ensure all elements are properly rendered
     setTimeout(checkPositioning, 200);
     
     // Throttled scroll event handler
@@ -87,6 +87,20 @@ export const useSidebarScroll = (
     };
   }, [showStickyAdvancedSettings, isLocked]); // Include state dependencies to ensure effect updates properly
 
+  // Initial load check - run after component is fully mounted
+  useEffect(() => {
+    // Run an initial check after DOM is fully rendered
+    const initialCheckTimeout = setTimeout(checkPositioning, 100);
+    
+    // Run another check after images and other resources are loaded
+    window.addEventListener('load', checkPositioning);
+    
+    return () => {
+      clearTimeout(initialCheckTimeout);
+      window.removeEventListener('load', checkPositioning);
+    };
+  }, []);
+
   // Add window resize listener with debounce
   useEffect(() => {
     let resizeTimeout: number | null = null;
@@ -96,13 +110,17 @@ export const useSidebarScroll = (
         window.clearTimeout(resizeTimeout);
       }
       
+      // Immediate check for faster response
+      checkPositioning();
+      
+      // Additional check after animation frames have settled
       resizeTimeout = window.setTimeout(() => {
         checkPositioning();
         resizeTimeout = null;
-      }, 200); // 200ms debounce
+      }, 150); // 150ms debounce
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -110,7 +128,7 @@ export const useSidebarScroll = (
         window.clearTimeout(resizeTimeout);
       }
     };
-  }, [showStickyAdvancedSettings, isLocked]); // Include state dependencies
+  }, [showStickyAdvancedSettings, isLocked]); // Include dependencies
 
   // Add MutationObserver for DOM changes
   useEffect(() => {
