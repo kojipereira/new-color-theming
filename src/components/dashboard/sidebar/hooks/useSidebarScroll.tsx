@@ -11,6 +11,7 @@ export const useSidebarScroll = (
   const isMobile = useIsMobile();
   
   // Create a ref to store the last state to prevent unnecessary re-renders
+  // Explicitly type the ref as boolean to avoid TypeScript inference issues
   const lastStateRef = useRef<boolean>(true);
   
   // Add a significant buffer zone to prevent flickering (in pixels)
@@ -38,7 +39,7 @@ export const useSidebarScroll = (
     if (lastStateRef.current) {
       // Only hide if it's clearly above the HIDE threshold
       if (baseColumnRect.bottom < HIDE_THRESHOLD) {
-        if (lastStateRef.current !== false) {
+        if (lastStateRef.current === true) { // Fix: use strict equality comparison
           isProcessingRef.current = true;
           lastStateRef.current = false;
           setShowStickyAdvancedSettings(false);
@@ -52,7 +53,7 @@ export const useSidebarScroll = (
     } else {
       // Only show if it's clearly below the SHOW threshold
       if (baseColumnRect.bottom > SHOW_THRESHOLD) {
-        if (lastStateRef.current !== true) {
+        if (lastStateRef.current === false) { // Fix: use strict equality comparison
           isProcessingRef.current = true;
           lastStateRef.current = true;
           setShowStickyAdvancedSettings(true);
