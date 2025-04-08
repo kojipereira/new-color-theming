@@ -6,10 +6,19 @@ export const useSidebarScroll = (
   scrollAreaRef: RefObject<HTMLDivElement>,
   baseColumnsRef: RefObject<HTMLDivElement>
 ) => {
-  // Scroll position tracking - add buffer to prevent flickering
-  const [showStickyAdvancedSettings, setShowStickyAdvancedSettings] = useState(true);
+  // State for showing the sticky advanced settings
+  const [showStickyAdvancedSettings, setShowStickyAdvancedSettings] = useState(false);
+  // Track last position to avoid unnecessary state changes
+  const [lastScrollPosition, setLastScrollPosition] = useState(0);
   const isMobile = useIsMobile();
 
+  // Create a locked state to prevent rapid toggling when near the threshold
+  const [isLocked, setIsLocked] = useState(false);
+  
+  // Add buffer to prevent flickering - separate thresholds for showing/hiding
+  const BUFFER_SHOW = 50;  // Buffer when deciding to show
+  const BUFFER_HIDE = 70;  // Larger buffer when deciding to hide (hysteresis)
+  
   // Function to check positioning and update visibility
   const checkPositioning = () => {
     if (!scrollAreaRef.current || !baseColumnsRef.current) return;
@@ -19,129 +28,128 @@ export const useSidebarScroll = (
     
     const baseColumnRect = baseColumnsRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
+    const currentPosition = scrollElement.scrollTop;
 
+    // Don't check if we just checked recently (debounce-like behavior)
+    if (Math.abs(currentPosition - lastScrollPosition) < 10) return;
+    setLastScrollPosition(currentPosition);
 
-    // Determine if the base columns section is below the viewport
-if (baseColumnRect.bottom > viewportHeight) {
-      // Base columns section is below or partially below the viewport
-      // Show the sticky version
-      setShowStickyAdvancedSettings(true);
+    // If the lock is active, don't change state
+    if (isLocked) return;
+
+    // Determine if the base columns section is below or near the viewport bottom
+    if (showStickyAdvancedSettings) {
+      // If already showing sticky, use the hide threshold (more scrolling required to hide)
+      if (baseColumnRect.bottom < viewportHeight - BUFFER_HIDE) {
+        setIsLocked(true);
+        setShowStickyAdvancedSettings(false);
+        setTimeout(() => setIsLocked(false), 300); // Keep locked for 300ms to prevent toggling back
+      }
     } else {
-      // Base columns section is fully visible within the viewport
-      // Hide the sticky version, show the inline version
-      setShowStickyAdvancedSettings(false);
+      // If not showing sticky, use the show threshold
+      if (baseColumnRect.bottom > viewportHeight - BUFFER_SHOW) {
+        setIsLocked(true);
+        setShowStickyAdvancedSettings(true);
+        setTimeout(() => setIsLocked(false), 300); // Keep locked for 300ms to prevent toggling back
+      }
     }
   };
 
   // Function to manually show the sticky advanced settings
   const showStickyPanel = () => {
     setShowStickyAdvancedSettings(true);
-    
-    // Timeout to ensure the DOM has updated before checking position
-    setTimeout(() => {
-      checkPositioning();
-    }, 100); // Increased timeout for more reliable checking
   };
 
   // Function to handle scroll and determine which Advanced Settings to show
   useEffect(() => {
-    const handleScroll = () => {
-      checkPositioning();
-    };
-    
     const scrollElement = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]');
-    if (scrollElement) {
-      scrollElement.addEventListener('scroll', handleScroll);
-      // Initial check
-      handleScroll();
-      
-      // Use requestAnimationFrame to throttle scroll events
-      let ticking = false;
-      const scrollListener = () => {
-        if (!ticking) {
-          window.requestAnimationFrame(() => {
-            handleScroll();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      };
-      
-      scrollElement.addEventListener('scroll', scrollListener, { passive: true });
-      
-      return () => {
-        scrollElement.removeEventListener('scroll', handleScroll);
-        scrollElement.removeEventListener('scroll', scrollListener);
-      };
-    }
-  }, []);
-
-  // Add window resize listener
-  useEffect(() => {
-    const handleResize = () => {
-      checkPositioning();
-    };
-
-    // Add debounce/throttle for better performance
-    let resizeTimeout: number;
-    const throttledResize = () => {
-      if (!resizeTimeout) {
-        resizeTimeout = window.setTimeout(() => {
-          resizeTimeout = 0;
-          handleResize();
-        }, 100); // 100ms throttle for resize
+    if (!scrollElement) return;
+    
+    // Initial check
+    setTimeout(checkPositioning, 200);
+    
+    // Throttled scroll event handler
+    let scrollTimeout: number | null = null;
+    const handleScrollThrottled = () => {
+      if (scrollTimeout === null) {
+        scrollTimeout = window.setTimeout(() => {
+          checkPositioning();
+          scrollTimeout = null;
+        }, 100);
       }
     };
-
-    window.addEventListener('resize', throttledResize);
     
-    // Initial check on mount
-    setTimeout(() => {
-      checkPositioning();
-    }, 100); // Delayed initial check to ensure DOM is fully rendered
+    scrollElement.addEventListener('scroll', handleScrollThrottled, { passive: true });
     
-    // Cleanup
     return () => {
-      window.removeEventListener('resize', throttledResize);
+      scrollElement.removeEventListener('scroll', handleScrollThrottled);
+      if (scrollTimeout) window.clearTimeout(scrollTimeout);
+    };
+  }, [showStickyAdvancedSettings, isLocked]); // Include state dependencies to ensure effect updates properly
+
+  // Add window resize listener with debounce
+  useEffect(() => {
+    let resizeTimeout: number | null = null;
+    
+    const handleResize = () => {
+      if (resizeTimeout) {
+        window.clearTimeout(resizeTimeout);
+      }
+      
+      resizeTimeout = window.setTimeout(() => {
+        checkPositioning();
+        resizeTimeout = null;
+      }, 200); // 200ms debounce
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
       if (resizeTimeout) {
         window.clearTimeout(resizeTimeout);
       }
     };
-  }, []);
+  }, [showStickyAdvancedSettings, isLocked]); // Include state dependencies
 
-  // Additional effect to handle window changes that might affect positioning
+  // Add MutationObserver for DOM changes
   useEffect(() => {
-    // MutationObserver to detect changes in the DOM that might affect positioning
-    const observer = new MutationObserver(() => {
-      setTimeout(() => {
+    // Don't update the state too frequently
+    let updateTimeout: number | null = null;
+    const debouncedPositionCheck = () => {
+      if (updateTimeout) return;
+      
+      updateTimeout = window.setTimeout(() => {
         checkPositioning();
-      }, 50);
-    });
+        updateTimeout = null;
+      }, 200);
+    };
     
-    // Observe the baseColumnsRef for changes
+    const observer = new MutationObserver(debouncedPositionCheck);
+    
     if (baseColumnsRef.current) {
       observer.observe(baseColumnsRef.current, { 
         subtree: true, 
         childList: true,
         attributes: true,
-        characterData: true 
       });
     }
     
-    // Observe the scrollAreaRef for changes
     if (scrollAreaRef.current) {
       observer.observe(scrollAreaRef.current, { 
         subtree: true, 
         childList: true,
         attributes: true,
-        characterData: true 
       });
     }
     
     return () => {
       observer.disconnect();
+      if (updateTimeout) {
+        window.clearTimeout(updateTimeout);
+      }
     };
-  }, [baseColumnsRef.current, scrollAreaRef.current]);
+  }, [showStickyAdvancedSettings, isLocked]); // Include dependencies
 
   return { showStickyAdvancedSettings, showStickyPanel };
 };

@@ -59,7 +59,6 @@ const SidebarMain: React.FC = () => {
                 showStickyPanel={showStickyPanel}
               />
               
-              {/* Inline Advanced Settings (shown when scrolled to base columns) */}
               {!showStickyAdvancedSettings && (
                 <AdvancedSettings 
                   advancedMenuOpen={sidebarState.advancedMenuOpen}
@@ -79,7 +78,6 @@ const SidebarMain: React.FC = () => {
         </ScrollArea>
       </div>
 
-      {/* Sticky Advanced Settings (shown when baseColumns push it below viewport) */}
       {showStickyAdvancedSettings && (
         <AdvancedSettings 
           advancedMenuOpen={sidebarState.advancedMenuOpen}
