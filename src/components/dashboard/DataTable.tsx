@@ -1,9 +1,25 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import FormulaPanel from "./FormulaPanel";
 
+interface ColumnFormula {
+  isActive: boolean;
+  formula: string;
+}
+
 const DataTable: React.FC = () => {
+  const [formulaColumn, setFormulaColumn] = useState<ColumnFormula>({
+    isActive: false,
+    formula: ""
+  });
+  
+  // Generate random values for each row based on the formula
+  const generateRandomValue = () => {
+    return (Math.random() * 100).toFixed(2);
+  };
+  
   return (
     <div className="bg-white border absolute z-0 flex min-h-[268px] w-[576px] max-w-full overflow-hidden text-[11px] text-neutral-900 font-normal leading-[1.2] h-[268px] rounded-lg border-[rgba(0,89,235,1)] border-solid left-6 top-[57px]">
       <div className="bg-[rgba(238,238,238,1)] overflow-hidden w-[195px]">
@@ -64,20 +80,18 @@ const DataTable: React.FC = () => {
               <Plus className="w-4 h-4 cursor-pointer text-blue-600 hover:text-blue-700" />
             </PopoverTrigger>
             <PopoverContent align="end" className="w-auto p-0">
-              <FormulaPanel />
+              <FormulaPanel onClose={() => {
+                setFormulaColumn({
+                  isActive: true,
+                  formula: "New Formula"
+                });
+              }} />
             </PopoverContent>
           </Popover>
         </div>
         {Array(8).fill(0).map((_, index) => (
           <div key={`cell-6-${index}`} className="bg-white border-neutral-200 min-h-7 w-full whitespace-nowrap px-3 border-b flex items-center justify-center">
-            <Popover>
-              <PopoverTrigger>
-                <Plus className="w-4 h-4 cursor-pointer text-blue-600 hover:text-blue-700" />
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-auto p-0">
-                <FormulaPanel />
-              </PopoverContent>
-            </Popover>
+            {formulaColumn.isActive ? generateRandomValue() : ''}
           </div>
         ))}
       </div>
