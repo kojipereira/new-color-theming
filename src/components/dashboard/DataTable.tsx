@@ -1,8 +1,11 @@
-
-import React from "react";
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import FormulaEditor from "./FormulaEditor";
 
 const DataTable: React.FC = () => {
-  return <div className="bg-white border absolute z-0 flex min-h-[268px] w-[576px] max-w-full overflow-hidden text-[11px] text-neutral-900 font-normal leading-[1.2] h-[268px] rounded-lg border-[rgba(0,89,235,1)] border-solid left-6 top-[57px]">
+  return (
+    <div className="bg-white border absolute z-0 flex min-h-[268px] w-[576px] max-w-full overflow-hidden text-[11px] text-neutral-900 font-normal leading-[1.2] h-[268px] rounded-lg border-[rgba(0,89,235,1)] border-solid left-6 top-[57px]">
       <div className="bg-[rgba(238,238,238,1)] overflow-hidden w-[195px]">
         <div className="border-neutral-200 flex w-full items-center gap-1 text-xs font-bold pl-5 pr-3 py-3 border-b-2">
           <div className="self-stretch flex items-center gap-1 my-auto">
@@ -54,6 +57,32 @@ const DataTable: React.FC = () => {
               {index === 3 ? "West" : index === 7 ? "East" : "Midwest"}
             </div>)}
       </div>
-    </div>;
+      <div className="bg-white w-[40px] border-l border-neutral-200">
+        <div className="bg-[rgba(238,238,238,1)] border-neutral-200 flex min-h-10 w-full items-center justify-center text-xs font-bold px-3 py-[13px] border-b-2">
+          <Popover>
+            <PopoverTrigger>
+              <Plus className="w-4 h-4 cursor-pointer text-blue-600 hover:text-blue-700" />
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <FormulaEditor />
+            </PopoverContent>
+          </Popover>
+        </div>
+        {Array(8).fill(0).map((_, index) => (
+          <div key={`cell-6-${index}`} className="bg-white border-neutral-200 min-h-7 w-full whitespace-nowrap px-3 border-b flex items-center justify-center">
+            <Popover>
+              <PopoverTrigger>
+                <Plus className="w-4 h-4 cursor-pointer text-blue-600 hover:text-blue-700" />
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <FormulaEditor />
+              </PopoverContent>
+            </Popover>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
+
 export default DataTable;
