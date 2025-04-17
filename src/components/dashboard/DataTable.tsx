@@ -6,12 +6,23 @@ import FormulaEditor from "./FormulaEditor";
 
 const DataTable: React.FC = () => {
   const [cellFormulas, setCellFormulas] = useState<Record<string, string>>({});
+  const [cellValues, setCellValues] = useState<Record<string, number>>({});
   
   const handleConfirmFormula = (cellId: string, formula: string) => {
     setCellFormulas(prev => ({
       ...prev,
       [cellId]: formula
     }));
+    
+    // Simulate calculation by generating a random number
+    setCellValues(prev => ({
+      ...prev,
+      [cellId]: Math.floor(Math.random() * 1000)
+    }));
+  };
+  
+  const handleCancelFormula = () => {
+    // Close the popover
   };
   
   return (
@@ -76,26 +87,16 @@ const DataTable: React.FC = () => {
             <PopoverContent className="w-auto p-0" align="end">
               <FormulaEditor 
                 onConfirm={(formula) => handleConfirmFormula("header", formula)} 
+                onCancel={handleCancelFormula}
               />
             </PopoverContent>
           </Popover>
         </div>
         {Array(8).fill(0).map((_, index) => (
           <div key={`cell-6-${index}`} className="bg-white border-neutral-200 min-h-7 w-full whitespace-nowrap px-3 border-b flex items-center justify-center">
-            {cellFormulas[`cell-${index}`] ? (
-              <div className="text-blue-600">{cellFormulas[`cell-${index}`]}</div>
-            ) : (
-              <Popover>
-                <PopoverTrigger>
-                  <Plus className="w-4 h-4 cursor-pointer text-blue-600 hover:text-blue-700" />
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="end">
-                  <FormulaEditor 
-                    onConfirm={(formula) => handleConfirmFormula(`cell-${index}`, formula)}
-                  />
-                </PopoverContent>
-              </Popover>
-            )}
+            {(cellFormulas[`cell-${index}`] && cellValues[`cell-${index}`] !== undefined) ? (
+              <div className="text-blue-600">{cellValues[`cell-${index}`]}</div>
+            ) : null}
           </div>
         ))}
       </div>
