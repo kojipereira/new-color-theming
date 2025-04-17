@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
@@ -15,11 +14,17 @@ const DataTable: React.FC = () => {
     formula: ""
   });
   
-  // Generate random values for each row based on the formula
   const generateRandomValue = () => {
     return (Math.random() * 100).toFixed(2);
   };
-  
+
+  const handleCalcClick = () => {
+    setFormulaColumn({
+      isActive: true,
+      formula: "SUM([Quantity]) * AVERAGE([Product]) BY [Calc]"
+    });
+  };
+
   return (
     <div className="bg-white border absolute z-0 flex min-h-[268px] w-[576px] max-w-full overflow-hidden text-[11px] text-neutral-900 font-normal leading-[1.2] h-[268px] rounded-lg border-[rgba(0,89,235,1)] border-solid left-6 top-[57px]">
       <div className="bg-[rgba(238,238,238,1)] overflow-hidden w-[195px]">
@@ -66,7 +71,14 @@ const DataTable: React.FC = () => {
       <div className="bg-white w-[93px]">
         <div className="bg-[rgba(238,238,238,1)] border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold px-3 py-[13px] border-b-2">
           <div className="self-stretch flex items-center gap-1 my-auto">
-            <div className="self-stretch gap-2.5 my-auto">Calc</div>
+            <Popover>
+              <PopoverTrigger>
+                <div className="self-stretch gap-2.5 my-auto cursor-pointer hover:text-blue-600">Calc</div>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-auto p-0">
+                <FormulaPanel onClose={handleCalcClick} />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
         {Array(8).fill(0).map((_, index) => <div key={`cell-5-${index}`} className="bg-white border-neutral-200 min-h-7 w-full whitespace-nowrap px-3 border-b">
