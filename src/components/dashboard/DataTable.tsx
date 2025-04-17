@@ -1,30 +1,9 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { Plus } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import FormulaEditor from "./FormulaEditor";
+import FormulaPanel from "./FormulaPanel";
 
 const DataTable: React.FC = () => {
-  const [cellFormulas, setCellFormulas] = useState<Record<string, string>>({});
-  const [cellValues, setCellValues] = useState<Record<string, number>>({});
-  
-  const handleConfirmFormula = (cellId: string, formula: string) => {
-    setCellFormulas(prev => ({
-      ...prev,
-      [cellId]: formula
-    }));
-    
-    // Simulate calculation by generating a random number
-    setCellValues(prev => ({
-      ...prev,
-      [cellId]: Math.floor(Math.random() * 1000)
-    }));
-  };
-  
-  const handleCancelFormula = () => {
-    // Close the popover
-  };
-  
   return (
     <div className="bg-white border absolute z-0 flex min-h-[268px] w-[576px] max-w-full overflow-hidden text-[11px] text-neutral-900 font-normal leading-[1.2] h-[268px] rounded-lg border-[rgba(0,89,235,1)] border-solid left-6 top-[57px]">
       <div className="bg-[rgba(238,238,238,1)] overflow-hidden w-[195px]">
@@ -71,7 +50,7 @@ const DataTable: React.FC = () => {
       <div className="bg-white w-[93px]">
         <div className="bg-[rgba(238,238,238,1)] border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold px-3 py-[13px] border-b-2">
           <div className="self-stretch flex items-center gap-1 my-auto">
-            <div className="self-stretch gap-2.5 my-auto">Store</div>
+            <div className="self-stretch gap-2.5 my-auto">Calc</div>
           </div>
         </div>
         {Array(8).fill(0).map((_, index) => <div key={`cell-5-${index}`} className="bg-white border-neutral-200 min-h-7 w-full whitespace-nowrap px-3 border-b">
@@ -84,19 +63,21 @@ const DataTable: React.FC = () => {
             <PopoverTrigger>
               <Plus className="w-4 h-4 cursor-pointer text-blue-600 hover:text-blue-700" />
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end">
-              <FormulaEditor 
-                onConfirm={(formula) => handleConfirmFormula("header", formula)} 
-                onCancel={handleCancelFormula}
-              />
+            <PopoverContent align="end" className="w-auto p-0">
+              <FormulaPanel />
             </PopoverContent>
           </Popover>
         </div>
         {Array(8).fill(0).map((_, index) => (
           <div key={`cell-6-${index}`} className="bg-white border-neutral-200 min-h-7 w-full whitespace-nowrap px-3 border-b flex items-center justify-center">
-            {(cellFormulas[`cell-${index}`] && cellValues[`cell-${index}`] !== undefined) ? (
-              <div className="text-blue-600">{cellValues[`cell-${index}`]}</div>
-            ) : null}
+            <Popover>
+              <PopoverTrigger>
+                <Plus className="w-4 h-4 cursor-pointer text-blue-600 hover:text-blue-700" />
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-auto p-0">
+                <FormulaPanel />
+              </PopoverContent>
+            </Popover>
           </div>
         ))}
       </div>
