@@ -17,6 +17,7 @@ const DataTable: React.FC = () => {
   });
   const [title, setTitle] = useState<string>("Order details by order number");
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isHovering, setIsHovering] = useState<boolean>(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
   const generateRandomValue = () => {
@@ -49,6 +50,14 @@ const DataTable: React.FC = () => {
     }
   };
 
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
+
   useEffect(() => {
     if (isEditing && titleInputRef.current) {
       titleInputRef.current.focus();
@@ -68,8 +77,19 @@ const DataTable: React.FC = () => {
             autoFocus
           />
         ) : (
-          <div onClick={handleTitleClick} className="cursor-text">
-            <CardTitle className="text-xl font-medium">{title}</CardTitle>
+          <div 
+            onClick={handleTitleClick} 
+            className="cursor-text" 
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            {title ? (
+              <CardTitle className="text-xl font-medium">{title}</CardTitle>
+            ) : (
+              <CardTitle className={`text-xl font-medium text-neutral-400 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
+                Enter title here
+              </CardTitle>
+            )}
           </div>
         )}
       </CardHeader>
