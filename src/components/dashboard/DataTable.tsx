@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Plus } from "lucide-react";
+
+import React, { useState, useRef, useEffect } from "react";
+import { Plus, Pencil, Save } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import FormulaPanel from "./FormulaPanel";
@@ -12,18 +13,63 @@ const DataTable: React.FC = () => {
     isActive: false,
     formula: ""
   });
+  const [title, setTitle] = useState<string>("Order details by order number");
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
   const generateRandomValue = () => {
     return (Math.random() * 100).toFixed(2);
   };
+  
   const handleCalcClick = () => {
     setFormulaColumn({
       isActive: true,
       formula: "SUM([Quantity]) * AVERAGE([Product]) BY [Calc]"
     });
   };
+
+  const handleTitleClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+
+  const handleTitleBlur = () => {
+    setIsEditing(false);
+    // Auto save happens here (already saved to state)
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setIsEditing(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isEditing && titleInputRef.current) {
+      titleInputRef.current.focus();
+    }
+  }, [isEditing]);
+
   return <Card className="w-[600px] shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-medium">Order details by order number</CardTitle>
+        {isEditing ? (
+          <input
+            ref={titleInputRef}
+            value={title}
+            onChange={handleTitleChange}
+            onBlur={handleTitleBlur}
+            onKeyDown={handleTitleKeyDown}
+            className="text-xl font-medium bg-transparent border-none outline-none w-full focus:ring-0 p-0"
+            autoFocus
+          />
+        ) : (
+          <div onClick={handleTitleClick} className="cursor-text">
+            <CardTitle className="text-xl font-medium">{title}</CardTitle>
+          </div>
+        )}
       </CardHeader>
       <CardContent className="p-0 relative">
         <div className="flex min-h-[268px] w-full overflow-hidden text-[11px] text-neutral-900 font-normal leading-[1.2]">
