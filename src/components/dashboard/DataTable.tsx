@@ -58,6 +58,10 @@ const DataTable: React.FC = () => {
     setIsHovering(false);
   };
 
+  const handleAddTitleClick = () => {
+    setIsEditing(true);
+  };
+
   useEffect(() => {
     if (isEditing && titleInputRef.current) {
       titleInputRef.current.focus();
@@ -65,7 +69,7 @@ const DataTable: React.FC = () => {
   }, [isEditing]);
 
   return <Card className="w-[600px] shadow-sm">
-      <CardHeader className="pb-2">
+      <CardHeader className={`${title ? 'pb-2' : isHovering ? 'pb-2' : 'p-0'}`}>
         {isEditing ? (
           <input
             ref={titleInputRef}
@@ -75,22 +79,36 @@ const DataTable: React.FC = () => {
             onKeyDown={handleTitleKeyDown}
             className="text-xl font-medium bg-transparent border border-neutral-200 rounded outline-none w-full focus:ring-0 px-2 py-0.5"
             autoFocus
+            placeholder="Enter title here"
           />
         ) : (
-          <div 
-            onClick={handleTitleClick} 
-            className="cursor-text" 
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
+          <>
             {title ? (
-              <CardTitle className="text-xl font-medium">{title}</CardTitle>
+              <div 
+                onClick={handleTitleClick} 
+                className="cursor-text" 
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <CardTitle className="text-xl font-medium">{title}</CardTitle>
+              </div>
             ) : (
-              <CardTitle className={`text-xl font-medium text-neutral-400 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
-                Enter title here
-              </CardTitle>
+              <div 
+                className="cursor-text flex items-center" 
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                {isHovering && (
+                  <div className="flex items-center gap-2 py-2">
+                    <button onClick={handleAddTitleClick} className="flex items-center gap-1 text-neutral-500 hover:text-blue-600">
+                      <Plus className="w-4 h-4" />
+                      <span className="text-xl font-medium text-neutral-400">Enter title here</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
       </CardHeader>
       <CardContent className="p-0 relative">
