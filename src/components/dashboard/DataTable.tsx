@@ -4,10 +4,12 @@ import { Plus, Pencil, Save } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import FormulaPanel from "./FormulaPanel";
+
 interface ColumnFormula {
   isActive: boolean;
   formula: string;
 }
+
 const DataTable: React.FC = () => {
   const [formulaColumn, setFormulaColumn] = useState<ColumnFormula>({
     isActive: false,
@@ -62,7 +64,7 @@ const DataTable: React.FC = () => {
             onChange={handleTitleChange}
             onBlur={handleTitleBlur}
             onKeyDown={handleTitleKeyDown}
-            className="text-xl font-medium bg-transparent border-none outline-none w-full focus:ring-0 p-0"
+            className="text-xl font-medium bg-transparent border border-neutral-200 rounded outline-none w-full focus:ring-0 px-2 py-0.5"
             autoFocus
           />
         ) : (
