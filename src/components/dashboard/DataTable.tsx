@@ -1,34 +1,27 @@
-
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import FormulaPanel from "./FormulaPanel";
-
 interface ColumnFormula {
   isActive: boolean;
   formula: string;
 }
-
 const DataTable: React.FC = () => {
   const [formulaColumn, setFormulaColumn] = useState<ColumnFormula>({
     isActive: false,
     formula: ""
   });
-  
   const generateRandomValue = () => {
     return (Math.random() * 100).toFixed(2);
   };
-
   const handleCalcClick = () => {
     setFormulaColumn({
       isActive: true,
       formula: "SUM([Quantity]) * AVERAGE([Product]) BY [Calc]"
     });
   };
-
-  return (
-    <Card className="w-[600px] shadow-sm">
+  return <Card className="w-[600px] shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-medium">Order details by order number</CardTitle>
       </CardHeader>
@@ -100,24 +93,20 @@ const DataTable: React.FC = () => {
                 </PopoverTrigger>
                 <PopoverContent align="end" className="w-auto p-0">
                   <FormulaPanel onClose={() => {
-                    setFormulaColumn({
-                      isActive: true,
-                      formula: "New Formula"
-                    });
-                  }} />
+                  setFormulaColumn({
+                    isActive: true,
+                    formula: "New Formula"
+                  });
+                }} />
                 </PopoverContent>
               </Popover>
             </div>
-            {Array(8).fill(0).map((_, index) => (
-              <div key={`cell-6-${index}`} className="bg-white border-neutral-200 min-h-7 w-full whitespace-nowrap px-3 border-b flex items-center justify-center">
+            {Array(8).fill(0).map((_, index) => <div key={`cell-6-${index}`} className="bg-white border-neutral-200 min-h-7 w-full whitespace-nowrap px-3 border-b flex items-center justify-center">
                 {formulaColumn.isActive ? generateRandomValue() : ''}
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default DataTable;
