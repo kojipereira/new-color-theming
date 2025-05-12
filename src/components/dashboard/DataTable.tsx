@@ -94,12 +94,12 @@ const DataTable: React.FC = () => {
               </div>
             ) : (
               <div 
-                className="cursor-text flex items-center" 
+                className="cursor-text absolute top-0 left-0 right-0 z-10" 
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
                 {isHovering && (
-                  <div className="flex items-center gap-2 py-2">
+                  <div className="flex items-center gap-2 py-2 px-4">
                     <button onClick={handleAddTitleClick} className="flex items-center gap-1 text-neutral-500 hover:text-blue-600">
                       <Plus className="w-4 h-4" />
                       <span className="text-xl font-medium text-neutral-400">Enter title here</span>
