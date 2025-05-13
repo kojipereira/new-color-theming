@@ -6,6 +6,7 @@ import BaseColumnsSection from "./BaseColumnsSection";
 import AdvancedSettings from "./AdvancedSettings";
 import AdvancedSectionRenderer from "./AdvancedSectionRenderer";
 import SidebarSections from "./SidebarSections";
+import ColorPicker from "./ColorPicker";
 import { useSidebarState } from "./hooks/useSidebarState";
 import { useSidebarDragDrop } from "./hooks/useSidebarDragDrop";
 import { useSidebarScroll } from "./hooks/useSidebarScroll";
@@ -96,6 +97,9 @@ const SidebarMain: React.FC = () => {
                 onDrop={(e) => dragDrop.handleDrop(e, "baseColumns")}
                 showStickyPanel={showStickyPanel}
               />
+              
+              {/* Add the ColorPicker component here */}
+              <ColorPicker />
               
               {!showStickyAdvancedSettings && (
                 <AdvancedSettings 
