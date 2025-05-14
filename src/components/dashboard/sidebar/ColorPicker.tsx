@@ -156,8 +156,7 @@ const ColorPicker: React.FC = () => {
       
       // Apply the highlight colors to the system
       document.documentElement.style.setProperty('--highlight-color', newColor);
-      // CHANGED: Use a brighter color for hover (index - 1 instead of index + 1)
-      document.documentElement.style.setProperty('--highlight-hover-color', newPalette[Math.max(0, closestIndex - 1)] || newPalette[0]);
+      document.documentElement.style.setProperty('--highlight-hover-color', newPalette[closestIndex + 1] || newPalette[newPalette.length - 1]);
       document.documentElement.style.setProperty('--highlight-darker', newPalette[7] || newPalette[closestIndex + 2] || newPalette[newPalette.length - 1]);
       document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF');
       
@@ -177,14 +176,12 @@ const ColorPicker: React.FC = () => {
       if (colorMatch) {
         // Use exact color when color match is enabled
         document.documentElement.style.setProperty('--highlight-color', newColor);
-        // CHANGED: Use a brighter color for hover (index - 1 instead of index + 1)
-        document.documentElement.style.setProperty('--highlight-hover-color', slots[Math.max(0, baseIndex - 1)] || slots[0]); // Use brighter slot or first slot for hover
+        document.documentElement.style.setProperty('--highlight-hover-color', slots[baseIndex + 1] || slots[slots.length - 1]); // Use next slot or last slot for hover
         document.documentElement.style.setProperty('--highlight-darker', slots[7] || slots[baseIndex + 2] || slots[slots.length - 1]); // Slot 7 for darker hover effects
       } else {
         // Use optimized slots for better contrast
         document.documentElement.style.setProperty('--highlight-color', slots[5]); // Medium-bright color for highlights
-        // CHANGED: Use a brighter color for hover (slot 4 instead of slot 6)
-        document.documentElement.style.setProperty('--highlight-hover-color', slots[4]); // Slightly brighter for hover states
+        document.documentElement.style.setProperty('--highlight-hover-color', slots[6]); // Slightly darker for hover states
         document.documentElement.style.setProperty('--highlight-darker', slots[7]); // Even darker for stronger hover effects
       }
       document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF'); // White text on highlight color
@@ -210,9 +207,11 @@ const ColorPicker: React.FC = () => {
         // Use exact color when color match is enabled
         document.documentElement.style.setProperty('--highlight-color', highlightColor);
         
-        // CHANGED: Find the brighter slot (previous index) or use the first one
-        const brighterSlotIndex = Math.max(0, closestIndex - 1);
-        const hoverColor = newPalette[brighterSlotIndex];
+        // Find the next darker slot or use the last one
+        const nextSlotIndex = closestIndex + 1;
+        const hoverColor = nextSlotIndex < newPalette.length 
+          ? newPalette[nextSlotIndex] 
+          : newPalette[newPalette.length - 1];
           
         document.documentElement.style.setProperty('--highlight-hover-color', hoverColor);
         
@@ -244,8 +243,7 @@ const ColorPicker: React.FC = () => {
         
         // Use optimized slots for better contrast
         document.documentElement.style.setProperty('--highlight-color', slots[5]);
-        // CHANGED: Use slot 4 (brighter) for hover instead of slot 6 (darker)
-        document.documentElement.style.setProperty('--highlight-hover-color', slots[4]);
+        document.documentElement.style.setProperty('--highlight-hover-color', slots[6]);
         document.documentElement.style.setProperty('--highlight-darker', slots[7]);
       }
       
@@ -406,3 +404,4 @@ const ColorPicker: React.FC = () => {
 };
 
 export default ColorPicker;
+
