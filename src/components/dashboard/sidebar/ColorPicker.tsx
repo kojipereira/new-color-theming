@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useEffect } from "react";
-import { Paintbrush, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
 import { meetsAccessibilityStandards } from "@/lib/utils";
 import { ColorSelector } from "./ColorSelector";
@@ -29,6 +29,13 @@ const ColorPicker: React.FC = () => {
     // Check contrast between black text (#000000) and table color (Slot 4, index 3)
     return !meetsAccessibilityStandards("#000000", slots[3]);
   }, []);
+
+  // Generate initial color slots on mount
+  useEffect(() => {
+    const initialSlots = generateColorSlots(color);
+    setColorSlots(initialSlots);
+    setHasContrastIssue(checkContrastIssue(initialSlots));
+  }, [checkContrastIssue]);
 
   // Check contrast when slots change
   useEffect(() => {
