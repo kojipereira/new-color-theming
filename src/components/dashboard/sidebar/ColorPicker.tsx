@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from "react";
 import { Paintbrush, Circle } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
@@ -20,11 +21,13 @@ const ColorPicker: React.FC = () => {
     const slots = generateColorSlots(newColor);
     setColorSlots(slots);
     
-    // Apply the colors to the system
-    document.documentElement.style.setProperty('--card-color', slots[0]); // Slot 1 (index 0) for cards
-    document.documentElement.style.setProperty('--background-color', slots[2]); // Slot 3 (index 2) for backgrounds
-    document.documentElement.style.setProperty('--table-color', slots[3]); // Slot 4 (index 3) for tables
-    document.documentElement.style.setProperty('--outline-color', slots[4]); // Slot 5 (index 4) for outlines
+    // Apply the colors to the system using the appropriate slots
+    // For medium brightness colors, use similar slots as before
+    // For very light or very dark colors, adapt accordingly
+    document.documentElement.style.setProperty('--card-color', slots[0]); // Always use lightest color for cards
+    document.documentElement.style.setProperty('--background-color', slots[2]); // Light color for backgrounds
+    document.documentElement.style.setProperty('--table-color', slots[3]); // Light-medium color for tables
+    document.documentElement.style.setProperty('--outline-color', slots[4]); // Medium color for outlines
 
     toast({
       title: "Color palette updated",

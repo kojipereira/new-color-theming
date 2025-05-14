@@ -1,8 +1,7 @@
-
 /**
  * Generates 12 color slots based on a given color
- * The provided color will be slot 9, slots 1-8 will have increasing brightness,
- * and slots 10-12 will have decreasing brightness
+ * The provided color will be positioned in a dynamic slot based on its brightness,
+ * with brighter colors placed in lower slots and darker colors in higher slots
  * 
  * @param baseColor - The hex color string to base the slots on
  * @returns Array of 12 hex color strings
@@ -14,29 +13,47 @@ export function generateColorSlots(baseColor: string): string[] {
   
   const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
   
-  // Base color will be slot 9 (index 8)
-  const slots = new Array(12).fill('');
-  slots[8] = baseColor; // Slot 9
+  // Determine the best slot based on lightness
+  // For very light colors (L > 0.9), use slot 1
+  // For very dark colors (L < 0.1), use slot 12
+  // Otherwise, map lightness to slots 2 through 11
+  let baseSlot: number;
   
-  // Generate brighter colors for slots 1-8
-  for (let i = 0; i < 8; i++) {
-    // Calculate lightness, increasing from slot 8 to slot 1
-    // We'll want a range from the base lightness up to near 1.0 (but not quite white)
-    const lightnessFactor = hsl.l + (0.95 - hsl.l) * ((8 - i) / 8);
-    // For very dark colors, also reduce saturation as we get lighter
-    const saturationFactor = hsl.l < 0.2 
-      ? Math.max(0.1, hsl.s * (1 - ((8 - i) / 16)))
+  if (hsl.l > 0.9) {
+    baseSlot = 0; // Slot 1 (index 0) for very bright colors
+  } else if (hsl.l < 0.1) {
+    baseSlot = 11; // Slot 12 (index 11) for very dark colors
+  } else {
+    // Map lightness from 0.1-0.9 to slots 2-11 (indices 1-10)
+    // Higher lightness = lower slot number
+    baseSlot = Math.round(10 - (hsl.l - 0.1) * (9 / 0.8)) + 1;
+  }
+  
+  // Create the slots array
+  const slots = new Array(12).fill('');
+  slots[baseSlot] = baseColor; // Place the base color in its optimal slot
+  
+  // Generate brighter colors for slots before the base slot
+  for (let i = baseSlot - 1; i >= 0; i--) {
+    // Calculate how much brighter this slot should be compared to the base
+    const brightnessStep = (baseSlot - i) / baseSlot;
+    // Increase lightness proportionally, maxing out near 1.0 (but not quite white)
+    const lightnessFactor = Math.min(0.95, hsl.l + (0.95 - hsl.l) * brightnessStep);
+    // For darker base colors, also reduce saturation as we get lighter
+    const saturationFactor = hsl.l < 0.3 
+      ? Math.max(0.1, hsl.s * (1 - brightnessStep / 2))
       : hsl.s;
     
     const rgb = hslToRgb(hsl.h, saturationFactor, lightnessFactor);
     slots[i] = rgbToHex(rgb.r, rgb.g, rgb.b);
   }
   
-  // Generate darker colors for slots 10-12
-  for (let i = 9; i < 12; i++) {
-    // Calculate lightness, decreasing from slot 10 to slot 12
-    // We'll want a range from the base lightness down to near 0.0 (but not quite black)
-    const lightnessFactor = hsl.l * (1 - ((i - 8) / 5));
+  // Generate darker colors for slots after the base slot
+  for (let i = baseSlot + 1; i < 12; i++) {
+    // Calculate how much darker this slot should be compared to the base
+    const darknessStep = (i - baseSlot) / (12 - baseSlot);
+    // Decrease lightness proportionally, reaching near 0.0 (but not quite black)
+    const lightnessFactor = Math.max(0.05, hsl.l * (1 - darknessStep));
     
     const rgb = hslToRgb(hsl.h, hsl.s, lightnessFactor);
     slots[i] = rgbToHex(rgb.r, rgb.g, rgb.b);
