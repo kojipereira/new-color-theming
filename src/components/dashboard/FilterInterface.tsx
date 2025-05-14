@@ -21,7 +21,7 @@ export default function FilterInterface() {
             className={cn(
               "flex-1 py-3 px-4 text-center rounded-md",
               timeRange === '30' 
-                ? 'bg-primary/10 text-primary' 
+                ? 'bg-highlight text-highlight-foreground' 
                 : 'bg-white text-foreground/70'
             )}
             onClick={() => setTimeRange('30')}
@@ -32,7 +32,7 @@ export default function FilterInterface() {
             className={cn(
               "flex-1 py-3 px-4 text-center rounded-md",
               timeRange === '60' 
-                ? 'bg-primary/10 text-primary' 
+                ? 'bg-highlight text-highlight-foreground' 
                 : 'bg-white text-foreground/70'
             )}
             onClick={() => setTimeRange('60')}
@@ -43,7 +43,7 @@ export default function FilterInterface() {
             className={cn(
               "flex-1 py-3 px-4 text-center rounded-md",
               timeRange === '180' 
-                ? 'bg-primary/10 text-primary' 
+                ? 'bg-highlight text-highlight-foreground' 
                 : 'bg-white text-foreground/70'
             )}
             onClick={() => setTimeRange('180')}
@@ -78,6 +78,7 @@ export default function FilterInterface() {
         <Switch 
           checked={showNull}
           onCheckedChange={setShowNull}
+          className="data-[state=checked]:bg-highlight"
         />
       </div>
 
@@ -87,7 +88,7 @@ export default function FilterInterface() {
         <div className="relative mb-2">
           <div className="w-full h-2 bg-secondary rounded-lg">
             <div 
-              className="absolute h-2 bg-primary rounded-l-lg" 
+              className="absolute h-2 bg-highlight rounded-l-lg" 
               style={{ width: `${volumeValue}%` }}
             ></div>
           </div>
@@ -101,7 +102,7 @@ export default function FilterInterface() {
           />
           <div 
             style={{ left: `${volumeValue}%` }}
-            className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-5 h-5 bg-background border-2 border-primary rounded-full"
+            className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-5 h-5 bg-background border-2 border-highlight rounded-full"
           />
         </div>
         <div className="flex justify-between text-sm text-foreground/70">
@@ -133,7 +134,7 @@ export default function FilterInterface() {
       </div>
 
       {/* Apply Button */}
-      <Button className="w-32">
+      <Button className="w-32 bg-highlight hover:bg-highlight-hover text-highlight-foreground">
         Apply
       </Button>
     </div>
