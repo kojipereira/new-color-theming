@@ -1,7 +1,8 @@
 
-import React, { useState, useCallback } from "react";
-import { Paintbrush, Circle } from "lucide-react";
+import React, { useState, useCallback, useEffect } from "react";
+import { Paintbrush, AlertTriangle } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
+import { meetsAccessibilityStandards } from "@/lib/utils";
 import { ColorSelector } from "./ColorSelector";
 import {
   DropdownMenu,
@@ -10,11 +11,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const ColorPicker: React.FC = () => {
   const [color, setColor] = useState("#898989");
   const [colorSlots, setColorSlots] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [hasContrastIssue, setHasContrastIssue] = useState(false);
+
+  const checkContrastIssue = useCallback((slots: string[]) => {
+    if (!slots.length) return false;
+    // Check contrast between black text (#000000) and table color (Slot 4, index 3)
+    return !meetsAccessibilityStandards("#000000", slots[3]);
+  }, []);
+
+  // Check contrast when slots change
+  useEffect(() => {
+    setHasContrastIssue(checkContrastIssue(colorSlots));
+  }, [colorSlots, checkContrastIssue]);
 
   const handleColorChange = useCallback((newColor: string) => {
     setColor(newColor);
@@ -42,20 +61,37 @@ const ColorPicker: React.FC = () => {
           Color Theme
         </div>
         
-        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-              <div 
-                className="w-5 h-5 rounded-full border border-gray-300" 
-                style={{ background: color }}
-              />
-              <span className="sr-only">Open color picker</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[300px] p-0" align="end">
-            <ColorSelector color={color} onChange={handleColorChange} onClose={() => setIsOpen(false)} />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-2">
+          {hasContrastIssue && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="cursor-help">
+                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Poor contrast ratio with black text on table color (Slot 4)</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          
+          <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                <div 
+                  className="w-5 h-5 rounded-full border border-gray-300" 
+                  style={{ background: color }}
+                />
+                <span className="sr-only">Open color picker</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[300px] p-0" align="end">
+              <ColorSelector color={color} onChange={handleColorChange} onClose={() => setIsOpen(false)} />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       
       {colorSlots.length > 0 && (
@@ -64,7 +100,7 @@ const ColorPicker: React.FC = () => {
             {colorSlots.map((slotColor, index) => (
               <div 
                 key={`color-slot-${index}`} 
-                className="w-5 h-5 rounded-full border border-gray-300 flex-shrink-0"
+                className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 ${index === 3 && hasContrastIssue ? 'ring-2 ring-amber-500' : ''}`}
                 style={{ backgroundColor: slotColor }}
                 title={`Slot ${index + 1}: ${slotColor}`}
               />
