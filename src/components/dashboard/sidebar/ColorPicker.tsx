@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from "react";
 import { AlertTriangle, Anchor } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
@@ -11,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 
 const ColorPicker: React.FC = () => {
-  const [color, setColor] = useState("#f1f1f1");  // Starting with a much brighter default color
+  const [color, setColor] = useState("#ffffff");  // Starting with white as default color
   const [highlightColor, setHighlightColor] = useState("#7E69AB"); // Default highlight color
   const [colorSlots, setColorSlots] = useState<string[]>([]);
   const [highlightColorSlots, setHighlightColorSlots] = useState<string[]>([]);
@@ -404,4 +403,3 @@ const ColorPicker: React.FC = () => {
 };
 
 export default ColorPicker;
-
