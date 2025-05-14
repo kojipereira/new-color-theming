@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from "react";
 import { AlertTriangle, Anchor } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
@@ -7,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
 
 const ColorPicker: React.FC = () => {
   const [color, setColor] = useState("#f1f1f1");  // Starting with a much brighter default color
@@ -20,6 +22,8 @@ const ColorPicker: React.FC = () => {
   const [baseSlotIndex, setBaseSlotIndex] = useState<number>(-1);
   const [highlightBaseSlotIndex, setHighlightBaseSlotIndex] = useState<number>(-1);
   const [colorMatch, setColorMatch] = useState(false);
+  const [closestColorIndex, setClosestColorIndex] = useState<number>(-1);
+  const { toast } = useToast();
 
   const checkColorThemeContrast = useCallback((slots: string[]) => {
     if (!slots.length) return false;
@@ -34,6 +38,48 @@ const ColorPicker: React.FC = () => {
     const colorToCheck = colorMatch && index !== 5 ? slots[index] : slots[5];
     return !meetsAccessibilityStandards("#FFFFFF", colorToCheck);
   }, [colorMatch]);
+
+  // Find the closest color in the palette to the target color
+  const findClosestColorIndex = useCallback((palette: string[], targetColor: string): number => {
+    const targetRgb = hexToRgb(targetColor);
+    if (!targetRgb || !palette.length) return -1;
+    
+    let closestIndex = 0;
+    let smallestDistance = Number.MAX_VALUE;
+    
+    palette.forEach((color, index) => {
+      const paletteRgb = hexToRgb(color);
+      if (!paletteRgb) return;
+      
+      // Calculate color distance using Euclidean distance in RGB space
+      const distance = Math.sqrt(
+        Math.pow(targetRgb.r - paletteRgb.r, 2) +
+        Math.pow(targetRgb.g - paletteRgb.g, 2) +
+        Math.pow(targetRgb.b - paletteRgb.b, 2)
+      );
+      
+      if (distance < smallestDistance) {
+        smallestDistance = distance;
+        closestIndex = index;
+      }
+    });
+    
+    return closestIndex;
+  }, []);
+  
+  // Hex to RGB helper function
+  const hexToRgb = (hex: string) => {
+    // Remove # if present
+    hex = hex.replace(/^#/, '');
+    
+    // Parse hex values
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    
+    return { r, g, b };
+  };
 
   // Generate initial color slots on mount
   useEffect(() => {
@@ -91,43 +137,81 @@ const ColorPicker: React.FC = () => {
 
   const handleHighlightColorChange = useCallback((newColor: string) => {
     setHighlightColor(newColor);
-    const slots = generateColorSlots(newColor);
-    setHighlightColorSlots(slots);
     
-    // Find the base slot for the new highlight color
-    const baseIndex = slots.findIndex(slot => slot.toLowerCase() === newColor.toLowerCase());
-    setHighlightBaseSlotIndex(baseIndex);
-
-    // Apply the highlight colors to the system
-    if (colorMatch) {
-      // Use exact color when color match is enabled
+    // Find closest color in the current palette if color match is enabled
+    if (colorMatch && highlightColorSlots.length > 0) {
+      const closestIndex = findClosestColorIndex(highlightColorSlots, newColor);
+      setClosestColorIndex(closestIndex);
+      
+      // Create a new palette by modifying the closest color
+      const newPalette = [...highlightColorSlots];
+      newPalette[closestIndex] = newColor;
+      setHighlightColorSlots(newPalette);
+      
+      // Show toast notification
+      toast({
+        title: "Color Match",
+        description: `Replaced color at position ${closestIndex + 1} with your selection`,
+      });
+      
+      // Apply the highlight colors to the system
       document.documentElement.style.setProperty('--highlight-color', newColor);
-      document.documentElement.style.setProperty('--highlight-hover-color', slots[baseIndex + 1] || slots[slots.length - 1]); // Use next slot or last slot for hover
-      document.documentElement.style.setProperty('--highlight-darker', slots[7] || slots[baseIndex + 2] || slots[slots.length - 1]); // Slot 7 for darker hover effects
+      document.documentElement.style.setProperty('--highlight-hover-color', newPalette[closestIndex + 1] || newPalette[newPalette.length - 1]);
+      document.documentElement.style.setProperty('--highlight-darker', newPalette[7] || newPalette[closestIndex + 2] || newPalette[newPalette.length - 1]);
+      document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF');
+      
+      // Check contrast with the new color
+      setHasHighlightContrastIssue(checkHighlightContrast(newPalette, closestIndex));
     } else {
-      // Use optimized slots for better contrast
-      document.documentElement.style.setProperty('--highlight-color', slots[5]); // Medium-bright color for highlights
-      document.documentElement.style.setProperty('--highlight-hover-color', slots[6]); // Slightly darker for hover states
-      document.documentElement.style.setProperty('--highlight-darker', slots[7]); // Even darker for stronger hover effects
-    }
-    document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF'); // White text on highlight color
+      // Standard behavior when color match is disabled
+      const slots = generateColorSlots(newColor);
+      setHighlightColorSlots(slots);
+      
+      // Find the base slot for the new highlight color
+      const baseIndex = slots.findIndex(slot => slot.toLowerCase() === newColor.toLowerCase());
+      setHighlightBaseSlotIndex(baseIndex);
+      setClosestColorIndex(-1); // Reset closest color index
 
-    // Check contrast after changing color
-    setHasHighlightContrastIssue(checkHighlightContrast(slots, colorMatch ? baseIndex : 5));
-  }, [colorMatch, checkHighlightContrast]);
+      // Apply the highlight colors to the system
+      if (colorMatch) {
+        // Use exact color when color match is enabled
+        document.documentElement.style.setProperty('--highlight-color', newColor);
+        document.documentElement.style.setProperty('--highlight-hover-color', slots[baseIndex + 1] || slots[slots.length - 1]); // Use next slot or last slot for hover
+        document.documentElement.style.setProperty('--highlight-darker', slots[7] || slots[baseIndex + 2] || slots[slots.length - 1]); // Slot 7 for darker hover effects
+      } else {
+        // Use optimized slots for better contrast
+        document.documentElement.style.setProperty('--highlight-color', slots[5]); // Medium-bright color for highlights
+        document.documentElement.style.setProperty('--highlight-hover-color', slots[6]); // Slightly darker for hover states
+        document.documentElement.style.setProperty('--highlight-darker', slots[7]); // Even darker for stronger hover effects
+      }
+      document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF'); // White text on highlight color
+
+      // Check contrast after changing color
+      setHasHighlightContrastIssue(checkHighlightContrast(slots, colorMatch ? baseIndex : 5));
+    }
+  }, [colorMatch, checkHighlightContrast, highlightColorSlots, findClosestColorIndex, toast]);
 
   // Update highlight colors when color match toggle changes
   useEffect(() => {
     if (highlightColorSlots.length > 0) {
       if (colorMatch) {
+        // Find the closest color to the current highlight color
+        const closestIndex = findClosestColorIndex(highlightColorSlots, highlightColor);
+        setClosestColorIndex(closestIndex);
+        
+        // Create a new palette with the highlight color replacing the closest color
+        const newPalette = [...highlightColorSlots];
+        newPalette[closestIndex] = highlightColor;
+        setHighlightColorSlots(newPalette);
+        
         // Use exact color when color match is enabled
         document.documentElement.style.setProperty('--highlight-color', highlightColor);
         
         // Find the next darker slot or use the last one
-        const nextSlotIndex = highlightBaseSlotIndex + 1;
-        const hoverColor = nextSlotIndex < highlightColorSlots.length 
-          ? highlightColorSlots[nextSlotIndex] 
-          : highlightColorSlots[highlightColorSlots.length - 1];
+        const nextSlotIndex = closestIndex + 1;
+        const hoverColor = nextSlotIndex < newPalette.length 
+          ? newPalette[nextSlotIndex] 
+          : newPalette[newPalette.length - 1];
           
         document.documentElement.style.setProperty('--highlight-hover-color', hoverColor);
         
@@ -135,24 +219,41 @@ const ColorPicker: React.FC = () => {
         const darkerSlotIndex = 7;
         document.documentElement.style.setProperty(
           '--highlight-darker', 
-          highlightColorSlots[darkerSlotIndex] || 
-            highlightColorSlots[highlightBaseSlotIndex + 2] || 
-            highlightColorSlots[highlightColorSlots.length - 1]
+          newPalette[darkerSlotIndex] || 
+            newPalette[closestIndex + 2] || 
+            newPalette[newPalette.length - 1]
         );
+        
+        // Show toast notification
+        toast({
+          title: "Color Match Enabled",
+          description: `Replaced color at position ${closestIndex + 1} with your highlight color`,
+        });
       } else {
+        // Reset closest color index when turning off color match
+        setClosestColorIndex(-1);
+        
+        // Regenerate the original color slots
+        const slots = generateColorSlots(highlightColor);
+        setHighlightColorSlots(slots);
+        
+        // Find the base slot for the highlight color
+        const baseIndex = slots.findIndex(slot => slot.toLowerCase() === highlightColor.toLowerCase());
+        setHighlightBaseSlotIndex(baseIndex);
+        
         // Use optimized slots for better contrast
-        document.documentElement.style.setProperty('--highlight-color', highlightColorSlots[5]);
-        document.documentElement.style.setProperty('--highlight-hover-color', highlightColorSlots[6]);
-        document.documentElement.style.setProperty('--highlight-darker', highlightColorSlots[7]);
+        document.documentElement.style.setProperty('--highlight-color', slots[5]);
+        document.documentElement.style.setProperty('--highlight-hover-color', slots[6]);
+        document.documentElement.style.setProperty('--highlight-darker', slots[7]);
       }
       
       // Check contrast when toggling color match
       setHasHighlightContrastIssue(checkHighlightContrast(
         highlightColorSlots, 
-        colorMatch ? highlightBaseSlotIndex : 5
+        colorMatch ? (closestColorIndex !== -1 ? closestColorIndex : highlightBaseSlotIndex) : 5
       ));
     }
-  }, [colorMatch, highlightColor, highlightColorSlots, highlightBaseSlotIndex, checkHighlightContrast]);
+  }, [colorMatch, highlightColor, highlightColorSlots, highlightBaseSlotIndex, checkHighlightContrast, findClosestColorIndex, closestColorIndex, toast]);
 
   return <div className="rounded-md bg-white w-full overflow-hidden py-4 mb-2 px-[8px]">
       <div className="flex min-h-6 w-full items-center gap-2 px-2">
@@ -260,16 +361,18 @@ const ColorPicker: React.FC = () => {
               <div 
                 key={`highlight-slot-${index}`} 
                 className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 relative ${
-                  (colorMatch && index === highlightBaseSlotIndex && hasHighlightContrastIssue) || 
+                  (colorMatch && index === closestColorIndex && hasHighlightContrastIssue) || 
                   (!colorMatch && index === 5 && hasHighlightContrastIssue) 
                     ? 'ring-2 ring-amber-500' : ''
                 } ${
                   index === 7 ? 'ring-1 ring-blue-500' : ''
+                } ${
+                  colorMatch && index === closestColorIndex ? 'ring-2 ring-highlight-hover' : ''
                 }`} 
                 style={{ backgroundColor: slotColor }} 
-                title={`Slot ${index + 1}: ${slotColor}${index === 7 ? ' (Darker Hover Effect)' : ''}`}
+                title={`Slot ${index + 1}: ${slotColor}${index === 7 ? ' (Darker Hover Effect)' : ''}${colorMatch && index === closestColorIndex ? ' (Color Match)' : ''}`}
               >
-                {index === highlightBaseSlotIndex && (
+                {(index === highlightBaseSlotIndex && !colorMatch) || (colorMatch && index === closestColorIndex) ? (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -278,11 +381,11 @@ const ColorPicker: React.FC = () => {
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Base color position</p>
+                        <p>{colorMatch && index === closestColorIndex ? 'Color Match position' : 'Base color position'}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                )}
+                ) : null}
               </div>
             ))}
           </div>
@@ -301,3 +404,4 @@ const ColorPicker: React.FC = () => {
 };
 
 export default ColorPicker;
+
