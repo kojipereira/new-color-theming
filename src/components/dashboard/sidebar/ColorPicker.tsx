@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { BaseColorPicker } from "./color-picker/BaseColorPicker";
 import { HighlightColorPicker } from "./color-picker/HighlightColorPicker";
 import { ColorMatchToggle } from "./color-picker/ColorMatchToggle";
-import { useColorState, useHighlightColorState } from "@/hooks/useColorState";
+import { useBaseColorState, useHighlightColorState } from "@/hooks/useColorState";
 
 const ColorPicker: React.FC = () => {
   // Use our custom hooks to manage state
@@ -15,7 +15,7 @@ const ColorPicker: React.FC = () => {
     isOpen,
     setIsOpen,
     handleColorChange
-  } = useColorState();
+  } = useBaseColorState();
   
   const {
     highlightColor,
