@@ -22,8 +22,11 @@ const ColorPicker: React.FC = () => {
     setColorSlots(slots);
     
     // Apply the colors to the system
-    document.documentElement.style.setProperty('--outline-color', slots[4]); // Slot 5 (index 4) for outlines
+    document.documentElement.style.setProperty('--card-color', slots[0]); // Slot 1 (index 0) for cards
     document.documentElement.style.setProperty('--background-color', slots[2]); // Slot 3 (index 2) for backgrounds
+    document.documentElement.style.setProperty('--table-color', slots[3]); // Slot 4 (index 3) for tables
+    document.documentElement.style.setProperty('--outline-color', slots[4]); // Slot 5 (index 4) for outlines
+
 
     toast({
       title: "Color palette updated",

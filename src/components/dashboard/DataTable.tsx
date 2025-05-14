@@ -69,8 +69,8 @@ const DataTable: React.FC = () => {
   }, [isEditing]);
 
   // CSS styles for table elements using CSS variables
-  const headerBgStyle = { background: "var(--background-color)" };
-  const leftColumnStyle = { background: "var(--background-color)" };
+  const headerBgStyle = { background: "var(--table-color)" };
+  const leftColumnStyle = { background: "var(--table-color)" };
 
   return <Card className="w-[600px] shadow-sm">
       <CardHeader className={`${title ? 'pb-2' : isHovering ? 'pb-2' : 'p-0'}`}>
