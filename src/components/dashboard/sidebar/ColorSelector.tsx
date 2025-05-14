@@ -14,14 +14,16 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
   
   const colorPaletteRef = useRef<HTMLDivElement>(null);
   const hueSliderRef = useRef<HTMLDivElement>(null);
+  const isInitialRender = useRef(true);
 
-  // Convert hex to HSL to initialize the picker
+  // Convert hex to HSL to initialize the picker - only on mount or color prop change
   useEffect(() => {
     const rgb = hexToRgb(color);
     if (!rgb) return;
     
     const hslColor = rgbToHsl(rgb.r, rgb.g, rgb.b);
     setHue(hslColor.h * 360);
+    setSelectedColor(color);
     
     if (colorPaletteRef.current) {
       const width = colorPaletteRef.current.clientWidth;
@@ -41,22 +43,26 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
         `linear-gradient(to top, #000, transparent), 
          linear-gradient(to right, #fff, hsl(${hue}, 100%, 50%))`;
     }
+  }, [hue]);
     
-    // Update the selected color when hue changes
-    if (colorPaletteRef.current) {
-      const rect = colorPaletteRef.current.getBoundingClientRect();
-      const saturation = position.x / rect.width;
-      const lightness = 1 - (position.y / rect.height);
-      
-      // Convert HSL to hex
-      const rgb = hslToRgb(hue / 360, saturation, lightness);
-      const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-      
-      setSelectedColor(hex);
-      
-      // FIXED: Live preview during hue changes
-      onChange(hex);
+  // Update the selected color when hue or position changes
+  useEffect(() => {
+    if (!colorPaletteRef.current || isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
     }
+    
+    const rect = colorPaletteRef.current.getBoundingClientRect();
+    const saturation = position.x / rect.width;
+    const lightness = 1 - (position.y / rect.height);
+    
+    // Convert HSL to hex
+    const rgb = hslToRgb(hue / 360, saturation, lightness);
+    const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+    
+    setSelectedColor(hex);
+    // Live preview color change
+    onChange(hex);
   }, [hue, position, onChange]);
 
   // Handle color palette click/drag
@@ -84,18 +90,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     y = Math.max(0, Math.min(rect.height, y));
     
     setPosition({ x, y });
-    
-    // Calculate color from position
-    const saturation = x / rect.width;
-    const lightness = 1 - (y / rect.height);
-    
-    // Convert HSL to hex
-    const rgb = hslToRgb(hue / 360, saturation, lightness);
-    const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-    
-    setSelectedColor(hex);
-    // FIXED: Live preview during palette drag
-    onChange(hex);
   };
   
   // Handle hue slider click/drag
@@ -121,8 +115,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     // Calculate hue from position
     const newHue = (x / rect.width) * 360;
     setHue(newHue);
-    
-    // Color will be updated via the useEffect
   };
   
   // Start dragging
@@ -161,9 +153,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     onChange(selectedColor);
     if (onClose) onClose();
   };
-
-  // REMOVED: This useEffect is no longer needed since we're updating during drag
-  // The live preview is now handled in the interaction handlers directly
   
   return (
     <div className="p-4 flex flex-col gap-4">
