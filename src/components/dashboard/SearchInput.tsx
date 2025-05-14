@@ -16,7 +16,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   placeholder = "Search..." 
 }) => {
   return (
-    <Card className="w-full mb-4 shadow-sm" style={{ background: "var(--card-color)" }}>
+    <Card className="w-full mb-4 shadow-sm bg-white">
       <CardContent className="py-3">
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-neutral-500" />
@@ -25,7 +25,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="pl-8 text-sm bg-transparent border-neutral-200 focus-visible:ring-blue-500"
+            className="pl-8 text-sm bg-white border-neutral-200 focus-visible:ring-blue-500"
           />
         </div>
       </CardContent>
