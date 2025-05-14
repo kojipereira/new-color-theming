@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useEffect } from "react";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Anchor } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
 import { meetsAccessibilityStandards } from "@/lib/utils";
 import { ColorSelector } from "./ColorSelector";
@@ -23,6 +23,7 @@ const ColorPicker: React.FC = () => {
   const [colorSlots, setColorSlots] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [hasContrastIssue, setHasContrastIssue] = useState(false);
+  const [baseSlotIndex, setBaseSlotIndex] = useState<number>(0);
 
   const checkContrastIssue = useCallback((slots: string[]) => {
     if (!slots.length) return false;
@@ -35,6 +36,10 @@ const ColorPicker: React.FC = () => {
     const initialSlots = generateColorSlots(color);
     setColorSlots(initialSlots);
     setHasContrastIssue(checkContrastIssue(initialSlots));
+    
+    // Find where the base color is
+    const index = initialSlots.findIndex(slot => slot.toLowerCase() === color.toLowerCase());
+    setBaseSlotIndex(index !== -1 ? index : 0);
   }, [checkContrastIssue]);
 
   // Check contrast when slots change
@@ -43,24 +48,30 @@ const ColorPicker: React.FC = () => {
   }, [colorSlots, checkContrastIssue]);
 
   const handleColorChange = useCallback((newColor: string) => {
+    // Don't overwrite color with the same value (helps prevent choppy interaction)
+    if (newColor.toLowerCase() === color.toLowerCase()) {
+      return;
+    }
+    
     setColor(newColor);
     const slots = generateColorSlots(newColor);
     setColorSlots(slots);
     
+    // Find where the base color is in the slots
+    const index = slots.findIndex(slot => slot.toLowerCase() === newColor.toLowerCase());
+    setBaseSlotIndex(index !== -1 ? index : 0);
+    
     // Apply the colors to the system using the appropriate slots
-    // For medium brightness colors, use similar slots as before
-    // For very light or very dark colors, adapt accordingly
-   
-    document.documentElement.style.setProperty('--background-color', slots[0]); // Always use lightest color for background
-    document.documentElement.style.setProperty('--card-color', slots[1]); // Always use light color for cards
-    document.documentElement.style.setProperty('--table-color', slots[2]); // Light-medium color for tables
-    document.documentElement.style.setProperty('--outline-color', slots[4]); // Medium color for outlines
+    document.documentElement.style.setProperty('--background-color', slots[0]); 
+    document.documentElement.style.setProperty('--card-color', slots[1]);
+    document.documentElement.style.setProperty('--table-color', slots[2]);
+    document.documentElement.style.setProperty('--outline-color', slots[4]);
 
     toast({
       title: "Color palette updated",
       description: "New color palette has been applied to the dashboard",
     });
-  }, []);
+  }, [color]);
 
   return (
     <div className="rounded-md bg-white w-full overflow-hidden py-4 mb-2 px-[8px]">
@@ -108,10 +119,17 @@ const ColorPicker: React.FC = () => {
             {colorSlots.map((slotColor, index) => (
               <div 
                 key={`color-slot-${index}`} 
-                className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 ${index === 3 && hasContrastIssue ? 'ring-2 ring-amber-500' : ''}`}
+                className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 relative ${index === 3 && hasContrastIssue ? 'ring-2 ring-amber-500' : ''}`}
                 style={{ backgroundColor: slotColor }}
                 title={`Slot ${index + 1}: ${slotColor}`}
-              />
+              >
+                {index === baseSlotIndex && (
+                  <Anchor 
+                    className="absolute -top-1 -right-1 h-3 w-3 text-blue-600" 
+                    strokeWidth={3}
+                  />
+                )}
+              </div>
             ))}
           </div>
           <div className="text-xs text-gray-500 mt-1">

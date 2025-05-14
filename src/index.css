@@ -137,3 +137,20 @@ rect.recharts-bar-rectangle {
   background-color: var(--table-color);
 }
 
+/* Override input background to always be white */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input:not([type]),
+textarea {
+  background-color: white !important;
+}
+
+/* But keep color input types as they are */
+input[type="color"] {
+  background-color: initial;
+}
