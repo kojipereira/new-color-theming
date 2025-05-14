@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
 import { 
   Tooltip,
   TooltipContent,
@@ -56,10 +55,7 @@ const ColorPicker: React.FC = () => {
     document.documentElement.style.setProperty('--table-color', slots[2]); // Light-medium color for tables
     document.documentElement.style.setProperty('--outline-color', slots[4]); // Medium color for outlines
 
-    toast({
-      title: "Color palette updated",
-      description: "New color palette has been applied to the dashboard",
-    });
+    // Toast notification removed as requested
   }, []);
 
   return (
