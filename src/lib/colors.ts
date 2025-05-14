@@ -1,8 +1,8 @@
+
 /**
  * Generates 12 color slots based on a given color
- * Inspired by Material 3 color system with tonal palettes
- * The provided color will be positioned in slot 6 (index 5)
- * with progressive variations in lightness, saturation, and tone
+ * The provided color will be positioned in a dynamic slot based on its brightness,
+ * with brighter colors placed in lower slots and darker colors in higher slots
  * 
  * @param baseColor - The hex color string to base the slots on
  * @returns Array of 12 hex color strings
@@ -11,36 +11,36 @@ export function generateColorSlots(baseColor: string): string[] {
   // Special case for pure white: generate grayscale palette
   if (baseColor.toLowerCase() === "#ffffff") {
     return [
-      "#FFFFFF", // Pure white - 100
-      "#F8F9FA", // 98
-      "#F1F3F4", // 95
-      "#E8EAED", // 90
-      "#DADCE0", // 80
-      "#C5C9CE", // 70
-      "#AAAFB6", // 60
-      "#8E949E", // 50
-      "#70767E", // 40
-      "#5A6066", // 30
-      "#444A50", // 20
-      "#202124"  // 10 - Very dark gray
+      "#FFFFFF", // Pure white
+      "#F6F6F7", // Very light gray
+      "#F1F1F1", // Light gray
+      "#E6E6E6", 
+      "#D9D9D9",
+      "#C8C8C9", // Light gray
+      "#B0B0B0", 
+      "#9F9EA1", // Silver gray
+      "#8A898C", // Medium gray
+      "#666666", 
+      "#444444",
+      "#222222"  // Very dark gray
     ];
   }
   
   // Special case for pure black: generate grayscale palette
   if (baseColor.toLowerCase() === "#000000") {
     return [
-      "#FFFFFF", // Pure white - 100
-      "#F8F9FA", // 98
-      "#F1F3F4", // 95
-      "#E8EAED", // 90
-      "#DADCE0", // 80
-      "#C5C9CE", // 70
-      "#AAAFB6", // 60
-      "#8E949E", // 50
-      "#70767E", // 40
-      "#5A6066", // 30
-      "#444A50", // 20
-      "#202124"  // 10 - Very dark gray
+      "#FFFFFF", // Pure white
+      "#F6F6F7", // Very light gray
+      "#E6E6E6",
+      "#C8C8C9", // Light gray
+      "#AAADB0", // Cool gray
+      "#9F9EA1", // Silver gray
+      "#8A898C", // Medium gray
+      "#666666",
+      "#444444",
+      "#333333", // Dark gray
+      "#222222", // Dark gray
+      "#000000"  // Pure black
     ];
   }
 
@@ -50,81 +50,49 @@ export function generateColorSlots(baseColor: string): string[] {
   
   const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
   
-  // In Material 3, colors are distributed across a tonal range
-  // We'll use slot 6 (index 5) as our primary color position
-  const baseSlot = 5;
+  // Determine the best slot based on lightness
+  // For very light colors (L > 0.9), use slot 1
+  // For very dark colors (L < 0.1), use slot 12
+  // Otherwise, map lightness to slots 2 through 11
+  let baseSlot: number;
+  
+  if (hsl.l > 0.9) {
+    baseSlot = 0; // Slot 1 (index 0) for very bright colors
+  } else if (hsl.l < 0.1) {
+    baseSlot = 11; // Slot 12 (index 11) for very dark colors
+  } else {
+    // Map lightness from 0.1-0.9 to slots 2-11 (indices 1-10)
+    // Higher lightness = lower slot number
+    baseSlot = Math.round(10 - (hsl.l - 0.1) * (9 / 0.8)) + 1;
+  }
   
   // Create the slots array
   const slots = new Array(12).fill('');
-  slots[baseSlot] = baseColor; // Place the base color in slot 6
+  slots[baseSlot] = baseColor; // Place the base color in its optimal slot
   
-  // Material 3-inspired tonal mappings (approximate lightness values)
-  // These values create more distinct steps between slots
-  const tonalLightness = [
-    0.98, // Slot 1 - Near white (but not pure white)
-    0.95, // Slot 2 - Very light
-    0.90, // Slot 3 - Light
-    0.80, // Slot 4 - Medium light
-    0.70, // Slot 5 - Below medium light
-    hsl.l, // Slot 6 - Base color (unchanged)
-    Math.max(0.05, hsl.l * 0.85), // Slot 7
-    Math.max(0.05, hsl.l * 0.70), // Slot 8
-    Math.max(0.05, hsl.l * 0.55), // Slot 9
-    Math.max(0.05, hsl.l * 0.40), // Slot 10
-    Math.max(0.05, hsl.l * 0.25), // Slot 11
-    Math.max(0.05, hsl.l * 0.15)  // Slot 12 - Very dark but not pure black
-  ];
-  
-  // Saturation adjustments for more variation
-  // For lighter colors, we'll reduce saturation
-  // For darker colors, we'll boost saturation to maintain vibrancy
-  const tonalSaturation = [
-    Math.max(0.05, hsl.s * 0.25), // Slot 1 - Much less saturated
-    Math.max(0.05, hsl.s * 0.40), // Slot 2 - Less saturated
-    Math.max(0.05, hsl.s * 0.55), // Slot 3
-    Math.max(0.05, hsl.s * 0.70), // Slot 4
-    Math.max(0.05, hsl.s * 0.85), // Slot 5
-    hsl.s,                        // Slot 6 - Base color saturation
-    Math.min(1.0, hsl.s * 1.05),  // Slot 7
-    Math.min(1.0, hsl.s * 1.10),  // Slot 8
-    Math.min(1.0, hsl.s * 1.15),  // Slot 9
-    Math.min(1.0, hsl.s * 1.10),  // Slot 10 - Slightly reduce saturation from peak
-    Math.min(1.0, hsl.s * 1.05),  // Slot 11 - Even less saturation
-    Math.min(1.0, hsl.s * 0.90)   // Slot 12 - Less saturated for dark colors
-  ];
-  
-  // Subtle hue shifts to create more interesting palettes
-  // Material 3 uses slight hue shifts to make the palette more dynamic
-  const hueShift = [
-    -0.02, // Slot 1 - Slightly cooler
-    -0.015, // Slot 2
-    -0.01, // Slot 3
-    -0.005, // Slot 4
-    -0.0025, // Slot 5
-    0,      // Slot 6 - Base color hue
-    0.0025, // Slot 7
-    0.005, // Slot 8
-    0.01, // Slot 9
-    0.015, // Slot 10
-    0.02, // Slot 11
-    0.025  // Slot 12 - Slightly warmer
-  ];
-  
-  // Generate all color slots
-  for (let i = 0; i < 12; i++) {
-    if (i === baseSlot) continue; // Skip the base slot as we already set it
+  // Generate brighter colors for slots before the base slot
+  for (let i = baseSlot - 1; i >= 0; i--) {
+    // Calculate how much brighter this slot should be compared to the base
+    const brightnessStep = (baseSlot - i) / baseSlot;
+    // Increase lightness proportionally, maxing out near 1.0 (but not quite white)
+    const lightnessFactor = Math.min(0.95, hsl.l + (0.95 - hsl.l) * brightnessStep);
+    // For darker base colors, also reduce saturation as we get lighter
+    const saturationFactor = hsl.l < 0.3 
+      ? Math.max(0.1, hsl.s * (1 - brightnessStep / 2))
+      : hsl.s;
     
-    // Apply the adjusted hue, saturation and lightness
-    let adjustedHue = hsl.h + hueShift[i];
-    // Normalize hue to be between 0 and 1
-    adjustedHue = adjustedHue < 0 ? adjustedHue + 1 : adjustedHue > 1 ? adjustedHue - 1 : adjustedHue;
+    const rgb = hslToRgb(hsl.h, saturationFactor, lightnessFactor);
+    slots[i] = rgbToHex(rgb.r, rgb.g, rgb.b);
+  }
+  
+  // Generate darker colors for slots after the base slot
+  for (let i = baseSlot + 1; i < 12; i++) {
+    // Calculate how much darker this slot should be compared to the base
+    const darknessStep = (i - baseSlot) / (12 - baseSlot);
+    // Decrease lightness proportionally, reaching near 0.0 (but not quite black)
+    const lightnessFactor = Math.max(0.05, hsl.l * (1 - darknessStep));
     
-    const rgb = hslToRgb(
-      adjustedHue,
-      tonalSaturation[i], 
-      tonalLightness[i]
-    );
-    
+    const rgb = hslToRgb(hsl.h, hsl.s, lightnessFactor);
     slots[i] = rgbToHex(rgb.r, rgb.g, rgb.b);
   }
   
@@ -196,9 +164,9 @@ function hslToRgb(h: number, s: number, l: number): { r: number, g: number, b: n
   }
   
   return {
-    r: Math.round(r * 255),
-    g: Math.round(g * 255),
-    b: Math.round(b * 255)
+    r: r * 255,
+    g: g * 255,
+    b: b * 255
   };
 }
 
