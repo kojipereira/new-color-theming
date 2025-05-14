@@ -7,6 +7,7 @@ import AdvancedSettings from "./AdvancedSettings";
 import AdvancedSectionRenderer from "./AdvancedSectionRenderer";
 import SidebarSections from "./SidebarSections";
 import ColorPicker from "./ColorPicker";
+import SecondaryColorPicker from "./SecondaryColorPicker";
 import { useSidebarState } from "./hooks/useSidebarState";
 import { useSidebarDragDrop } from "./hooks/useSidebarDragDrop";
 import { useSidebarScroll } from "./hooks/useSidebarScroll";
@@ -98,8 +99,11 @@ const SidebarMain: React.FC = () => {
                 showStickyPanel={showStickyPanel}
               />
               
-              {/* Add the ColorPicker component here */}
+              {/* Primary ColorPicker */}
               <ColorPicker />
+              
+              {/* Secondary ColorPicker */}
+              <SecondaryColorPicker />
               
               {!showStickyAdvancedSettings && (
                 <AdvancedSettings 
