@@ -13,7 +13,7 @@ export default function FilterInterface() {
   const [maxPrice, setMaxPrice] = useState('');
 
   return (
-    <div className="p-4 bg-background rounded-lg border border-border mt-4">
+    <div className="p-4 bg-card rounded-lg border border-border mt-4">
       {/* Time Range Selector */}
       <div className="mb-8">
         <div className="flex rounded-md overflow-hidden border border-border p-1 bg-white">
