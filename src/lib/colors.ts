@@ -1,4 +1,3 @@
-
 /**
  * Generates 12 color slots based on a given color
  * The provided color will be positioned in a dynamic slot based on its brightness,
@@ -50,7 +49,7 @@ export function generateColorSlots(baseColor: string): string[] {
   
   const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
   
-  // Determine the best slot based on lightness
+  // Determine the best slot based on perceived brightness
   // For very light colors (L > 0.9), use slot 1
   // For very dark colors (L < 0.1), use slot 12
   // Otherwise, map lightness to slots 2 through 11
@@ -62,7 +61,6 @@ export function generateColorSlots(baseColor: string): string[] {
     baseSlot = 11; // Slot 12 (index 11) for very dark colors
   } else {
     // Map lightness from 0.1-0.9 to slots 2-11 (indices 1-10)
-    // Higher lightness = lower slot number
     baseSlot = Math.round(10 - (hsl.l - 0.1) * (9 / 0.8)) + 1;
   }
   
@@ -72,28 +70,91 @@ export function generateColorSlots(baseColor: string): string[] {
   
   // Generate brighter colors for slots before the base slot
   for (let i = baseSlot - 1; i >= 0; i--) {
-    // Make earlier slots much brighter (enhance brightness)
-    const brightnessStep = (baseSlot - i) / baseSlot;
-    // Increase lightness more aggressively for first slots, maxing out near 1.0
-    const lightnessBias = i < 2 ? 0.15 : 0; // Extra brightness boost for first two slots
-    const lightnessFactor = Math.min(0.98, hsl.l + (0.98 - hsl.l) * brightnessStep + lightnessBias);
-    // For darker base colors, also reduce saturation as we get lighter
-    const saturationFactor = hsl.l < 0.3 
-      ? Math.max(0.1, hsl.s * (1 - brightnessStep / 2))
-      : Math.min(hsl.s, hsl.s * (1 - brightnessStep / 4)); // Slightly reduce saturation for brighter colors
+    // Calculate brightness multiplier based on position
+    const positionFactor = (baseSlot - i) / baseSlot;
     
-    const rgb = hslToRgb(hsl.h, saturationFactor, lightnessFactor);
+    // Apply different multipliers for different color types
+    let lightnessIncrease: number;
+    let saturationChange: number;
+    
+    // For vibrant colors (high saturation), preserve more saturation while increasing lightness
+    if (hsl.s > 0.7) {
+      lightnessIncrease = 0.08 + (positionFactor * 0.07); // Gentler lightness increase
+      saturationChange = -0.05 * positionFactor; // Slight decrease in saturation
+    }
+    // For medium saturation colors
+    else if (hsl.s > 0.3) {
+      lightnessIncrease = 0.09 + (positionFactor * 0.08);
+      saturationChange = -0.1 * positionFactor; // More decrease in saturation
+    }
+    // For muted colors (low saturation)
+    else {
+      lightnessIncrease = 0.1 + (positionFactor * 0.09);
+      saturationChange = 0; // Keep saturation similar for already muted colors
+    }
+    
+    // Apply exponential curve to lightness for more natural progression
+    const exponentialFactor = Math.pow(positionFactor, 0.8); // Less aggressive curve
+    lightnessIncrease = lightnessIncrease * exponentialFactor;
+    
+    // Extra boost for first two slots to ensure they're bright enough
+    if (i < 2) {
+      lightnessIncrease += 0.05;
+    }
+    
+    // Ensure we never go over 1.0 lightness
+    const newLightness = Math.min(0.98, hsl.l + lightnessIncrease);
+    
+    // Apply saturation changes based on color type
+    let newSaturation = Math.max(0, Math.min(1, hsl.s + saturationChange));
+    
+    // For very light colors, reduce saturation more aggressively
+    if (newLightness > 0.9) {
+      newSaturation = Math.max(0.02, newSaturation * 0.7);
+    }
+    
+    const rgb = hslToRgb(hsl.h, newSaturation, newLightness);
     slots[i] = rgbToHex(rgb.r, rgb.g, rgb.b);
   }
   
   // Generate darker colors for slots after the base slot
   for (let i = baseSlot + 1; i < 12; i++) {
-    // Calculate how much darker this slot should be compared to the base
-    const darknessStep = (i - baseSlot) / (12 - baseSlot);
-    // Decrease lightness proportionally, reaching near 0.0 (but not quite black)
-    const lightnessFactor = Math.max(0.05, hsl.l * (1 - darknessStep));
+    // Calculate darkness multiplier based on position
+    const positionFactor = (i - baseSlot) / (12 - baseSlot);
     
-    const rgb = hslToRgb(hsl.h, hsl.s, lightnessFactor);
+    // Apply different multipliers for different color types
+    let lightnessFactor: number;
+    let saturationChange: number;
+    
+    // For vibrant colors (high saturation)
+    if (hsl.s > 0.7) {
+      lightnessFactor = hsl.l * (1 - (positionFactor * 0.8)); // Less aggressive darkening
+      saturationChange = 0.05 * positionFactor; // Slight increase in saturation for darker tones
+    }
+    // For medium saturation colors
+    else if (hsl.s > 0.3) {
+      lightnessFactor = hsl.l * (1 - (positionFactor * 0.85));
+      saturationChange = 0.1 * positionFactor; // More increase in saturation
+    }
+    // For muted colors (low saturation)
+    else {
+      lightnessFactor = hsl.l * (1 - (positionFactor * 0.9));
+      saturationChange = 0.15 * positionFactor; // Even more increase in saturation for muted colors
+    }
+    
+    // Apply logarithmic curve for more natural darkening
+    const logCurveFactor = 1 - (Math.log(positionFactor * 9 + 1) / Math.log(10));
+    lightnessFactor = Math.max(0.05, hsl.l * logCurveFactor);
+    
+    // For very dark colors, increase saturation to keep colors vibrant even when dark
+    let newSaturation = Math.min(1, hsl.s + saturationChange);
+    
+    // Lower saturation slightly for very dark colors (near black)
+    if (lightnessFactor < 0.15) {
+      newSaturation = Math.min(newSaturation, newSaturation * 0.9);
+    }
+    
+    const rgb = hslToRgb(hsl.h, newSaturation, lightnessFactor);
     slots[i] = rgbToHex(rgb.r, rgb.g, rgb.b);
   }
   
