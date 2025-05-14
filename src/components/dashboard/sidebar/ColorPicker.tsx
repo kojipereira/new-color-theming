@@ -156,7 +156,7 @@ const ColorPicker: React.FC = () => {
       
       // Apply the highlight colors to the system
       document.documentElement.style.setProperty('--highlight-color', newColor);
-      document.documentElement.style.setProperty('--highlight-hover-color', newPalette[closestIndex + 1] || newPalette[newPalette.length + 1]);
+      document.documentElement.style.setProperty('--highlight-hover-color', newPalette[closestIndex + 1] || newPalette[newPalette.length - 1]);
       document.documentElement.style.setProperty('--highlight-darker', newPalette[7] || newPalette[closestIndex + 2] || newPalette[newPalette.length - 1]);
       document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF');
       
