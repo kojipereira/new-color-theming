@@ -37,10 +37,11 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
     let x = clientX - rect.left;
     let y = clientY - rect.top;
     
-    // Constrain to palette bounds
+    // Constrain to palette bounds (ensure we don't exceed the palette dimensions)
     x = Math.max(0, Math.min(rect.width, x));
     y = Math.max(0, Math.min(rect.height, y));
     
+    // Update the position state to reflect the exact point clicked
     setPosition({ x, y });
   };
   

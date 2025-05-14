@@ -26,7 +26,7 @@ export function useHighlightColorState() {
     const highlightBaseIndex = initialHighlightSlots.findIndex(
       slot => slot.toLowerCase() === highlightColor.toLowerCase()
     );
-    setHighlightBaseSlotIndex(highlightBaseIndex);
+    setHighlightBaseSlotIndex(highlightBaseIndex !== -1 ? highlightBaseIndex : 5);
     
     // Check highlight contrast
     setHasHighlightContrastIssue(checkHighlightContrast(initialHighlightSlots, highlightBaseIndex, false));
