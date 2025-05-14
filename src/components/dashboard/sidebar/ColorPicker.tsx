@@ -40,7 +40,7 @@ const ColorPicker: React.FC = () => {
     document.documentElement.style.setProperty('--background-color', slots[0]); // Always use lightest color for background
     document.documentElement.style.setProperty('--card-color', slots[0]); // Light color for cards
     document.documentElement.style.setProperty('--table-color', slots[2]); // Light-medium color for tables
-    document.documentElement.style.setProperty('--outline-color', slots[4]); // Medium color for outlines
+    document.documentElement.style.setProperty('--outline-color', slots[3]); // Medium color for outlines
 
     // Toast notification removed as requested
   }, []);
