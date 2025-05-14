@@ -7,6 +7,7 @@ import { ColorSelector } from "./ColorSelector";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Switch } from "@/components/ui/switch";
 
 const ColorPicker: React.FC = () => {
   const [color, setColor] = useState("#898989");
@@ -18,6 +19,7 @@ const ColorPicker: React.FC = () => {
   const [hasContrastIssue, setHasContrastIssue] = useState(false);
   const [baseSlotIndex, setBaseSlotIndex] = useState<number>(-1);
   const [highlightBaseSlotIndex, setHighlightBaseSlotIndex] = useState<number>(-1);
+  const [colorMatch, setColorMatch] = useState(false);
 
   const checkContrastIssue = useCallback((slots: string[]) => {
     if (!slots.length) return false;
@@ -80,10 +82,39 @@ const ColorPicker: React.FC = () => {
     setHighlightBaseSlotIndex(baseIndex);
 
     // Apply the highlight colors to the system
-    document.documentElement.style.setProperty('--highlight-color', slots[5]); // Medium-bright color for highlights
-    document.documentElement.style.setProperty('--highlight-hover-color', slots[6]); // Slightly darker for hover states
+    if (colorMatch) {
+      // Use exact color when color match is enabled
+      document.documentElement.style.setProperty('--highlight-color', newColor);
+      document.documentElement.style.setProperty('--highlight-hover-color', slots[baseIndex + 1] || slots[slots.length - 1]); // Use next slot or last slot for hover
+    } else {
+      // Use optimized slots for better contrast
+      document.documentElement.style.setProperty('--highlight-color', slots[5]); // Medium-bright color for highlights
+      document.documentElement.style.setProperty('--highlight-hover-color', slots[6]); // Slightly darker for hover states
+    }
     document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF'); // White text on highlight color
-  }, []);
+  }, [colorMatch]);
+
+  // Update highlight colors when color match toggle changes
+  useEffect(() => {
+    if (highlightColorSlots.length > 0) {
+      if (colorMatch) {
+        // Use exact color when color match is enabled
+        document.documentElement.style.setProperty('--highlight-color', highlightColor);
+        
+        // Find the next darker slot or use the last one
+        const nextSlotIndex = highlightBaseSlotIndex + 1;
+        const hoverColor = nextSlotIndex < highlightColorSlots.length 
+          ? highlightColorSlots[nextSlotIndex] 
+          : highlightColorSlots[highlightColorSlots.length - 1];
+          
+        document.documentElement.style.setProperty('--highlight-hover-color', hoverColor);
+      } else {
+        // Use optimized slots for better contrast
+        document.documentElement.style.setProperty('--highlight-color', highlightColorSlots[5]);
+        document.documentElement.style.setProperty('--highlight-hover-color', highlightColorSlots[6]);
+      }
+    }
+  }, [colorMatch, highlightColor, highlightColorSlots, highlightBaseSlotIndex]);
 
   return <div className="rounded-md bg-white w-full overflow-hidden py-4 mb-2 px-[8px]">
       <div className="flex min-h-6 w-full items-center gap-2 px-2">
@@ -199,6 +230,16 @@ const ColorPicker: React.FC = () => {
             ))}
           </div>
         </div>}
+        
+      {/* Color Match Toggle */}
+      <div className="flex items-center justify-between mt-4 px-2">
+        <span className="text-sm text-neutral-900 font-medium">Color Match</span>
+        <Switch 
+          checked={colorMatch}
+          onCheckedChange={setColorMatch}
+          className="data-[state=checked]:bg-highlight"
+        />
+      </div>
     </div>;
 };
 
