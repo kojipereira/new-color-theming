@@ -1,15 +1,17 @@
+
 import React from "react";
+import Header from "./Header";
+import Canvas from "./Canvas";
 import Sidebar from "./Sidebar";
-import DashboardLayout from "./DashboardLayout";
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="flex h-screen overflow-hidden">
-      <div className="w-64 h-full bg-sidebar border-r border-sidebar-border">
+    <div className="bg-[rgba(247,247,247,1)] overflow-hidden rounded-lg flex flex-col h-screen">
+      <Header />
+      <div className="bg-neutral-200 w-full h-px" />
+      <div className="flex flex-1 overflow-hidden">
+        <Canvas />
         <Sidebar />
-      </div>
-      <div className="flex-1 overflow-auto">
-        <DashboardLayout />
       </div>
     </div>
   );

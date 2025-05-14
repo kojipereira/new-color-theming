@@ -56,12 +56,6 @@
     --outline-color: #e0e0e0;
     --background-color: #f5f5f5;
     --table-color: #f0f0f0;
-    
-    /* Secondary color slots system */
-    --secondary-card-color: #E5DEFF;
-    --secondary-outline-color: #9b87f5;
-    --secondary-background-color: #F1F0FB;
-    --secondary-table-color: #D6BCFA;
   }
 
   .dark {
@@ -106,12 +100,6 @@
     --outline-color: #3a3a3a;
     --background-color: #1a1a1a;
     --table-color: #252525;
-    
-    /* Secondary color slots system - dark mode */
-    --secondary-card-color: #1A1F2C;
-    --secondary-outline-color: #8B5CF6;
-    --secondary-background-color: #221F26;
-    --secondary-table-color: #7E69AB;
   }
 }
 
@@ -149,20 +137,3 @@ rect.recharts-bar-rectangle {
   background-color: var(--table-color);
 }
 
-/* Secondary color theming for controls */
-.bg-secondary-outline-color {
-  background-color: var(--secondary-outline-color);
-}
-
-.hover\:bg-secondary-outline-color\/90:hover {
-  background-color: color-mix(in srgb, var(--secondary-outline-color) 90%, transparent);
-}
-
-/* Slider theming */
-.data-\[state\=checked\]\:bg-secondary-outline-color[data-state=checked] {
-  background-color: var(--secondary-outline-color);
-}
-
-.data-\[state\=checked\]\:border-secondary-outline-color[data-state=checked] {
-  border-color: var(--secondary-outline-color);
-}

@@ -41,20 +41,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
         `linear-gradient(to top, #000, transparent), 
          linear-gradient(to right, #fff, hsl(${hue}, 100%, 50%))`;
     }
-    
-    // Update the selected color when hue changes
-    if (colorPaletteRef.current) {
-      const rect = colorPaletteRef.current.getBoundingClientRect();
-      const saturation = position.x / rect.width;
-      const lightness = 1 - (position.y / rect.height);
-      
-      // Convert HSL to hex
-      const rgb = hslToRgb(hue / 360, saturation, lightness);
-      const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-      
-      setSelectedColor(hex);
-    }
-  }, [hue, position]);
+  }, [hue]);
 
   // Handle color palette click/drag
   const handleColorPaletteInteraction = (e: React.MouseEvent | React.TouchEvent) => {
@@ -142,7 +129,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
       document.removeEventListener('touchmove', handleMove);
       document.removeEventListener('touchend', handleEnd);
       
-      // Apply final color when drag ends
+      // Apply final color only when drag ends
       onChange(selectedColor);
     };
     
@@ -157,16 +144,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     onChange(selectedColor);
     if (onClose) onClose();
   };
-
-  // Update when hue changes
-  useEffect(() => {
-    // Live preview the color as user drags the hue slider
-    const previewDebounce = setTimeout(() => {
-      onChange(selectedColor);
-    }, 100);
-    
-    return () => clearTimeout(previewDebounce);
-  }, [selectedColor, onChange]);
   
   return (
     <div className="p-4 flex flex-col gap-4">
