@@ -11,7 +11,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
   const [hue, setHue] = useState(0);
   const [selectedColor, setSelectedColor] = useState(color);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
   
   const colorPaletteRef = useRef<HTMLDivElement>(null);
   const hueSliderRef = useRef<HTMLDivElement>(null);
@@ -58,7 +57,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
   }, [hue, position]);
 
   // Handle color palette click/drag
-  const handleColorPaletteInteraction = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
+  const handleColorPaletteInteraction = (e: React.MouseEvent | React.TouchEvent) => {
     if (!colorPaletteRef.current) return;
     
     const rect = colorPaletteRef.current.getBoundingClientRect();
@@ -95,7 +94,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
   };
   
   // Handle hue slider click/drag
-  const handleHueSliderInteraction = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
+  const handleHueSliderInteraction = (e: React.MouseEvent | React.TouchEvent) => {
     if (!hueSliderRef.current) return;
     
     const rect = hueSliderRef.current.getBoundingClientRect();
@@ -124,8 +123,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     handler: (e: MouseEvent | TouchEvent) => void,
     event: React.MouseEvent | React.TouchEvent
   ) => {
-    setIsDragging(true);
-    
     // Call handler immediately with the initial event
     if ('touches' in event) {
       handler(event.nativeEvent);
@@ -145,8 +142,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
       document.removeEventListener('touchmove', handleMove);
       document.removeEventListener('touchend', handleEnd);
       
-      // Apply final color when drag ends and change dragging state
-      setIsDragging(false);
+      // Apply final color when drag ends
       onChange(selectedColor);
     };
     
@@ -162,43 +158,15 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     if (onClose) onClose();
   };
 
-  // Update color preview - use a limited update rate during drag to prevent choppy interaction
+  // Update when hue changes
   useEffect(() => {
-    // Skip live updates during dragging to prevent erratic behavior
-    if (isDragging) return;
-    
-    // Live preview the color after user stops dragging
+    // Live preview the color as user drags the hue slider
     const previewDebounce = setTimeout(() => {
       onChange(selectedColor);
-    }, 200); // Increased debounce time
+    }, 100);
     
     return () => clearTimeout(previewDebounce);
-  }, [selectedColor, onChange, isDragging]);
-  
-  // Handle direct hex input with validation
-  const handleHexInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    setSelectedColor(input);
-    
-    // Only update if it's a valid hex color
-    if (/^#[0-9A-F]{6}$/i.test(input)) {
-      const rgb = hexToRgb(input);
-      if (rgb) {
-        const hslColor = rgbToHsl(rgb.r, rgb.g, rgb.b);
-        setHue(hslColor.h * 360);
-        
-        if (colorPaletteRef.current) {
-          const width = colorPaletteRef.current.clientWidth;
-          const height = colorPaletteRef.current.clientHeight;
-          
-          setPosition({
-            x: width * hslColor.s,
-            y: height * (1 - hslColor.l)
-          });
-        }
-      }
-    }
-  };
+  }, [selectedColor, onChange]);
   
   return (
     <div className="p-4 flex flex-col gap-4">
@@ -214,7 +182,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
             <input
               type="text"
               value={selectedColor}
-              onChange={handleHexInput}
+              onChange={(e) => setSelectedColor(e.target.value)}
               onBlur={() => {
                 // Validate if input is a valid hex color
                 if (/^#[0-9A-F]{6}$/i.test(selectedColor)) {
