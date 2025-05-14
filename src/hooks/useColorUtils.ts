@@ -1,19 +1,19 @@
 
 import { useCallback } from "react";
-import { hexToRgb } from "@/lib/colors";
+import { ColorUtils } from "@/lib/colorUtils";
 import { meetsAccessibilityStandards } from "@/lib/utils";
 
 // Find the closest color in the palette to the target color
 export const useFindClosestColorIndex = () => {
   return useCallback((palette: string[], targetColor: string): number => {
-    const targetRgb = hexToRgb(targetColor);
+    const targetRgb = ColorUtils.hexToRgb(targetColor);
     if (!targetRgb || !palette.length) return -1;
     
     let closestIndex = 0;
     let smallestDistance = Number.MAX_VALUE;
     
     palette.forEach((color, index) => {
-      const paletteRgb = hexToRgb(color);
+      const paletteRgb = ColorUtils.hexToRgb(color);
       if (!paletteRgb) return;
       
       // Calculate color distance using Euclidean distance in RGB space
