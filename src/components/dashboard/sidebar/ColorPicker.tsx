@@ -50,8 +50,8 @@ const ColorPicker: React.FC = () => {
     // Apply the colors to the system using the appropriate slots
     // For medium brightness colors, use similar slots as before
     // For very light or very dark colors, adapt accordingly
-    document.documentElement.style.setProperty('--card-color', slots[0]); // Always use lightest color for cards
-    document.documentElement.style.setProperty('--background-color', slots[1]); // Light color for backgrounds
+    document.documentElement.style.setProperty('--background-color', slots[0]); // Always use lightest color for backgrounds
+    document.documentElement.style.setProperty('--card-color', slots[1]); // Light color for card
     document.documentElement.style.setProperty('--table-color', slots[2]); // Light-medium color for tables
     document.documentElement.style.setProperty('--outline-color', slots[4]); // Medium color for outlines
 
