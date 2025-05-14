@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from "react";
 import { AlertTriangle, Anchor } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
@@ -8,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
+import ThemeToggle from "./ThemeToggle";
 
 const ColorPicker: React.FC = () => {
   const [color, setColor] = useState("#898989");
@@ -146,9 +146,9 @@ const ColorPicker: React.FC = () => {
     }
   }, [colorMatch, highlightColor, highlightColorSlots, highlightBaseSlotIndex, checkHighlightContrast]);
 
-  return <div className="rounded-md bg-white w-full overflow-hidden py-4 mb-2 px-[8px]">
+  return <div className="rounded-md bg-white dark:bg-gray-800 w-full overflow-hidden py-4 mb-2 px-[8px]">
       <div className="flex min-h-6 w-full items-center gap-2 px-2">
-        <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
+        <div className="self-stretch gap-2 text-sm text-neutral-900 dark:text-neutral-100 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
           Color Theme
         </div>
         
@@ -212,7 +212,7 @@ const ColorPicker: React.FC = () => {
 
       {/* Highlight Color Section */}
       <div className="flex min-h-6 w-full items-center gap-2 px-2 mt-4">
-        <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
+        <div className="self-stretch gap-2 text-sm text-neutral-900 dark:text-neutral-100 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
           Highlight Color
         </div>
         
@@ -280,13 +280,16 @@ const ColorPicker: React.FC = () => {
         
       {/* Color Match Toggle */}
       <div className="flex items-center justify-between mt-4 px-2">
-        <span className="text-sm text-neutral-900 font-medium">Color Match</span>
+        <span className="text-sm text-neutral-900 dark:text-neutral-200 font-medium">Color Match</span>
         <Switch 
           checked={colorMatch}
           onCheckedChange={setColorMatch}
           className="data-[state=checked]:bg-highlight"
         />
       </div>
+      
+      {/* Add theme toggle */}
+      <ThemeToggle />
     </div>;
 };
 
