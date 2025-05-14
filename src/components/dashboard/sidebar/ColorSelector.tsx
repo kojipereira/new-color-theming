@@ -53,11 +53,14 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
       const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
       
       setSelectedColor(hex);
+      
+      // FIXED: Live preview during hue changes
+      onChange(hex);
     }
-  }, [hue, position]);
+  }, [hue, position, onChange]);
 
   // Handle color palette click/drag
-  const handleColorPaletteInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleColorPaletteInteraction = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
     if (!colorPaletteRef.current) return;
     
     const rect = colorPaletteRef.current.getBoundingClientRect();
@@ -91,10 +94,12 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
     
     setSelectedColor(hex);
+    // FIXED: Live preview during palette drag
+    onChange(hex);
   };
   
   // Handle hue slider click/drag
-  const handleHueSliderInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleHueSliderInteraction = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
     if (!hueSliderRef.current) return;
     
     const rect = hueSliderRef.current.getBoundingClientRect();
@@ -116,6 +121,8 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     // Calculate hue from position
     const newHue = (x / rect.width) * 360;
     setHue(newHue);
+    
+    // Color will be updated via the useEffect
   };
   
   // Start dragging
@@ -141,9 +148,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
       document.removeEventListener('mouseup', handleEnd);
       document.removeEventListener('touchmove', handleMove);
       document.removeEventListener('touchend', handleEnd);
-      
-      // Apply final color when drag ends
-      onChange(selectedColor);
     };
     
     document.addEventListener('mousemove', handleMove);
@@ -158,15 +162,8 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     if (onClose) onClose();
   };
 
-  // Update when hue changes
-  useEffect(() => {
-    // Live preview the color as user drags the hue slider
-    const previewDebounce = setTimeout(() => {
-      onChange(selectedColor);
-    }, 100);
-    
-    return () => clearTimeout(previewDebounce);
-  }, [selectedColor, onChange]);
+  // REMOVED: This useEffect is no longer needed since we're updating during drag
+  // The live preview is now handled in the interaction handlers directly
   
   return (
     <div className="p-4 flex flex-col gap-4">
