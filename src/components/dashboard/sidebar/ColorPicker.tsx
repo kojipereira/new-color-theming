@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from "react";
 import { Paintbrush, Circle } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
@@ -26,7 +25,6 @@ const ColorPicker: React.FC = () => {
     document.documentElement.style.setProperty('--background-color', slots[2]); // Slot 3 (index 2) for backgrounds
     document.documentElement.style.setProperty('--table-color', slots[3]); // Slot 4 (index 3) for tables
     document.documentElement.style.setProperty('--outline-color', slots[4]); // Slot 5 (index 4) for outlines
-
 
     toast({
       title: "Color palette updated",
@@ -70,7 +68,7 @@ const ColorPicker: React.FC = () => {
             ))}
           </div>
           <div className="text-xs text-gray-500 mt-1">
-            Outlines: Slot 5 • Background: Slot 3
+            Cards: Slot 1 • Background: Slot 3 • Tables: Slot 4 • Outlines: Slot 5
           </div>
         </div>
       )}

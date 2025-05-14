@@ -52,8 +52,10 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
     
     /* Color slots system */
+    --card-color: #ffffff;
     --outline-color: #e0e0e0;
     --background-color: #f5f5f5;
+    --table-color: #f0f0f0;
   }
 
   .dark {
@@ -94,8 +96,10 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
     
     /* Color slots system - dark mode */
+    --card-color: #2d2d2d;
     --outline-color: #3a3a3a;
     --background-color: #1a1a1a;
+    --table-color: #252525;
   }
 }
 
@@ -118,7 +122,18 @@
   background-color: var(--background-color);
 }
 
+/* Apply card color */
+.bg-card {
+  background-color: var(--card-color);
+}
+
 /* Apply to chart elements */
 rect.recharts-bar-rectangle {
   fill: var(--background-color);
 }
+
+/* Apply to table elements */
+.bg-muted {
+  background-color: var(--table-color);
+}
+
