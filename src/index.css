@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -146,4 +147,22 @@ rect.recharts-bar-rectangle {
 /* Apply to table elements */
 .bg-muted {
   background-color: var(--table-color);
+}
+
+/* Secondary color theming for controls */
+.bg-secondary-outline-color {
+  background-color: var(--secondary-outline-color);
+}
+
+.hover\:bg-secondary-outline-color\/90:hover {
+  background-color: color-mix(in srgb, var(--secondary-outline-color) 90%, transparent);
+}
+
+/* Slider theming */
+.data-\[state\=checked\]\:bg-secondary-outline-color[data-state=checked] {
+  background-color: var(--secondary-outline-color);
+}
+
+.data-\[state\=checked\]\:border-secondary-outline-color[data-state=checked] {
+  border-color: var(--secondary-outline-color);
 }
