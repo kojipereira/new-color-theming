@@ -13,16 +13,16 @@ export function generateColorSlots(baseColor: string): string[] {
   if (baseColor.toLowerCase() === "#ffffff") {
     return [
       "#FFFFFF", // Pure white
-      "#FCFCFD", // Almost white
-      "#F9F9FA", // Very very light gray
-      "#F6F6F7", // Very light gray
-      "#F1F1F1", // Light gray
-      "#E6E6E6", 
-      "#D9D9D9",
-      "#C8C8C9", // Medium light gray
-      "#B0B0B0", 
-      "#9F9EA1", // Silver gray
-      "#8A898C", // Medium gray
+      "#F7F7F7", // Almost white
+      "#F2F2F2", // Very very light gray
+      "#EEEEEE", // Very light gray
+      "#E5E5E5", // Light gray
+      "#D2D2D2", 
+      "#A4A4A4",
+      "#898989", // Medium light gray
+      "#666666", 
+      "#434343", // Silver gray
+      "#151515", // Medium gray
       "#666666"  // Darker gray
     ];
   }
@@ -31,17 +31,17 @@ export function generateColorSlots(baseColor: string): string[] {
   if (baseColor.toLowerCase() === "#000000") {
     return [
       "#FFFFFF", // Pure white
-      "#FCFCFD", // Almost white
-      "#F9F9FA", // Very very light gray
-      "#F6F6F7", // Very light gray
-      "#E6E6E6",
-      "#C8C8C9", // Light gray
-      "#AAADB0", // Cool gray
-      "#9F9EA1", // Silver gray
-      "#8A898C", // Medium gray
-      "#666666",
-      "#444444",
-      "#000000"  // Pure black
+      "#F7F7F7", // Almost white
+      "#F2F2F2", // Very very light gray
+      "#EEEEEE", // Very light gray
+      "#E5E5E5", // Light gray
+      "#D2D2D2", 
+      "#A4A4A4",
+      "#898989", // Medium light gray
+      "#666666", 
+      "#434343", // Silver gray
+      "#151515", // Medium gray
+      "#666666"  // Darker gray
     ];
   }
 
