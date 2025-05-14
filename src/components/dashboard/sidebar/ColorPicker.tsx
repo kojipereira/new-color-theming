@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from "react";
 import { AlertTriangle, Anchor } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
@@ -20,6 +21,7 @@ const ColorPicker: React.FC = () => {
   const [baseSlotIndex, setBaseSlotIndex] = useState<number>(-1);
   const [highlightBaseSlotIndex, setHighlightBaseSlotIndex] = useState<number>(-1);
   const [colorMatch, setColorMatch] = useState(false);
+  const [closestColorIndex, setClosestColorIndex] = useState<number>(-1);
 
   const checkColorThemeContrast = useCallback((slots: string[]) => {
     if (!slots.length) return false;
@@ -34,6 +36,37 @@ const ColorPicker: React.FC = () => {
     const colorToCheck = colorMatch && index !== 5 ? slots[index] : slots[5];
     return !meetsAccessibilityStandards("#FFFFFF", colorToCheck);
   }, [colorMatch]);
+
+  // Calculate closest color in the palette to the highlight color
+  const findClosestColorIndex = useCallback((targetColor: string, palette: string[]): number => {
+    if (!palette.length) return -1;
+    
+    // Convert hex to RGB
+    const targetRgb = hexToRgb(targetColor);
+    if (!targetRgb) return -1;
+    
+    let closestIndex = -1;
+    let minDistance = Number.MAX_VALUE;
+    
+    palette.forEach((color, index) => {
+      const paletteRgb = hexToRgb(color);
+      if (!paletteRgb) return;
+      
+      // Calculate Euclidean distance in RGB space
+      const distance = Math.sqrt(
+        Math.pow(targetRgb.r - paletteRgb.r, 2) +
+        Math.pow(targetRgb.g - paletteRgb.g, 2) +
+        Math.pow(targetRgb.b - paletteRgb.b, 2)
+      );
+      
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+    
+    return closestIndex;
+  }, []);
 
   // Generate initial color slots on mount
   useEffect(() => {
@@ -120,7 +153,11 @@ const ColorPicker: React.FC = () => {
   useEffect(() => {
     if (highlightColorSlots.length > 0) {
       if (colorMatch) {
-        // Use exact color when color match is enabled
+        // Find closest color in color slots to the highlight color
+        const closestIndex = findClosestColorIndex(highlightColor, colorSlots);
+        setClosestColorIndex(closestIndex);
+        
+        // Use the exact highlight color when color match is enabled
         document.documentElement.style.setProperty('--highlight-color', highlightColor);
         
         // Find the next darker slot or use the last one
@@ -140,6 +177,9 @@ const ColorPicker: React.FC = () => {
             highlightColorSlots[highlightColorSlots.length - 1]
         );
       } else {
+        // Reset closest color index when color match is disabled
+        setClosestColorIndex(-1);
+        
         // Use optimized slots for better contrast
         document.documentElement.style.setProperty('--highlight-color', highlightColorSlots[5]);
         document.documentElement.style.setProperty('--highlight-hover-color', highlightColorSlots[6]);
@@ -152,7 +192,21 @@ const ColorPicker: React.FC = () => {
         colorMatch ? highlightBaseSlotIndex : 5
       ));
     }
-  }, [colorMatch, highlightColor, highlightColorSlots, highlightBaseSlotIndex, checkHighlightContrast]);
+  }, [colorMatch, highlightColor, highlightColorSlots, highlightBaseSlotIndex, checkHighlightContrast, colorSlots, findClosestColorIndex]);
+
+  // Helper function to convert hex to RGB
+  const hexToRgb = (hex: string) => {
+    // Remove # if present
+    hex = hex.replace(/^#/, '');
+    
+    // Parse hex values
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    
+    return { r, g, b };
+  };
 
   return <div className="rounded-md bg-white w-full overflow-hidden py-4 mb-2 px-[8px]">
       <div className="flex min-h-6 w-full items-center gap-2 px-2">
@@ -195,9 +249,15 @@ const ColorPicker: React.FC = () => {
             {colorSlots.map((slotColor, index) => (
               <div 
                 key={`color-slot-${index}`} 
-                className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 relative ${index === 2 && hasContrastIssue ? 'ring-2 ring-amber-500' : ''}`} 
+                className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 relative ${
+                  index === 2 && hasContrastIssue ? 'ring-2 ring-amber-500' : ''
+                } ${
+                  colorMatch && index === closestColorIndex ? 'ring-2 ring-highlight' : ''
+                }`} 
                 style={{ backgroundColor: slotColor }} 
-                title={`Slot ${index + 1}: ${slotColor}`}
+                title={`Slot ${index + 1}: ${slotColor}${
+                  colorMatch && index === closestColorIndex ? ' (Closest match to highlight color)' : ''
+                }`}
               >
                 {index === baseSlotIndex && (
                   <TooltipProvider>
@@ -301,3 +361,4 @@ const ColorPicker: React.FC = () => {
 };
 
 export default ColorPicker;
+
