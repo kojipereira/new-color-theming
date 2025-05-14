@@ -12,36 +12,36 @@ export function generateColorSlots(baseColor: string): string[] {
   // Special case for pure white: generate grayscale palette
   if (baseColor.toLowerCase() === "#ffffff") {
     return [
-      "#FFFFFF", // Pure white
-      "#F7F7F7", // Almost white
-      "#F2F2F2", // Very very light gray
-      "#EEEEEE", // Very light gray
-      "#E5E5E5", // Light gray
-      "#D2D2D2", 
-      "#A4A4A4",
-      "#898989", // Medium light gray
-      "#666666", 
-      "#434343", // Silver gray
-      "#151515", // Medium gray
-      "#666666"  // Darker gray
+      "#FAFAF9", // Off-white, slightly warm
+      "#F5F5F4", // Very light gray, warmer tone
+      "#EDEDED", // Extra light gray
+      "#E4E4E4", // Light gray
+      "#D6D6D6", // Light-medium gray
+      "#B8B8B8", // Medium gray
+      "#9A9A9A", // Medium-dark gray
+      "#7C7C7C", // Darker gray
+      "#5E5E5E", // Strong dark gray
+      "#3F3F3F", // Near charcoal
+      "#222222", // Almost black
+      "#0F0F0F"  // Near black, not fully black
     ];
   }
   
   // Special case for pure black: generate grayscale palette
   if (baseColor.toLowerCase() === "#000000") {
     return [
-      "#FFFFFF", // Pure white
-      "#F7F7F7", // Almost white
-      "#F2F2F2", // Very very light gray
-      "#EEEEEE", // Very light gray
-      "#E5E5E5", // Light gray
-      "#D2D2D2", 
-      "#A4A4A4",
-      "#898989", // Medium light gray
-      "#666666", 
-      "#434343", // Silver gray
-      "#151515", // Medium gray
-      "#666666"  // Darker gray
+      "#FAFAF9", // Off-white, slightly warm
+      "#F5F5F4", // Very light gray, warmer tone
+      "#EDEDED", // Extra light gray
+      "#E4E4E4", // Light gray
+      "#D6D6D6", // Light-medium gray
+      "#B8B8B8", // Medium gray
+      "#9A9A9A", // Medium-dark gray
+      "#7C7C7C", // Darker gray
+      "#5E5E5E", // Strong dark gray
+      "#3F3F3F", // Near charcoal
+      "#222222", // Almost black
+      "#0F0F0F"  // Near black, not fully black
     ];
   }
 
