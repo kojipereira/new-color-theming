@@ -1,9 +1,7 @@
-
 import React from "react";
 import PanelItem from "../PanelItem";
 import { SidebarItem } from "./hooks/useSidebarState";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 interface BaseColumnsSectionProps {
   visibleBaseColumnItems: SidebarItem[];
   baseColumnsExpanded: boolean;
@@ -12,7 +10,6 @@ interface BaseColumnsSectionProps {
   onDrop: (e: React.DragEvent) => void;
   showStickyPanel?: () => void; // Optional function to show sticky panel
 }
-
 const BaseColumnsSection: React.FC<BaseColumnsSectionProps> = ({
   visibleBaseColumnItems,
   baseColumnsExpanded,
@@ -34,33 +31,21 @@ const BaseColumnsSection: React.FC<BaseColumnsSectionProps> = ({
       showStickyPanel();
     }
   };
-
-  return (
-    <div className="w-full py-0 my-0" onDragOver={handleDragOver} onDrop={onDrop}>
-      <div className="flex items-center justify-between px-2 py-1 bg-[rgba(243,243,243,1)] rounded-md">
-        <div className="text-sm font-medium text-neutral-800">Base Columns</div>
-        <div className="flex items-center">
-          <button 
-            onClick={handleShowMoreClick} 
-            className="text-xs text-blue-600 hover:underline"
-          >
-            {baseColumnsExpanded ? "Show Less" : "Show More"}
-          </button>
+  return <div onDragOver={handleDragOver} onDrop={onDrop} className="rounded-md bg-white w-full overflow-hidden mt-1 mb-2 px-[8px] my-0 py-[9px]">
+      <div className="flex min-h-6 w-full items-center gap-1 px-2">
+        <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">Columns</div>
+        
+        <div className="rounded self-stretch flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
+          <img src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/cb1292c171f906e91c44d3be493b675ac9675368?placeholderIfAbsent=true" className="aspect-[1] object-contain w-4 self-stretch my-auto" alt="Action" />
         </div>
       </div>
-      <div className="flex flex-col gap-1 w-full px-1 mt-1">
-        {visibleBaseColumnItems.map((item, index) => (
-          <PanelItem
-            key={`base-column-${index}`}
-            icon={item.icon}
-            label={item.label}
-            draggable={true}
-            onDragStart={(e) => handleDragStart(e, item)}
-          />
-        ))}
+      <div className="w-full overflow-hidden mt-1">
+        {visibleBaseColumnItems.map((item, index) => <PanelItem key={`base-column-${index}`} icon={item.icon} label={item.label} draggable={true} onDragStart={e => handleDragStart(e, item)} />)}
+        
+        <div className="w-full text-center py-2 text-blue-600 hover:text-blue-800 cursor-pointer font-medium text-sm" onClick={handleShowMoreClick}>
+          {baseColumnsExpanded ? "Show less" : "Show more"}
+        </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default BaseColumnsSection;
