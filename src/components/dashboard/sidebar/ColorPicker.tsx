@@ -8,8 +8,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { useThemeMode } from "@/hooks/useThemeMode";
 
 const ColorPicker: React.FC = () => {
   const [color, setColor] = useState("#898989");
@@ -23,7 +21,6 @@ const ColorPicker: React.FC = () => {
   const [baseSlotIndex, setBaseSlotIndex] = useState<number>(-1);
   const [highlightBaseSlotIndex, setHighlightBaseSlotIndex] = useState<number>(-1);
   const [colorMatch, setColorMatch] = useState(false);
-  const { theme } = useThemeMode();
 
   const checkColorThemeContrast = useCallback((slots: string[]) => {
     if (!slots.length) return false;
@@ -83,12 +80,18 @@ const ColorPicker: React.FC = () => {
     const baseIndex = slots.findIndex(slot => slot.toLowerCase() === newColor.toLowerCase());
     setBaseSlotIndex(baseIndex);
 
-    // Apply the colors to the system based on the current theme
-    applyThemeColors(slots, theme);
+    // Apply the colors to the system using the appropriate slots
+    // For medium brightness colors, use similar slots as before
+    // For very light or very dark colors, adapt accordingly
+
+    document.documentElement.style.setProperty('--background-color', slots[0]); // Always use lightest color for background
+    document.documentElement.style.setProperty('--card-color', slots[1]); // Light color for cards
+    document.documentElement.style.setProperty('--table-color', slots[2]); // Light-medium color for tables
+    document.documentElement.style.setProperty('--outline-color', slots[3]); // Medium color for outlines
 
     // Check contrast after changing color
     setHasContrastIssue(checkColorThemeContrast(slots));
-  }, [checkColorThemeContrast, theme]);
+  }, [checkColorThemeContrast]);
 
   const handleHighlightColorChange = useCallback((newColor: string) => {
     setHighlightColor(newColor);
@@ -114,30 +117,6 @@ const ColorPicker: React.FC = () => {
     // Check contrast after changing color
     setHasHighlightContrastIssue(checkHighlightContrast(slots, colorMatch ? baseIndex : 5));
   }, [colorMatch, checkHighlightContrast]);
-
-  // Function to apply theme colors based on slots and current theme
-  const applyThemeColors = useCallback((slots: string[], currentTheme: string) => {
-    if (currentTheme === 'light') {
-      // Light mode - use original slot mapping
-      document.documentElement.style.setProperty('--background-color', slots[0]);
-      document.documentElement.style.setProperty('--card-color', slots[1]);
-      document.documentElement.style.setProperty('--table-color', slots[2]);
-      document.documentElement.style.setProperty('--outline-color', slots[3]);
-    } else {
-      // Dark mode - use inverted slot mapping as specified
-      document.documentElement.style.setProperty('--background-color', slots[11] || slots[slots.length - 1]);
-      document.documentElement.style.setProperty('--card-color', slots[10] || slots[slots.length - 2]);
-      document.documentElement.style.setProperty('--table-color', slots[9] || slots[slots.length - 3]);
-      document.documentElement.style.setProperty('--outline-color', slots[4]);
-    }
-  }, []);
-
-  // Update color application when theme changes
-  useEffect(() => {
-    if (colorSlots.length > 0) {
-      applyThemeColors(colorSlots, theme);
-    }
-  }, [theme, colorSlots, applyThemeColors]);
 
   // Update highlight colors when color match toggle changes
   useEffect(() => {
@@ -167,9 +146,9 @@ const ColorPicker: React.FC = () => {
     }
   }, [colorMatch, highlightColor, highlightColorSlots, highlightBaseSlotIndex, checkHighlightContrast]);
 
-  return <div className="rounded-md bg-white dark:bg-slate-800 w-full overflow-hidden py-4 mb-2 px-[8px]">
+  return <div className="rounded-md bg-white w-full overflow-hidden py-4 mb-2 px-[8px]">
       <div className="flex min-h-6 w-full items-center gap-2 px-2">
-        <div className="self-stretch gap-2 text-sm text-neutral-900 dark:text-white font-bold leading-none flex-1 shrink basis-[0%] my-auto">
+        <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
           Color Theme
         </div>
         
@@ -186,8 +165,6 @@ const ColorPicker: React.FC = () => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>}
-          
-          <ThemeToggle />
           
           <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
@@ -235,7 +212,7 @@ const ColorPicker: React.FC = () => {
 
       {/* Highlight Color Section */}
       <div className="flex min-h-6 w-full items-center gap-2 px-2 mt-4">
-        <div className="self-stretch gap-2 text-sm text-neutral-900 dark:text-white font-bold leading-none flex-1 shrink basis-[0%] my-auto">
+        <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
           Highlight Color
         </div>
         
@@ -303,7 +280,7 @@ const ColorPicker: React.FC = () => {
         
       {/* Color Match Toggle */}
       <div className="flex items-center justify-between mt-4 px-2">
-        <span className="text-sm text-neutral-900 dark:text-white font-medium">Color Match</span>
+        <span className="text-sm text-neutral-900 font-medium">Color Match</span>
         <Switch 
           checked={colorMatch}
           onCheckedChange={setColorMatch}

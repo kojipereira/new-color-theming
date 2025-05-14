@@ -96,8 +96,10 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
     
     /* Color slots system - dark mode */
-    /* These will be dynamically set by the ColorPicker component */
-    /* We're keeping the same variables but will use different slots */
+    --card-color: #2d2d2d;
+    --outline-color: #3a3a3a;
+    --background-color: #1a1a1a;
+    --table-color: #252525;
   }
 }
 
@@ -134,3 +136,4 @@ rect.recharts-bar-rectangle {
 .bg-muted {
   background-color: var(--table-color);
 }
+
