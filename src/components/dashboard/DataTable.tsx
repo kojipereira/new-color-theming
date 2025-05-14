@@ -68,6 +68,10 @@ const DataTable: React.FC = () => {
     }
   }, [isEditing]);
 
+  // CSS styles for table elements using CSS variables
+  const headerBgStyle = { background: "var(--background-color)" };
+  const leftColumnStyle = { background: "var(--background-color)" };
+
   return <Card className="w-[600px] shadow-sm">
       <CardHeader className={`${title ? 'pb-2' : isHovering ? 'pb-2' : 'p-0'}`}>
         {isEditing ? (
@@ -113,19 +117,19 @@ const DataTable: React.FC = () => {
       </CardHeader>
       <CardContent className="p-0 relative">
         <div className="flex min-h-[268px] w-full overflow-hidden text-[11px] text-neutral-900 font-normal leading-[1.2]">
-          <div className="bg-[rgba(238,238,238,1)] overflow-hidden w-[195px]">
-            <div className="border-neutral-200 flex w-full items-center gap-1 text-xs font-bold pl-5 pr-3 py-3 border-b-2">
+          <div style={leftColumnStyle} className="overflow-hidden w-[195px]">
+            <div style={headerBgStyle} className="border-neutral-200 flex w-full items-center gap-1 text-xs font-bold pl-5 pr-3 py-3 border-b-2">
               <div className="self-stretch flex items-center gap-1 my-auto">
                 <div className="self-stretch gap-2.5 my-auto">Primary Account</div>
                 <img src="https://cdn.builder.io/api/v1/image/assets/608cb3afdcd244e7a1995ba6f432cc7d/1d2d5e969d6289a867288e29f0b4f8e84d33496e?placeholderIfAbsent=true" className="aspect-[1] object-contain w-4 self-stretch shrink-0 my-auto" alt="Sort" />
               </div>
             </div>
-            {Array(8).fill(0).map((_, index) => <div key={`cell-1-${index}`} className="bg-[rgba(238,238,238,1)] border-neutral-200 min-h-7 w-full whitespace-nowrap pl-5 pr-3 border-b">
+            {Array(8).fill(0).map((_, index) => <div key={`cell-1-${index}`} style={leftColumnStyle} className="border-neutral-200 min-h-7 w-full whitespace-nowrap pl-5 pr-3 border-b">
                   142676
                 </div>)}
           </div>
           <div className="bg-white w-[130px]">
-            <div className="bg-[rgba(238,238,238,1)] border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold whitespace-nowrap text-right px-3 py-[13px] border-b-2">
+            <div style={headerBgStyle} className="border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold whitespace-nowrap text-right px-3 py-[13px] border-b-2">
               <div className="self-stretch flex items-center gap-1 my-auto">
                 <div className="self-stretch gap-2.5 my-auto">Date</div>
               </div>
@@ -135,7 +139,7 @@ const DataTable: React.FC = () => {
                 </div>)}
           </div>
           <div className="bg-white text-right w-[118px]">
-            <div className="bg-[rgba(238,238,238,1)] border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold px-3 py-[13px] border-b-2">
+            <div style={headerBgStyle} className="border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold px-3 py-[13px] border-b-2">
               <div className="self-stretch flex items-center gap-1 my-auto">
                 <div className="self-stretch gap-2.5 my-auto">Quantity</div>
               </div>
@@ -145,7 +149,7 @@ const DataTable: React.FC = () => {
                 </div>)}
           </div>
           <div className="bg-white w-[95px]">
-            <div className="bg-[rgba(238,238,238,1)] border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold px-3 py-[13px] border-b-2">
+            <div style={headerBgStyle} className="border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold px-3 py-[13px] border-b-2">
               <div className="self-stretch flex items-center gap-1 my-auto">
                 <div className="self-stretch gap-2.5 my-auto">Product</div>
               </div>
@@ -155,7 +159,7 @@ const DataTable: React.FC = () => {
                 </div>)}
           </div>
           <div className="bg-white w-[93px]">
-            <div className="bg-[rgba(238,238,238,1)] border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold px-3 py-[13px] border-b-2">
+            <div style={headerBgStyle} className="border-neutral-200 flex min-h-10 w-full items-center gap-1 text-xs font-bold px-3 py-[13px] border-b-2">
               <div className="self-stretch flex items-center gap-1 my-auto">
                 <Popover>
                   <PopoverTrigger>
@@ -172,7 +176,7 @@ const DataTable: React.FC = () => {
                 </div>)}
           </div>
           <div className="bg-white w-[40px] border-l border-neutral-200">
-            <div className="bg-[rgba(238,238,238,1)] border-neutral-200 flex min-h-10 w-full items-center justify-center text-xs font-bold px-3 py-[13px] border-b-2">
+            <div style={headerBgStyle} className="border-neutral-200 flex min-h-10 w-full items-center justify-center text-xs font-bold px-3 py-[13px] border-b-2">
               <Popover>
                 <PopoverTrigger>
                   <Plus className="w-4 h-4 cursor-pointer text-blue-600 hover:text-blue-700" />
