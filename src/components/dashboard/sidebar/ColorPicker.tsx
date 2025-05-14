@@ -17,21 +17,30 @@ const ColorPicker: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHighlightOpen, setIsHighlightOpen] = useState(false);
   const [hasContrastIssue, setHasContrastIssue] = useState(false);
+  const [hasHighlightContrastIssue, setHasHighlightContrastIssue] = useState(false);
   const [baseSlotIndex, setBaseSlotIndex] = useState<number>(-1);
   const [highlightBaseSlotIndex, setHighlightBaseSlotIndex] = useState<number>(-1);
   const [colorMatch, setColorMatch] = useState(false);
 
-  const checkContrastIssue = useCallback((slots: string[]) => {
+  const checkColorThemeContrast = useCallback((slots: string[]) => {
     if (!slots.length) return false;
-    // Check contrast between black text (#000000) and table color (Slot 4, index 3)
-    return !meetsAccessibilityStandards("#000000", slots[3]);
+    // Check contrast between black text (#000000) and table color (Slot 3, index 2)
+    return !meetsAccessibilityStandards("#000000", slots[2]);
   }, []);
+
+  const checkHighlightContrast = useCallback((slots: string[], index: number = 5) => {
+    if (!slots.length) return false;
+    // Check contrast between white text (#FFFFFF) and highlight color (Slot 6, index 5 by default)
+    // When color match is on, use the selected color directly (baseIndex)
+    const colorToCheck = colorMatch && index !== 5 ? slots[index] : slots[5];
+    return !meetsAccessibilityStandards("#FFFFFF", colorToCheck);
+  }, [colorMatch]);
 
   // Generate initial color slots on mount
   useEffect(() => {
     const initialSlots = generateColorSlots(color);
     setColorSlots(initialSlots);
-    setHasContrastIssue(checkContrastIssue(initialSlots));
+    setHasContrastIssue(checkColorThemeContrast(initialSlots));
     
     // Find the base slot (where the selected color appears)
     const baseIndex = initialSlots.findIndex(slot => slot.toLowerCase() === color.toLowerCase());
@@ -44,12 +53,23 @@ const ColorPicker: React.FC = () => {
     // Find the base slot for highlight color
     const highlightBaseIndex = initialHighlightSlots.findIndex(slot => slot.toLowerCase() === highlightColor.toLowerCase());
     setHighlightBaseSlotIndex(highlightBaseIndex);
-  }, [checkContrastIssue]);
+    
+    // Check highlight contrast
+    setHasHighlightContrastIssue(checkHighlightContrast(initialHighlightSlots, highlightBaseIndex));
+  }, [checkColorThemeContrast, checkHighlightContrast]);
 
   // Check contrast when slots change
   useEffect(() => {
-    setHasContrastIssue(checkContrastIssue(colorSlots));
-  }, [colorSlots, checkContrastIssue]);
+    setHasContrastIssue(checkColorThemeContrast(colorSlots));
+  }, [colorSlots, checkColorThemeContrast]);
+
+  // Check highlight contrast when slots or color match changes
+  useEffect(() => {
+    setHasHighlightContrastIssue(checkHighlightContrast(
+      highlightColorSlots, 
+      colorMatch ? highlightBaseSlotIndex : 5
+    ));
+  }, [highlightColorSlots, checkHighlightContrast, colorMatch, highlightBaseSlotIndex]);
 
   const handleColorChange = useCallback((newColor: string) => {
     setColor(newColor);
@@ -69,8 +89,9 @@ const ColorPicker: React.FC = () => {
     document.documentElement.style.setProperty('--table-color', slots[2]); // Light-medium color for tables
     document.documentElement.style.setProperty('--outline-color', slots[3]); // Medium color for outlines
 
-    // Toast notification removed as requested
-  }, []);
+    // Check contrast after changing color
+    setHasContrastIssue(checkColorThemeContrast(slots));
+  }, [checkColorThemeContrast]);
 
   const handleHighlightColorChange = useCallback((newColor: string) => {
     setHighlightColor(newColor);
@@ -92,7 +113,10 @@ const ColorPicker: React.FC = () => {
       document.documentElement.style.setProperty('--highlight-hover-color', slots[6]); // Slightly darker for hover states
     }
     document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF'); // White text on highlight color
-  }, [colorMatch]);
+
+    // Check contrast after changing color
+    setHasHighlightContrastIssue(checkHighlightContrast(slots, colorMatch ? baseIndex : 5));
+  }, [colorMatch, checkHighlightContrast]);
 
   // Update highlight colors when color match toggle changes
   useEffect(() => {
@@ -113,8 +137,14 @@ const ColorPicker: React.FC = () => {
         document.documentElement.style.setProperty('--highlight-color', highlightColorSlots[5]);
         document.documentElement.style.setProperty('--highlight-hover-color', highlightColorSlots[6]);
       }
+      
+      // Check contrast when toggling color match
+      setHasHighlightContrastIssue(checkHighlightContrast(
+        highlightColorSlots, 
+        colorMatch ? highlightBaseSlotIndex : 5
+      ));
     }
-  }, [colorMatch, highlightColor, highlightColorSlots, highlightBaseSlotIndex]);
+  }, [colorMatch, highlightColor, highlightColorSlots, highlightBaseSlotIndex, checkHighlightContrast]);
 
   return <div className="rounded-md bg-white w-full overflow-hidden py-4 mb-2 px-[8px]">
       <div className="flex min-h-6 w-full items-center gap-2 px-2">
@@ -131,7 +161,7 @@ const ColorPicker: React.FC = () => {
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Poor contrast ratio with black text on table color (Slot 4)</p>
+                  <p>Poor contrast ratio with black text on table color (Slot 3)</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>}
@@ -157,7 +187,7 @@ const ColorPicker: React.FC = () => {
             {colorSlots.map((slotColor, index) => (
               <div 
                 key={`color-slot-${index}`} 
-                className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 relative ${index === 3 && hasContrastIssue ? 'ring-2 ring-amber-500' : ''}`} 
+                className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 relative ${index === 2 && hasContrastIssue ? 'ring-2 ring-amber-500' : ''}`} 
                 style={{ backgroundColor: slotColor }} 
                 title={`Slot ${index + 1}: ${slotColor}`}
               >
@@ -187,6 +217,19 @@ const ColorPicker: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-2">
+          {hasHighlightContrastIssue && <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="cursor-help">
+                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Poor contrast ratio with white text on highlight color</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>}
+            
           <DropdownMenu open={isHighlightOpen} onOpenChange={setIsHighlightOpen}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
@@ -208,7 +251,11 @@ const ColorPicker: React.FC = () => {
             {highlightColorSlots.map((slotColor, index) => (
               <div 
                 key={`highlight-slot-${index}`} 
-                className="w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 relative" 
+                className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 relative ${
+                  (colorMatch && index === highlightBaseSlotIndex && hasHighlightContrastIssue) || 
+                  (!colorMatch && index === 5 && hasHighlightContrastIssue) 
+                    ? 'ring-2 ring-amber-500' : ''
+                }`} 
                 style={{ backgroundColor: slotColor }} 
                 title={`Slot ${index + 1}: ${slotColor}`}
               >
