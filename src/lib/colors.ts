@@ -1,3 +1,4 @@
+
 /**
  * Generates 12 color slots based on a given color
  * The provided color will be positioned in a dynamic slot based on its brightness,
@@ -7,6 +8,42 @@
  * @returns Array of 12 hex color strings
  */
 export function generateColorSlots(baseColor: string): string[] {
+  // Special case for pure white: generate grayscale palette
+  if (baseColor.toLowerCase() === "#ffffff") {
+    return [
+      "#FFFFFF", // Pure white
+      "#F6F6F7", // Very light gray
+      "#F1F1F1", // Light gray
+      "#E6E6E6", 
+      "#D9D9D9",
+      "#C8C8C9", // Light gray
+      "#B0B0B0", 
+      "#9F9EA1", // Silver gray
+      "#8A898C", // Medium gray
+      "#666666", 
+      "#444444",
+      "#222222"  // Very dark gray
+    ];
+  }
+  
+  // Special case for pure black: generate grayscale palette
+  if (baseColor.toLowerCase() === "#000000") {
+    return [
+      "#FFFFFF", // Pure white
+      "#F6F6F7", // Very light gray
+      "#E6E6E6",
+      "#C8C8C9", // Light gray
+      "#AAADB0", // Cool gray
+      "#9F9EA1", // Silver gray
+      "#8A898C", // Medium gray
+      "#666666",
+      "#444444",
+      "#333333", // Dark gray
+      "#222222", // Dark gray
+      "#000000"  // Pure black
+    ];
+  }
+
   // Convert the base color to HSL
   const rgb = hexToRgb(baseColor);
   if (!rgb) return Array(12).fill(baseColor);
