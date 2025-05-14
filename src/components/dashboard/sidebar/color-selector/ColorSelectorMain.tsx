@@ -64,9 +64,9 @@ export const ColorSelectorMain: React.FC<ColorSelectorProps> = ({ color, onChang
     const hex = ColorUtils.rgbToHex(rgb.r, rgb.g, rgb.b);
     
     setSelectedColor(hex);
-    // Live preview color change
-    onChange(hex);
-  }, [hue, position, onChange]);
+    // Removed the live preview to fix random color changes
+    // onChange(hex);
+  }, [hue, position]);
 
   // Handle apply button click
   const handleApply = () => {

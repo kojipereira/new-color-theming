@@ -30,6 +30,12 @@ export function useHighlightColorState() {
     
     // Check highlight contrast
     setHasHighlightContrastIssue(checkHighlightContrast(initialHighlightSlots, highlightBaseIndex, false));
+
+    // Set CSS Variables
+    document.documentElement.style.setProperty('--highlight-color', initialHighlightSlots[5]); // Medium-bright color for highlights
+    document.documentElement.style.setProperty('--highlight-hover-color', initialHighlightSlots[4]); // Slightly brighter for hover states
+    document.documentElement.style.setProperty('--highlight-darker', initialHighlightSlots[7]); // Even darker for hover effects
+    document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF'); // White text on highlight color
   }, [checkHighlightContrast]);
 
   // Handle highlight color change
@@ -74,33 +80,17 @@ export function useHighlightColorState() {
       
       // Find the base slot for the new highlight color
       const baseIndex = slots.findIndex(slot => slot.toLowerCase() === newColor.toLowerCase());
-      setHighlightBaseSlotIndex(baseIndex);
+      setHighlightBaseSlotIndex(baseIndex !== -1 ? baseIndex : 5);
       setClosestColorIndex(-1); // Reset closest color index
 
       // Apply the highlight colors to the system
-      if (colorMatch) {
-        // Use exact color when color match is enabled
-        document.documentElement.style.setProperty('--highlight-color', newColor);
-        // Use a brighter color for hover (index - 1 instead of index + 1)
-        document.documentElement.style.setProperty(
-          '--highlight-hover-color', 
-          slots[Math.max(0, baseIndex - 1)] || slots[0]
-        ); // Use brighter slot or first slot for hover
-        document.documentElement.style.setProperty(
-          '--highlight-darker', 
-          slots[7] || slots[baseIndex + 2] || slots[slots.length - 1]
-        ); // Slot 7 for darker hover effects
-      } else {
-        // Use optimized slots for better contrast
-        document.documentElement.style.setProperty('--highlight-color', slots[5]); // Medium-bright color for highlights
-        // Use a brighter color for hover (slot 4 instead of slot 6)
-        document.documentElement.style.setProperty('--highlight-hover-color', slots[4]); // Slightly brighter for hover states
-        document.documentElement.style.setProperty('--highlight-darker', slots[7]); // Even darker for stronger hover effects
-      }
+      document.documentElement.style.setProperty('--highlight-color', slots[5]); // Medium-bright color for highlights
+      document.documentElement.style.setProperty('--highlight-hover-color', slots[4]); // Slightly brighter for hover states
+      document.documentElement.style.setProperty('--highlight-darker', slots[7]); // Darker for stronger hover effects
       document.documentElement.style.setProperty('--highlight-foreground-color', '#FFFFFF'); // White text on highlight color
 
       // Check contrast after changing color
-      setHasHighlightContrastIssue(checkHighlightContrast(slots, colorMatch ? baseIndex : 5, colorMatch));
+      setHasHighlightContrastIssue(checkHighlightContrast(slots, 5, false));
     }
   }, [colorMatch, checkHighlightContrast, highlightColorSlots, findClosestColorIndex, toast]);
 
@@ -150,7 +140,7 @@ export function useHighlightColorState() {
         
         // Find the base slot for the highlight color
         const baseIndex = slots.findIndex(slot => slot.toLowerCase() === highlightColor.toLowerCase());
-        setHighlightBaseSlotIndex(baseIndex);
+        setHighlightBaseSlotIndex(baseIndex !== -1 ? baseIndex : 5);
         
         // Use optimized slots for better contrast
         document.documentElement.style.setProperty('--highlight-color', slots[5]);
