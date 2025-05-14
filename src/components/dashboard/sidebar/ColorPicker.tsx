@@ -48,12 +48,10 @@ const ColorPicker: React.FC = () => {
     setColorSlots(slots);
     
     // Apply the colors to the system using the appropriate slots
-    // For medium brightness colors, use similar slots as before
-    // For very light or very dark colors, adapt accordingly
-    document.documentElement.style.setProperty('--card-color', slots[0]); // Always use lightest color for cards
-    document.documentElement.style.setProperty('--background-color', slots[1]); // Light color for backgrounds
-    document.documentElement.style.setProperty('--table-color', slots[2]); // Light-medium color for tables
-    document.documentElement.style.setProperty('--outline-color', slots[4]); // Medium color for outlines
+    document.documentElement.style.setProperty('--card-color', slots[0]);
+    document.documentElement.style.setProperty('--background-color', slots[1]);
+    document.documentElement.style.setProperty('--table-color', slots[2]);
+    document.documentElement.style.setProperty('--outline-color', slots[4]);
 
     toast({
       title: "Color palette updated",
@@ -78,7 +76,7 @@ const ColorPicker: React.FC = () => {
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Poor contrast ratio with black text on table color (Slot 4)</p>
+                  <p>Poor contrast ratio with black text on table color</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
