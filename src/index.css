@@ -137,3 +137,33 @@ rect.recharts-bar-rectangle {
   background-color: var(--table-color);
 }
 
+/* 1. Form element focus styles */
+input:focus, 
+textarea:focus,
+select:focus {
+  border-color: var(--highlight-color);
+  outline-color: var(--highlight-color);
+  box-shadow: 0 0 0 1px var(--highlight-color);
+}
+
+/* 2. Dropdown selected option */
+.select-content .select-item[data-state="checked"],
+[data-radix-select-item][data-state="checked"] {
+  background-color: var(--highlight-color);
+  color: var(--highlight-foreground-color);
+}
+
+/* Apply darker highlight color (slot 7) for hover effects */
+.hover\:bg-highlight-darker:hover {
+  background-color: var(--highlight-darker);
+}
+
+/* Add these classes for buttons and controls */
+.bg-highlight-darker {
+  background-color: var(--highlight-darker);
+}
+
+/* Override default hover behavior for components that need slot 7 color */
+.bg-highlight:hover {
+  background-color: var(--highlight-darker);
+}

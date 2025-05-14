@@ -19,10 +19,10 @@ export default function FilterInterface() {
         <div className="flex rounded-md overflow-hidden border border-border p-1 bg-white">
           <button 
             className={cn(
-              "flex-1 py-3 px-4 text-center rounded-md",
+              "flex-1 py-3 px-4 text-center rounded-md transition-colors",
               timeRange === '30' 
                 ? 'bg-highlight text-highlight-foreground' 
-                : 'bg-white text-foreground/70'
+                : 'bg-white text-foreground/70 hover:bg-highlight-darker hover:text-highlight-foreground'
             )}
             onClick={() => setTimeRange('30')}
           >
@@ -30,10 +30,10 @@ export default function FilterInterface() {
           </button>
           <button 
             className={cn(
-              "flex-1 py-3 px-4 text-center rounded-md",
+              "flex-1 py-3 px-4 text-center rounded-md transition-colors",
               timeRange === '60' 
                 ? 'bg-highlight text-highlight-foreground' 
-                : 'bg-white text-foreground/70'
+                : 'bg-white text-foreground/70 hover:bg-highlight-darker hover:text-highlight-foreground'
             )}
             onClick={() => setTimeRange('60')}
           >
@@ -41,10 +41,10 @@ export default function FilterInterface() {
           </button>
           <button 
             className={cn(
-              "flex-1 py-3 px-4 text-center rounded-md",
+              "flex-1 py-3 px-4 text-center rounded-md transition-colors",
               timeRange === '180' 
                 ? 'bg-highlight text-highlight-foreground' 
-                : 'bg-white text-foreground/70'
+                : 'bg-white text-foreground/70 hover:bg-highlight-darker hover:text-highlight-foreground'
             )}
             onClick={() => setTimeRange('180')}
           >
@@ -58,7 +58,7 @@ export default function FilterInterface() {
         <label className="block text-lg font-medium text-foreground mb-2">Month</label>
         <div className="relative">
           <select 
-            className="block w-full pl-4 pr-10 py-3 text-foreground/70 bg-white border border-input rounded-md appearance-none focus:outline-none focus:ring-ring focus:border-primary"
+            className="block w-full pl-4 pr-10 py-3 text-foreground/70 bg-white border border-input rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-highlight focus:border-highlight"
             defaultValue=""
           >
             <option value="" disabled>Select values</option>
@@ -120,7 +120,7 @@ export default function FilterInterface() {
             placeholder="min"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="block w-full rounded-md border border-input py-3 px-4 bg-white text-foreground focus:outline-none focus:ring-ring focus:border-primary"
+            className="block w-full rounded-md border border-input py-3 px-4 bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-highlight focus:border-highlight"
           />
           <span className="mx-2 text-foreground/50">–</span>
           <input
@@ -128,13 +128,13 @@ export default function FilterInterface() {
             placeholder="max"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="block w-full rounded-md border border-input py-3 px-4 bg-white text-foreground focus:outline-none focus:ring-ring focus:border-primary"
+            className="block w-full rounded-md border border-input py-3 px-4 bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-highlight focus:border-highlight"
           />
         </div>
       </div>
 
       {/* Apply Button */}
-      <Button className="w-32 bg-highlight hover:bg-highlight-hover text-highlight-foreground">
+      <Button className="w-32 bg-highlight hover:bg-highlight-darker text-highlight-foreground">
         Apply
       </Button>
     </div>
