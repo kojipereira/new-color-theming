@@ -26,6 +26,8 @@ export const HighlightColorPicker: React.FC<HighlightColorPickerProps> = ({
   colorMatch,
   closestColorIndex
 }) => {
+  // Use the actual selected color, not a slot from the palette
+  const displayColor = highlightColor;
   const contrastCheckIndex = colorMatch ? closestColorIndex : 5;
   const contrastWarning = "Poor contrast ratio with white text on highlight color";
   
@@ -37,7 +39,7 @@ export const HighlightColorPicker: React.FC<HighlightColorPickerProps> = ({
         </div>
         
         <ColorPickerButton
-          color={highlightColor}
+          color={displayColor}
           hasContrastIssue={hasHighlightContrastIssue}
           contrastWarning={contrastWarning}
           isOpen={isHighlightOpen}
