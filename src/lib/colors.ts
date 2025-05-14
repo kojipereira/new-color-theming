@@ -1,4 +1,5 @@
 
+
 /**
  * Generates 12 color slots based on a given color
  * The provided color will be positioned in a dynamic slot based on its brightness,
@@ -12,17 +13,17 @@ export function generateColorSlots(baseColor: string): string[] {
   if (baseColor.toLowerCase() === "#ffffff") {
     return [
       "#FFFFFF", // Pure white
+      "#FCFCFD", // Almost white
+      "#F9F9FA", // Very very light gray
       "#F6F6F7", // Very light gray
       "#F1F1F1", // Light gray
       "#E6E6E6", 
       "#D9D9D9",
-      "#C8C8C9", // Light gray
+      "#C8C8C9", // Medium light gray
       "#B0B0B0", 
       "#9F9EA1", // Silver gray
       "#8A898C", // Medium gray
-      "#666666", 
-      "#444444",
-      "#222222"  // Very dark gray
+      "#666666"  // Darker gray
     ];
   }
   
@@ -30,6 +31,8 @@ export function generateColorSlots(baseColor: string): string[] {
   if (baseColor.toLowerCase() === "#000000") {
     return [
       "#FFFFFF", // Pure white
+      "#FCFCFD", // Almost white
+      "#F9F9FA", // Very very light gray
       "#F6F6F7", // Very light gray
       "#E6E6E6",
       "#C8C8C9", // Light gray
@@ -38,8 +41,6 @@ export function generateColorSlots(baseColor: string): string[] {
       "#8A898C", // Medium gray
       "#666666",
       "#444444",
-      "#333333", // Dark gray
-      "#222222", // Dark gray
       "#000000"  // Pure black
     ];
   }
@@ -74,12 +75,14 @@ export function generateColorSlots(baseColor: string): string[] {
   for (let i = baseSlot - 1; i >= 0; i--) {
     // Calculate how much brighter this slot should be compared to the base
     const brightnessStep = (baseSlot - i) / baseSlot;
-    // Increase lightness proportionally, maxing out near 1.0 (but not quite white)
-    const lightnessFactor = Math.min(0.95, hsl.l + (0.95 - hsl.l) * brightnessStep);
+    
+    // Start with much brighter colors, max out at 0.99 (almost white but not quite)
+    const lightnessFactor = Math.min(0.99, hsl.l + (0.99 - hsl.l) * brightnessStep);
+    
     // For darker base colors, also reduce saturation as we get lighter
     const saturationFactor = hsl.l < 0.3 
-      ? Math.max(0.1, hsl.s * (1 - brightnessStep / 2))
-      : hsl.s;
+      ? Math.max(0.05, hsl.s * (1 - brightnessStep / 1.5))
+      : Math.max(0.05, hsl.s * (1 - brightnessStep / 3));
     
     const rgb = hslToRgb(hsl.h, saturationFactor, lightnessFactor);
     slots[i] = rgbToHex(rgb.r, rgb.g, rgb.b);

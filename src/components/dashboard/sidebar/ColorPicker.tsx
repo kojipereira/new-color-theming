@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from "react";
 import { AlertTriangle, Anchor } from "lucide-react";
 import { generateColorSlots } from "@/lib/colors";
@@ -10,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Switch } from "@/components/ui/switch";
 
 const ColorPicker: React.FC = () => {
-  const [color, setColor] = useState("#898989");
+  const [color, setColor] = useState("#f1f1f1");  // Starting with a much brighter default color
   const [highlightColor, setHighlightColor] = useState("#7E69AB"); // Default highlight color
   const [colorSlots, setColorSlots] = useState<string[]>([]);
   const [highlightColorSlots, setHighlightColorSlots] = useState<string[]>([]);
@@ -80,14 +79,11 @@ const ColorPicker: React.FC = () => {
     const baseIndex = slots.findIndex(slot => slot.toLowerCase() === newColor.toLowerCase());
     setBaseSlotIndex(baseIndex);
 
-    // Apply the colors to the system using the appropriate slots
-    // For medium brightness colors, use similar slots as before
-    // For very light or very dark colors, adapt accordingly
-
-    document.documentElement.style.setProperty('--background-color', slots[0]); // Always use lightest color for background
-    document.documentElement.style.setProperty('--card-color', slots[1]); // Light color for cards
-    document.documentElement.style.setProperty('--table-color', slots[2]); // Light-medium color for tables
-    document.documentElement.style.setProperty('--outline-color', slots[3]); // Medium color for outlines
+    // Apply the colors to the system using the brighter slots
+    document.documentElement.style.setProperty('--background-color', slots[1]); // Use slot 1 (almost white) for background
+    document.documentElement.style.setProperty('--card-color', slots[0]); // Use slot 0 (brightest) for cards
+    document.documentElement.style.setProperty('--table-color', slots[2]); // Use slot 2 for tables
+    document.documentElement.style.setProperty('--outline-color', slots[4]); // Use slot 4 for outlines
 
     // Check contrast after changing color
     setHasContrastIssue(checkColorThemeContrast(slots));
