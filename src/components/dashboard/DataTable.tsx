@@ -1,9 +1,11 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Plus, Pencil, Save } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import FormulaPanel from "./FormulaPanel";
 import SearchInput from "./SearchInput";
+import FilterInterface from "./FilterInterface";
 
 interface ColumnFormula {
   isActive: boolean;
@@ -207,7 +209,11 @@ const DataTable: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Add FilterInterface below the table */}
+      <FilterInterface />
     </>
   );
 };
+
 export default DataTable;
