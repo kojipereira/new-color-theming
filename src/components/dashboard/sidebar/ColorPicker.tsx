@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 
 const ColorPicker: React.FC = () => {
-  const [color, setColor] = useState("#f1f1f1");  // Starting with a much brighter default color
+  const [color, setColor] = useState("#ffffff");  // Starting with white as default color
   const [highlightColor, setHighlightColor] = useState("#7E69AB"); // Default highlight color
   const [colorSlots, setColorSlots] = useState<string[]>([]);
   const [highlightColorSlots, setHighlightColorSlots] = useState<string[]>([]);
@@ -101,6 +101,12 @@ const ColorPicker: React.FC = () => {
     
     // Check highlight contrast
     setHasHighlightContrastIssue(checkHighlightContrast(initialHighlightSlots, highlightBaseIndex));
+
+    // Apply the initial colors to the system
+    document.documentElement.style.setProperty('--background-color', initialSlots[1]); // Use slot 1 for background
+    document.documentElement.style.setProperty('--card-color', initialSlots[0]); // Use slot 0 for cards
+    document.documentElement.style.setProperty('--table-color', initialSlots[2]); // Use slot 2 for tables
+    document.documentElement.style.setProperty('--outline-color', initialSlots[4]); // Use slot 4 for outlines
   }, [checkColorThemeContrast, checkHighlightContrast]);
 
   // Check contrast when slots change
