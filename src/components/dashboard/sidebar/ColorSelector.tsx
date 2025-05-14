@@ -2,22 +2,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 interface ColorSelectorProps {
-  color: string;
-  onChange: (color: string) => void;
-  onClose?: () => void;
+  colors: string[];
+  selectedColor: string;
+  onColorChange: (color: string) => void;
 }
 
-export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, onClose }) => {
+export const ColorSelector: React.FC<ColorSelectorProps> = ({ colors, selectedColor, onColorChange }) => {
+  const [showPicker, setShowPicker] = useState(false);
   const [hue, setHue] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(color);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [currentColor, setCurrentColor] = useState(selectedColor);
   
   const colorPaletteRef = useRef<HTMLDivElement>(null);
   const hueSliderRef = useRef<HTMLDivElement>(null);
 
   // Convert hex to HSL to initialize the picker
   useEffect(() => {
-    const rgb = hexToRgb(color);
+    const rgb = hexToRgb(selectedColor);
     if (!rgb) return;
     
     const hslColor = rgbToHsl(rgb.r, rgb.g, rgb.b);
@@ -32,7 +33,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
         y: height * (1 - hslColor.l)
       });
     }
-  }, [color]);
+  }, [selectedColor]);
 
   // Update color palette gradient based on selected hue
   useEffect(() => {
@@ -52,7 +53,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
       const rgb = hslToRgb(hue / 360, saturation, lightness);
       const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
       
-      setSelectedColor(hex);
+      setCurrentColor(hex);
     }
   }, [hue, position]);
 
@@ -90,7 +91,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     const rgb = hslToRgb(hue / 360, saturation, lightness);
     const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
     
-    setSelectedColor(hex);
+    setCurrentColor(hex);
   };
   
   // Handle hue slider click/drag
@@ -143,7 +144,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
       document.removeEventListener('touchend', handleEnd);
       
       // Apply final color when drag ends
-      onChange(selectedColor);
+      onColorChange(currentColor);
     };
     
     document.addEventListener('mousemove', handleMove);
@@ -152,92 +153,94 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     document.addEventListener('touchend', handleEnd);
   };
 
-  // Apply button handler
-  const handleApply = () => {
-    onChange(selectedColor);
-    if (onClose) onClose();
-  };
-
-  // Update when hue changes
-  useEffect(() => {
-    // Live preview the color as user drags the hue slider
-    const previewDebounce = setTimeout(() => {
-      onChange(selectedColor);
-    }, 100);
-    
-    return () => clearTimeout(previewDebounce);
-  }, [selectedColor, onChange]);
-  
   return (
-    <div className="p-4 flex flex-col gap-4">
-      {/* Color display and hex input */}
-      <div className="flex items-center gap-2">
-        <div 
-          className="w-10 h-10 rounded-md border border-gray-200" 
-          style={{ backgroundColor: selectedColor }} 
-        />
-        <div className="flex-1">
-          <div className="text-sm font-medium mb-1">Color value</div>
-          <div className="relative">
-            <input
-              type="text"
-              value={selectedColor}
-              onChange={(e) => setSelectedColor(e.target.value)}
-              onBlur={() => {
-                // Validate if input is a valid hex color
-                if (/^#[0-9A-F]{6}$/i.test(selectedColor)) {
-                  onChange(selectedColor);
-                }
-              }}
-              className="px-2 h-8 w-full border border-gray-300 rounded text-sm"
+    <div>
+      <div className="mb-2">
+        <h3 className="text-xs text-neutral-500 mb-2">Select a color</h3>
+        <div className="flex flex-wrap gap-2">
+          {colors.map((color, index) => (
+            <button
+              key={index}
+              onClick={() => onColorChange(color)}
+              className={`w-6 h-6 rounded-full border ${selectedColor === color ? 'border-blue-500 ring-2 ring-blue-200' : 'border-neutral-200'}`}
+              style={{ backgroundColor: color }}
+              aria-label={`Select color ${color}`}
             />
-          </div>
+          ))}
         </div>
       </div>
       
-      {/* Color palette */}
-      <div 
-        ref={colorPaletteRef}
-        className="relative w-full h-48 rounded-md cursor-crosshair"
-        onMouseDown={(e) => startDrag((ev) => handleColorPaletteInteraction(ev as any), e)}
-        onTouchStart={(e) => startDrag((ev) => handleColorPaletteInteraction(ev as any), e)}
-      >
-        {/* Color selector thumb */}
-        <div
-          className="absolute w-4 h-4 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-md"
-          style={{ 
-            left: position.x, 
-            top: position.y,
-            backgroundColor: selectedColor
-          }}
-        />
-      </div>
+      {showPicker && (
+        <div className="mt-4">
+          {/* Color display and hex input */}
+          <div className="flex items-center gap-2 mb-4">
+            <div 
+              className="w-10 h-10 rounded-md border border-gray-200" 
+              style={{ backgroundColor: currentColor }} 
+            />
+            <div className="flex-1">
+              <div className="text-sm font-medium mb-1">Color value</div>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={currentColor}
+                  onChange={(e) => setCurrentColor(e.target.value)}
+                  onBlur={() => {
+                    // Validate if input is a valid hex color
+                    if (/^#[0-9A-F]{6}$/i.test(currentColor)) {
+                      onColorChange(currentColor);
+                    }
+                  }}
+                  className="px-2 h-8 w-full border border-gray-300 rounded text-sm"
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Color palette */}
+          <div 
+            ref={colorPaletteRef}
+            className="relative w-full h-48 rounded-md cursor-crosshair"
+            onMouseDown={(e) => startDrag((ev) => handleColorPaletteInteraction(ev as any), e)}
+            onTouchStart={(e) => startDrag((ev) => handleColorPaletteInteraction(ev as any), e)}
+          >
+            {/* Color selector thumb */}
+            <div
+              className="absolute w-4 h-4 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-md"
+              style={{ 
+                left: position.x, 
+                top: position.y,
+                backgroundColor: currentColor
+              }}
+            />
+          </div>
+          
+          {/* Hue slider */}
+          <div 
+            ref={hueSliderRef}
+            className="relative w-full h-8 rounded-md cursor-pointer mt-4"
+            style={{ 
+              background: 'linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)' 
+            }}
+            onMouseDown={(e) => startDrag((ev) => handleHueSliderInteraction(ev as any), e)}
+            onTouchStart={(e) => startDrag((ev) => handleHueSliderInteraction(ev as any), e)}
+          >
+            {/* Hue slider thumb */}
+            <div
+              className="absolute top-0 w-2 h-8 border-2 border-white -translate-x-1/2 shadow-md"
+              style={{ 
+                left: (hue / 360) * 100 + '%',
+              }}
+            />
+          </div>
+        </div>
+      )}
       
-      {/* Hue slider */}
-      <div 
-        ref={hueSliderRef}
-        className="relative w-full h-8 rounded-md cursor-pointer"
-        style={{ 
-          background: 'linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)' 
-        }}
-        onMouseDown={(e) => startDrag((ev) => handleHueSliderInteraction(ev as any), e)}
-        onTouchStart={(e) => startDrag((ev) => handleHueSliderInteraction(ev as any), e)}
+      <button
+        className="mt-4 bg-secondary text-secondary-foreground px-3 py-1.5 rounded-md text-sm flex items-center justify-center w-full"
+        onClick={() => setShowPicker(prev => !prev)}
       >
-        {/* Hue slider thumb */}
-        <div
-          className="absolute top-0 w-2 h-8 border-2 border-white -translate-x-1/2 shadow-md"
-          style={{ 
-            left: (hue / 360) * 100 + '%',
-          }}
-        />
-      </div>
-      
-      {/* Apply button */}
-      <button 
-        className="bg-blue-500 text-white rounded-md py-2 hover:bg-blue-600 transition-colors"
-        onClick={handleApply}
-      >
-        Apply Color
+        {showPicker ? 'Hide Color Picker' : 'Custom Color'}
       </button>
     </div>
   );

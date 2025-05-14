@@ -1,5 +1,27 @@
 
 /**
+ * Predefined base colors for the color picker
+ */
+export const baseColors = [
+  "#4361ee", // Blue
+  "#3a0ca3", // Purple
+  "#7209b7", // Violet
+  "#f72585", // Pink
+  "#4cc9f0", // Light blue
+  "#4895ef", // Sky blue
+  "#560bad", // Deep purple
+  "#480ca8", // Dark purple
+  "#b5179e", // Magenta
+  "#f72585", // Fuchsia
+  "#4ecdc4", // Teal
+  "#6a994e", // Green
+  "#ff9f1c", // Orange
+  "#e63946", // Red
+  "#ffffff", // White
+  "#000000", // Black
+];
+
+/**
  * Generates 12 color slots based on a given color
  * The provided color will be positioned in a dynamic slot based on its brightness,
  * with brighter colors placed in lower slots and darker colors in higher slots

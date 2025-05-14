@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Triangle } from "lucide-react";
-import ColorSelector from "./ColorSelector";
+import { ColorSelector } from "./ColorSelector";
 import { baseColors, generateColorSlots } from "@/lib/colors";
 
 const ColorPicker: React.FC = () => {
