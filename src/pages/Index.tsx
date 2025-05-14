@@ -1,8 +1,7 @@
 
-import React from 'react';
 import Dashboard from "@/components/dashboard/Dashboard";
 
-const Index: React.FC = () => {
+const Index = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Dashboard />

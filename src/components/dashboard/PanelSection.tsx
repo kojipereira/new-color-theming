@@ -1,7 +1,6 @@
 
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import { Plus } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 
 interface PanelSectionProps {
   title: string;
@@ -18,48 +17,23 @@ const PanelSection: React.FC<PanelSectionProps> = ({
   expanded = true,
   onAddItem
 }) => {
-  const [isExpanded, setIsExpanded] = useState(expanded);
-
-  const toggleExpanded = () => {
-    setIsExpanded(!isExpanded);
-  };
-
-  return (
-    <div className="mb-4">
-      <div className="flex justify-between items-center mb-2 px-2">
-        <div className="flex items-center gap-2">
-          <button 
-            onClick={toggleExpanded}
-            className="text-xs text-neutral-500 hover:text-neutral-700"
-          >
-            {isExpanded ? "▼" : "►"}
-          </button>
-          <h3 className="font-semibold text-sm">{title}</h3>
+  return <div className="bg-white w-full py-4 max-w-[280px] overflow-hidden rounded-md mb-2 px-[8px]">
+      <div className="relative flex min-h-6 w-full items-center gap-2 px-2">
+        <div className="self-stretch z-0 gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 truncate shrink basis-[0%] my-auto">
+          {title}
         </div>
-        <div className="flex items-center">
-          {actionIcons.map((icon, index) => (
-            <span key={index} className="text-xs mx-1">{icon}</span>
-          ))}
-          {onAddItem && (
-            <button 
-              onClick={onAddItem}
-              className="p-1 rounded-full hover:bg-gray-100"
-            >
-              <Plus size={16} />
-            </button>
-          )}
-        </div>
+        {onAddItem && <div className="rounded self-stretch z-0 flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1 cursor-pointer hover:bg-gray-100" onClick={onAddItem}>
+            <Plus className="h-4 w-4" />
+          </div>}
+        {actionIcons.map((icon, index) => (
+          <div key={index} className="rounded self-stretch z-0 flex items-center gap-0.5 overflow-hidden justify-center w-6 my-auto p-1">
+            <img src={icon} className="aspect-[1] object-contain w-4 self-stretch my-auto" alt="Action" />
+          </div>
+        ))}
+        <div className="absolute z-0 flex w-2 shrink-0 h-4 -left-1 bottom-1" />
       </div>
-      
-      <Separator className="my-2" />
-      
-      {isExpanded && (
-        <div className="px-2">
-          {children}
-        </div>
-      )}
-    </div>
-  );
+      {expanded && <div className="w-full overflow-hidden mt-1">{children}</div>}
+    </div>;
 };
 
 export default PanelSection;

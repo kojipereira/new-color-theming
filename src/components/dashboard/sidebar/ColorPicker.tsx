@@ -1,88 +1,120 @@
 
-import React, { useState, useEffect } from "react";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { Triangle } from "lucide-react";
+import React, { useState, useCallback, useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
+import { generateColorSlots } from "@/lib/colors";
+import { meetsAccessibilityStandards } from "@/lib/utils";
 import { ColorSelector } from "./ColorSelector";
-import { baseColors, generateColorSlots } from "@/lib/colors";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const ColorPicker: React.FC = () => {
-  const { toast } = useToast();
-  const [currentColor, setCurrentColor] = useState(baseColors[0]);
+  const [color, setColor] = useState("#898989");
   const [colorSlots, setColorSlots] = useState<string[]>([]);
-  const [poorContrast, setPoorContrast] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [hasContrastIssue, setHasContrastIssue] = useState(false);
 
-  useEffect(() => {
-    // Initialize colors on first load
-    handleColorChange(currentColor);
+  const checkContrastIssue = useCallback((slots: string[]) => {
+    if (!slots.length) return false;
+    // Check contrast between black text (#000000) and table color (Slot 4, index 3)
+    return !meetsAccessibilityStandards("#000000", slots[3]);
   }, []);
 
-  const handleColorChange = (hexColor: string) => {
-    setCurrentColor(hexColor);
-    const slots = generateColorSlots(hexColor);
+  // Generate initial color slots on mount
+  useEffect(() => {
+    const initialSlots = generateColorSlots(color);
+    setColorSlots(initialSlots);
+    setHasContrastIssue(checkContrastIssue(initialSlots));
+  }, [checkContrastIssue]);
+
+  // Check contrast when slots change
+  useEffect(() => {
+    setHasContrastIssue(checkContrastIssue(colorSlots));
+  }, [colorSlots, checkContrastIssue]);
+
+  const handleColorChange = useCallback((newColor: string) => {
+    setColor(newColor);
+    const slots = generateColorSlots(newColor);
     setColorSlots(slots);
     
     // Apply the colors to the system using the appropriate slots
-    document.documentElement.style.setProperty('--card-color', slots[0]);
-    document.documentElement.style.setProperty('--background-color', slots[1]);
-    document.documentElement.style.setProperty('--table-color', slots[2]);
-    document.documentElement.style.setProperty('--outline-color', slots[4]);
+    // For medium brightness colors, use similar slots as before
+    // For very light or very dark colors, adapt accordingly
+    document.documentElement.style.setProperty('--card-color', slots[0]); // Always use lightest color for cards
+    document.documentElement.style.setProperty('--background-color', slots[1]); // Light color for backgrounds
+    document.documentElement.style.setProperty('--table-color', slots[2]); // Light-medium color for tables
+    document.documentElement.style.setProperty('--outline-color', slots[4]); // Medium color for outlines
 
     toast({
       title: "Color palette updated",
-      description: "Your dashboard's color theme has been updated.",
+      description: "New color palette has been applied to the dashboard",
     });
-    
-    // Basic contrast check - could be improved with proper WCAG calculations
-    setPoorContrast(false);
-  };
+  }, []);
 
   return (
-    <div className="rounded-md bg-white w-full mb-2 px-[8px] py-4">
-      <div className="flex min-h-6 w-full items-center gap-2 px-2 mb-2">
+    <div className="rounded-md bg-white w-full overflow-hidden py-4 mb-2 px-[8px]">
+      <div className="flex min-h-6 w-full items-center gap-2 px-2">
         <div className="self-stretch gap-2 text-sm text-neutral-900 font-bold leading-none flex-1 shrink basis-[0%] my-auto">
-          Dashboard Theme
-          {poorContrast && (
-            <div className="ml-2 inline-block">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="text-amber-500 inline-flex items-center">
-                      <Triangle className="h-4 w-4 fill-current" />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Poor contrast ratio with black text on table color</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+          Color Theme
+        </div>
+        
+        <div className="flex items-center gap-2">
+          {hasContrastIssue && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="cursor-help">
+                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Poor contrast ratio with black text on table color (Slot 4)</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
+          
+          <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                <div 
+                  className="w-5 h-5 rounded-full border border-gray-300" 
+                  style={{ background: color }}
+                />
+                <span className="sr-only">Open color picker</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[300px] p-0" align="end">
+              <ColorSelector color={color} onChange={handleColorChange} onClose={() => setIsOpen(false)} />
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       
-      <Separator className="my-3" />
-      
-      <div className="px-2">
-        <ColorSelector 
-          colors={baseColors}
-          selectedColor={currentColor}
-          onColorChange={handleColorChange}
-        />
-      </div>
-      
       {colorSlots.length > 0 && (
-        <div className="mt-3 px-2">
-          <p className="text-xs text-neutral-500 mb-2">Generated Color Palette:</p>
-          <div className="flex gap-2">
-            {colorSlots.map((color, index) => (
+        <div className="mt-2 px-2">
+          <div className="flex gap-1 overflow-x-auto py-1">
+            {colorSlots.map((slotColor, index) => (
               <div 
-                key={index}
-                className="h-5 w-5 rounded-full border border-neutral-200"
-                style={{ backgroundColor: color }}
+                key={`color-slot-${index}`} 
+                className={`w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 ${index === 3 && hasContrastIssue ? 'ring-2 ring-amber-500' : ''}`}
+                style={{ backgroundColor: slotColor }}
+                title={`Slot ${index + 1}: ${slotColor}`}
               />
             ))}
+          </div>
+          <div className="text-xs text-gray-500 mt-1">
+            Cards: Slot 1 • Background: Slot 3 • Tables: Slot 4 • Outlines: Slot 5
           </div>
         </div>
       )}
