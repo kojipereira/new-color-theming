@@ -153,9 +153,9 @@ select:focus {
   color: var(--highlight-foreground-color);
 }
 
-/* Apply darker highlight color (slot 7) for hover effects */
+/* Apply brighter highlight color for hover effects */
 .hover\:bg-highlight-darker:hover {
-  background-color: var(--highlight-darker);
+  background-color: var(--highlight-hover-color);
 }
 
 /* Add these classes for buttons and controls */
@@ -163,7 +163,7 @@ select:focus {
   background-color: var(--highlight-darker);
 }
 
-/* Override default hover behavior for components that need slot 7 color */
+/* Override default hover behavior for components that need the brighter hover color */
 .bg-highlight:hover {
-  background-color: var(--highlight-darker);
+  background-color: var(--highlight-hover-color);
 }
