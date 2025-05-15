@@ -14,8 +14,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
   
   const colorPaletteRef = useRef<HTMLDivElement>(null);
   const hueSliderRef = useRef<HTMLDivElement>(null);
-  const colorThumbRef = useRef<HTMLDivElement>(null);
-  const hueThumbRef = useRef<HTMLDivElement>(null);
 
   // Convert hex to HSL to initialize the picker
   useEffect(() => {
@@ -36,41 +34,30 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     }
   }, [color]);
 
-  // Update color palette background based on selected hue
+  // Update color palette gradient based on selected hue
   useEffect(() => {
     if (colorPaletteRef.current) {
-      // Use a pure hue color for the gradient
-      const pureHueColor = `hsl(${hue}, 100%, 50%)`;
-      colorPaletteRef.current.style.background = `
-        linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1)),
-        linear-gradient(to right, rgba(255,255,255,1), ${pureHueColor})
-      `;
+      colorPaletteRef.current.style.background = 
+        `linear-gradient(to top, #000, transparent), 
+         linear-gradient(to right, #fff, hsl(${hue}, 100%, 50%))`;
     }
-    
-    // Calculate color based on current position and hue
-    updateColorFromPosition();
   }, [hue]);
 
-  // Update color based on current position
-  const updateColorFromPosition = () => {
-    if (!colorPaletteRef.current) return;
+  // Get precise color at a specific point in the palette
+  const getColorAtPoint = (x: number, y: number): string => {
+    if (!colorPaletteRef.current) return selectedColor;
     
     const rect = colorPaletteRef.current.getBoundingClientRect();
-    const saturation = Math.max(0, Math.min(1, position.x / rect.width));
-    const lightness = Math.max(0, Math.min(1, 1 - (position.y / rect.height)));
+    
+    // Calculate normalized coordinates (0 to 1)
+    const saturation = Math.max(0, Math.min(1, x / rect.width));
+    const lightness = Math.max(0, Math.min(1, 1 - (y / rect.height)));
     
     // Convert HSL to hex
     const rgb = hslToRgb(hue / 360, saturation, lightness);
-    const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-    
-    setSelectedColor(hex);
+    return rgbToHex(rgb.r, rgb.g, rgb.b);
   };
 
-  // Update position when color changes
-  useEffect(() => {
-    updateColorFromPosition();
-  }, [position]);
-  
   // Handle color palette click/drag
   const handleColorPaletteInteraction = (e: MouseEvent | TouchEvent) => {
     if (!colorPaletteRef.current) return;
@@ -93,11 +80,9 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     
     setPosition({ x, y });
     
-    // Move the thumb
-    if (colorThumbRef.current) {
-      colorThumbRef.current.style.left = `${x}px`;
-      colorThumbRef.current.style.top = `${y}px`;
-    }
+    // Get exact color at point and update
+    const exactColor = getColorAtPoint(x, y);
+    setSelectedColor(exactColor);
   };
   
   // Handle hue slider click/drag
@@ -120,11 +105,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     // Calculate hue from position
     const newHue = (x / rect.width) * 360;
     setHue(newHue);
-    
-    // Move the hue thumb
-    if (hueThumbRef.current) {
-      hueThumbRef.current.style.left = `${x}px`;
-    }
   };
   
   // Start dragging
@@ -173,35 +153,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     return () => clearTimeout(previewDebounce);
   }, [selectedColor, onChange]);
   
-  // Update position when hex input changes
-  const updatePositionFromHex = (hex: string) => {
-    if (!/^#[0-9A-F]{6}$/i.test(hex)) return;
-    
-    const rgb = hexToRgb(hex);
-    if (!rgb || !colorPaletteRef.current) return;
-    
-    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-    setHue(hsl.h * 360);
-    
-    const width = colorPaletteRef.current.clientWidth;
-    const height = colorPaletteRef.current.clientHeight;
-    
-    setPosition({
-      x: width * hsl.s,
-      y: height * (1 - hsl.l)
-    });
-    
-    // Move the thumbs
-    if (colorThumbRef.current) {
-      colorThumbRef.current.style.left = `${width * hsl.s}px`;
-      colorThumbRef.current.style.top = `${height * (1 - hsl.l)}px`;
-    }
-    
-    if (hueThumbRef.current) {
-      hueThumbRef.current.style.left = `${(hsl.h * 360 / 360) * hueSliderRef.current!.clientWidth}px`;
-    }
-  };
-  
   return (
     <div className="p-4 flex flex-col gap-4">
       {/* Color display and hex input */}
@@ -218,10 +169,26 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
               value={selectedColor}
               onChange={(e) => setSelectedColor(e.target.value)}
               onBlur={() => {
-                // Validate and update picker position if valid hex
+                // Validate if input is a valid hex color
                 if (/^#[0-9A-F]{6}$/i.test(selectedColor)) {
                   onChange(selectedColor);
-                  updatePositionFromHex(selectedColor);
+                  
+                  // Update position and hue based on the new color
+                  const rgb = hexToRgb(selectedColor);
+                  if (rgb) {
+                    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+                    setHue(hsl.h * 360);
+                    
+                    if (colorPaletteRef.current) {
+                      const width = colorPaletteRef.current.clientWidth;
+                      const height = colorPaletteRef.current.clientHeight;
+                      
+                      setPosition({
+                        x: width * hsl.s,
+                        y: height * (1 - hsl.l)
+                      });
+                    }
+                  }
                 }
               }}
               className="px-2 h-8 w-full border border-gray-300 rounded text-sm"
@@ -231,17 +198,15 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
       </div>
       
       {/* Color palette */}
-      <div className="relative">
-        <div 
-          ref={colorPaletteRef}
-          className="relative w-full h-48 rounded-md cursor-crosshair overflow-hidden"
-          onMouseDown={(e) => startDrag((ev) => handleColorPaletteInteraction(ev), e)}
-          onTouchStart={(e) => startDrag((ev) => handleColorPaletteInteraction(ev), e)}
-        />
-        {/* Color selector thumb - positioned absolutely */}
+      <div 
+        ref={colorPaletteRef}
+        className="relative w-full h-48 rounded-md cursor-crosshair"
+        onMouseDown={(e) => startDrag((ev) => handleColorPaletteInteraction(ev), e)}
+        onTouchStart={(e) => startDrag((ev) => handleColorPaletteInteraction(ev), e)}
+      >
+        {/* Color selector thumb */}
         <div
-          ref={colorThumbRef}
-          className="absolute w-4 h-4 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-md pointer-events-none"
+          className="absolute w-4 h-4 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-md"
           style={{ 
             left: position.x, 
             top: position.y,
@@ -251,20 +216,18 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
       </div>
       
       {/* Hue slider */}
-      <div className="relative">
-        <div 
-          ref={hueSliderRef}
-          className="relative w-full h-8 rounded-md cursor-pointer"
-          style={{ 
-            background: 'linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)' 
-          }}
-          onMouseDown={(e) => startDrag((ev) => handleHueSliderInteraction(ev), e)}
-          onTouchStart={(e) => startDrag((ev) => handleHueSliderInteraction(ev), e)}
-        />
-        {/* Hue slider thumb - positioned absolutely */}
+      <div 
+        ref={hueSliderRef}
+        className="relative w-full h-8 rounded-md cursor-pointer"
+        style={{ 
+          background: 'linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)' 
+        }}
+        onMouseDown={(e) => startDrag((ev) => handleHueSliderInteraction(ev), e)}
+        onTouchStart={(e) => startDrag((ev) => handleHueSliderInteraction(ev), e)}
+      >
+        {/* Hue slider thumb */}
         <div
-          ref={hueThumbRef}
-          className="absolute top-0 w-2 h-8 border-2 border-white -translate-x-1/2 shadow-md pointer-events-none"
+          className="absolute top-0 w-2 h-8 border-2 border-white -translate-x-1/2 shadow-md"
           style={{ 
             left: (hue / 360) * 100 + '%',
           }}
@@ -284,15 +247,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
 
 // Color conversion utilities
 const hexToRgb = (hex: string) => {
-  // Remove # if present
-  hex = hex.replace(/^#/, '');
-  
-  // Handle both 3-digit and 6-digit formats
-  if (hex.length === 3) {
-    hex = hex.split('').map(char => char + char).join('');
-  }
-  
-  const result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? {
     r: parseInt(result[1], 16),
     g: parseInt(result[2], 16),
