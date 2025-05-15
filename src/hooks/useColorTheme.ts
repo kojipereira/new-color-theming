@@ -38,7 +38,7 @@ export function useColorTheme(initialColor: string = "#ffffff") {
     // Apply the colors to the system using the brighter slots
     document.documentElement.style.setProperty('--background-color', slots[1]); // Use slot 1 (almost white) for background
     document.documentElement.style.setProperty('--card-color', slots[0]); // Use slot 0 (brightest) for cards
-    document.documentElement.style.setProperty('--table-color', slots[2]); // Use slot 2 for tables
+    document.documentElement.style.setProperty('--table-color', slots[1]); // Use slot 1 for tables
     document.documentElement.style.setProperty('--outline-color', slots[2]); // Use slot 2 for outlines
 
     // Check contrast after changing color
