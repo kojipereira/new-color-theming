@@ -18,7 +18,7 @@ const Index = () => {
     document.documentElement.style.setProperty('--background-color', colorSlots[1]); // Use slot 1 for background
     document.documentElement.style.setProperty('--card-color', colorSlots[0]); // Use slot 0 for cards
     document.documentElement.style.setProperty('--table-color', colorSlots[2]); // Use slot 2 for tables
-    document.documentElement.style.setProperty('--outline-color', colorSlots[3]); // Use slot 3 for outlines
+    document.documentElement.style.setProperty('--outline-color', colorSlots[2]); // Use slot 2 for outlines
   }, []);
 
   return (
