@@ -41,12 +41,14 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
         `linear-gradient(to top, #000, transparent), 
          linear-gradient(to right, #fff, hsl(${hue}, 100%, 50%))`;
     }
-    
-    // Update the selected color when hue changes
+  }, [hue]);
+
+  // Update selected color whenever position or hue changes
+  useEffect(() => {
     if (colorPaletteRef.current) {
       const rect = colorPaletteRef.current.getBoundingClientRect();
-      const saturation = position.x / rect.width;
-      const lightness = 1 - (position.y / rect.height);
+      const saturation = Math.max(0, Math.min(1, position.x / rect.width));
+      const lightness = Math.max(0, Math.min(1, 1 - (position.y / rect.height)));
       
       // Convert HSL to hex
       const rgb = hslToRgb(hue / 360, saturation, lightness);
@@ -56,8 +58,23 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     }
   }, [hue, position]);
 
+  // Get precise color at a specific point in the palette
+  const getColorAtPoint = (x: number, y: number): string => {
+    if (!colorPaletteRef.current) return selectedColor;
+    
+    const rect = colorPaletteRef.current.getBoundingClientRect();
+    
+    // Calculate normalized coordinates (0 to 1)
+    const saturation = Math.max(0, Math.min(1, x / rect.width));
+    const lightness = Math.max(0, Math.min(1, 1 - (y / rect.height)));
+    
+    // Convert HSL to hex
+    const rgb = hslToRgb(hue / 360, saturation, lightness);
+    return rgbToHex(rgb.r, rgb.g, rgb.b);
+  };
+
   // Handle color palette click/drag
-  const handleColorPaletteInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleColorPaletteInteraction = (e: MouseEvent | TouchEvent) => {
     if (!colorPaletteRef.current) return;
     
     const rect = colorPaletteRef.current.getBoundingClientRect();
@@ -73,28 +90,18 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     }
     
     // Calculate position
-    let x = clientX - rect.left;
-    let y = clientY - rect.top;
-    
-    // Constrain to palette bounds
-    x = Math.max(0, Math.min(rect.width, x));
-    y = Math.max(0, Math.min(rect.height, y));
+    let x = Math.max(0, Math.min(rect.width, clientX - rect.left));
+    let y = Math.max(0, Math.min(rect.height, clientY - rect.top));
     
     setPosition({ x, y });
     
-    // Calculate color from position
-    const saturation = x / rect.width;
-    const lightness = 1 - (y / rect.height);
-    
-    // Convert HSL to hex
-    const rgb = hslToRgb(hue / 360, saturation, lightness);
-    const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-    
-    setSelectedColor(hex);
+    // Get exact color at point and update
+    const exactColor = getColorAtPoint(x, y);
+    setSelectedColor(exactColor);
   };
   
   // Handle hue slider click/drag
-  const handleHueSliderInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleHueSliderInteraction = (e: MouseEvent | TouchEvent) => {
     if (!hueSliderRef.current) return;
     
     const rect = hueSliderRef.current.getBoundingClientRect();
@@ -108,10 +115,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     }
     
     // Calculate position
-    let x = clientX - rect.left;
-    
-    // Constrain to slider bounds
-    x = Math.max(0, Math.min(rect.width, x));
+    let x = Math.max(0, Math.min(rect.width, clientX - rect.left));
     
     // Calculate hue from position
     const newHue = (x / rect.width) * 360;
@@ -124,11 +128,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     event: React.MouseEvent | React.TouchEvent
   ) => {
     // Call handler immediately with the initial event
-    if ('touches' in event) {
-      handler(event.nativeEvent);
-    } else {
-      handler(event.nativeEvent);
-    }
+    handler(event.nativeEvent);
     
     // Add event listeners for move and end events
     const handleMove = (e: MouseEvent | TouchEvent) => {
@@ -158,9 +158,9 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     if (onClose) onClose();
   };
 
-  // Update when hue changes
+  // Update when selected color changes
   useEffect(() => {
-    // Live preview the color as user drags the hue slider
+    // Live preview the color as user drags
     const previewDebounce = setTimeout(() => {
       onChange(selectedColor);
     }, 100);
@@ -199,8 +199,8 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
       <div 
         ref={colorPaletteRef}
         className="relative w-full h-48 rounded-md cursor-crosshair"
-        onMouseDown={(e) => startDrag((ev) => handleColorPaletteInteraction(ev as any), e)}
-        onTouchStart={(e) => startDrag((ev) => handleColorPaletteInteraction(ev as any), e)}
+        onMouseDown={(e) => startDrag((ev) => handleColorPaletteInteraction(ev), e)}
+        onTouchStart={(e) => startDrag((ev) => handleColorPaletteInteraction(ev), e)}
       >
         {/* Color selector thumb */}
         <div
@@ -220,8 +220,8 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
         style={{ 
           background: 'linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)' 
         }}
-        onMouseDown={(e) => startDrag((ev) => handleHueSliderInteraction(ev as any), e)}
-        onTouchStart={(e) => startDrag((ev) => handleHueSliderInteraction(ev as any), e)}
+        onMouseDown={(e) => startDrag((ev) => handleHueSliderInteraction(ev), e)}
+        onTouchStart={(e) => startDrag((ev) => handleHueSliderInteraction(ev), e)}
       >
         {/* Hue slider thumb */}
         <div
