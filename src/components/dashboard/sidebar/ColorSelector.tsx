@@ -43,21 +43,6 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
     }
   }, [hue]);
 
-  // Update selected color whenever position or hue changes
-  useEffect(() => {
-    if (colorPaletteRef.current) {
-      const rect = colorPaletteRef.current.getBoundingClientRect();
-      const saturation = Math.max(0, Math.min(1, position.x / rect.width));
-      const lightness = Math.max(0, Math.min(1, 1 - (position.y / rect.height)));
-      
-      // Convert HSL to hex
-      const rgb = hslToRgb(hue / 360, saturation, lightness);
-      const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-      
-      setSelectedColor(hex);
-    }
-  }, [hue, position]);
-
   // Get precise color at a specific point in the palette
   const getColorAtPoint = (x: number, y: number): string => {
     if (!colorPaletteRef.current) return selectedColor;
@@ -187,6 +172,23 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({ color, onChange, o
                 // Validate if input is a valid hex color
                 if (/^#[0-9A-F]{6}$/i.test(selectedColor)) {
                   onChange(selectedColor);
+                  
+                  // Update position and hue based on the new color
+                  const rgb = hexToRgb(selectedColor);
+                  if (rgb) {
+                    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+                    setHue(hsl.h * 360);
+                    
+                    if (colorPaletteRef.current) {
+                      const width = colorPaletteRef.current.clientWidth;
+                      const height = colorPaletteRef.current.clientHeight;
+                      
+                      setPosition({
+                        x: width * hsl.s,
+                        y: height * (1 - hsl.l)
+                      });
+                    }
+                  }
                 }
               }}
               className="px-2 h-8 w-full border border-gray-300 rounded text-sm"
